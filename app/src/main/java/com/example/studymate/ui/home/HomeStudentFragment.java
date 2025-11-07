@@ -28,7 +28,7 @@ public class HomeStudentFragment extends Fragment {
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_list, container, false);
+        return inflater.inflate(R.layout.fragment_class_list_teacher, container, false);
     }
 
     @Override public void onViewCreated(@NonNull View v, @Nullable Bundle s) {
@@ -36,7 +36,7 @@ public class HomeStudentFragment extends Fragment {
         vm = new ViewModelProvider(requireActivity()).get(ClassViewModel.class);
         session = new SessionManager(requireContext());
         NavController nav = Navigation.findNavController(v);
-        RecyclerView rv = v.findViewById(R.id.rvClasses);
+        RecyclerView rv = v.findViewById(R.id.rvStudentClasses);
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         ClassAdapter adapter = new ClassAdapter();
@@ -47,21 +47,21 @@ public class HomeStudentFragment extends Fragment {
         });
         rv.setAdapter(adapter);
 
-// nạp dữ liệu
+        // nạp dữ liệu
         vm.getClasses().observe(getViewLifecycleOwner(), adapter::submitList);
 
 
-        v.findViewById(R.id.fabPrimary).setOnClickListener(btn -> {
-            BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
-            View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_join_class, null);
-            TextInputEditText edt = sheet.findViewById(R.id.edtCode);
-            MaterialButton join = sheet.findViewById(R.id.btnJoin);
-            join.setOnClickListener(b -> {
-                String code = edt.getText() != null ? edt.getText().toString() : "";
-                vm.joinByCode(code, session.getUserId());
-                dialog.dismiss();
-            });
-            dialog.setContentView(sheet); dialog.show();
-        });
+//        v.findViewById(R.id.fabPrimary).setOnClickListener(btn -> {
+//            BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
+//            View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_join_class, null);
+//            TextInputEditText edt = sheet.findViewById(R.id.edtCode);
+//            MaterialButton join = sheet.findViewById(R.id.btnJoin);
+//            join.setOnClickListener(b -> {
+//                String code = edt.getText() != null ? edt.getText().toString() : "";
+//                vm.joinByCode(code, session.getUserId());
+//                dialog.dismiss();
+//            });
+//            dialog.setContentView(sheet); dialog.show();
+//        });
     }
 }

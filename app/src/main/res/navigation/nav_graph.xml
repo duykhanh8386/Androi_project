@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
@@ -23,24 +24,27 @@
     <fragment
         android:id="@+id/homeTeacherFragment"
         android:name="com.example.studymate.ui.home.HomeTeacherFragment"
-        android:label="@string/home_teacher">
+        android:label="@string/home_teacher"
+        tools:layout="@layout/fragment_class_list_teacher">
         <action android:id="@+id/action_home_to_classDetail" app:destination="@id/classDetailFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/homeStudentFragment"
         android:name="com.example.studymate.ui.home.HomeStudentFragment"
-        android:label="@string/home_student">
+        android:label="@string/home_student"
+        tools:layout="@layout/fragment_class_list_student">
         <action android:id="@+id/action_home_to_classDetail2" app:destination="@id/classDetailFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/classDetailFragment"
         android:name="com.example.studymate.ui.classdetail.ClassDetailFragment"
-        android:label="@string/class_detail">
+        android:label="@string/class_detail"
+        tools:layout="@layout/fragment_class_detail_teacher">
         <action android:id="@+id/action_detail_to_feedback" app:destination="@id/feedbackThreadFragment"/>
         <action android:id="@+id/action_detail_to_notifications" app:destination="@id/notificationListFragment"/>
-        <action android:id="@+id/action_detail_to_gradeStudent" app:destination="@id/gradeListStudentFragment"/>
+        <action android:id="@+id/action_detail_to_gradeStudent" app:destination="@id/gradeStudentFragment"/>
         <action android:id="@+id/action_detail_to_gradeEntry" app:destination="@id/gradeEntryFragment"/>
         <action android:id="@+id/action_detail_to_studentManage" app:destination="@id/studentManageFragment"/>
     </fragment>
@@ -53,7 +57,8 @@
     <fragment
         android:id="@+id/notificationListFragment"
         android:name="com.example.studymate.ui.notify.NotificationListFragment"
-        android:label="@string/announcement">
+        android:label="@string/announcement"
+        tools:layout="@layout/fragment_notification_list">
         <action android:id="@+id/action_list_to_createNotify" app:destination="@id/notificationCreateFragment"/>
         <action android:id="@+id/action_list_to_detailNotify" app:destination="@id/notificationDetailFragment"/>
     </fragment>
@@ -81,8 +86,9 @@
         android:label="Tạo tài khoản"/>
 
     <fragment
-        android:id="@+id/gradeListStudentFragment"
+        android:id="@+id/gradeStudentFragment"
         android:name="com.example.studymate.ui.grade.GradeListStudentFragment"
+        tools:layout="@layout/fragment_grade_student"
         android:label="@string/score"/>
 
     <fragment

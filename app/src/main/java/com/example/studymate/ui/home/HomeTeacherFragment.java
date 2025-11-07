@@ -23,7 +23,7 @@ public class HomeTeacherFragment extends Fragment {
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_list, container, false);
+        return inflater.inflate(R.layout.fragment_class_list_teacher, container, false);
     }
 
     @Override public void onViewCreated(@NonNull View v, @Nullable Bundle s) {
@@ -32,7 +32,7 @@ public class HomeTeacherFragment extends Fragment {
         ClassViewModel vm = new ViewModelProvider(requireActivity()).get(ClassViewModel.class);
         NavController nav = Navigation.findNavController(v);
 
-        RecyclerView rv = v.findViewById(R.id.rvClasses);
+        RecyclerView rv = v.findViewById(R.id.rvTeacherClasses);
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         ClassAdapter adapter = new ClassAdapter();
@@ -47,8 +47,8 @@ public class HomeTeacherFragment extends Fragment {
         vm.getClasses().observe(getViewLifecycleOwner(), adapter::submitList);
 
         // FAB -> tạo lớp (để TODO sau)
-        v.findViewById(R.id.fabPrimary).setOnClickListener(btn -> {
-            // TODO: mở bottom sheet tạo lớp
-        });
+//        v.findViewById(R.id.fabPrimary).setOnClickListener(btn -> {
+//            // TODO: mở bottom sheet tạo lớp
+//        });
     }
 }
