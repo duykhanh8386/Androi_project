@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.studymate.ui.auth.LoginFragment"
+        android:label="@string/login">
+        <action android:id="@+id/action_login_to_homeAdmin"   app:destination="@id/homeAdminFragment"/>
+        <action android:id="@+id/action_login_to_homeTeacher" app:destination="@id/homeTeacherFragment"/>
+        <action android:id="@+id/action_login_to_homeStudent" app:destination="@id/homeStudentFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeAdminFragment"
+        android:name="com.example.studymate.ui.home.HomeAdminFragment"
+        android:label="@string/home_admin">
+        <action android:id="@+id/action_admin_to_accounts" app:destination="@id/accountListFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeTeacherFragment"
+        android:name="com.example.studymate.ui.home.HomeTeacherFragment"
+        android:label="@string/home_teacher">
+        <action android:id="@+id/action_home_to_classDetail" app:destination="@id/classDetailFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeStudentFragment"
+        android:name="com.example.studymate.ui.home.HomeStudentFragment"
+        android:label="@string/home_student">
+        <action android:id="@+id/action_home_to_classDetail2" app:destination="@id/classDetailFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/classDetailFragment"
+        android:name="com.example.studymate.ui.classdetail.ClassDetailFragment"
+        android:label="@string/class_detail">
+        <action android:id="@+id/action_detail_to_feedback" app:destination="@id/feedbackThreadFragment"/>
+        <action android:id="@+id/action_detail_to_notifications" app:destination="@id/notificationListFragment"/>
+        <action android:id="@+id/action_detail_to_gradeStudent" app:destination="@id/gradeListStudentFragment"/>
+        <action android:id="@+id/action_detail_to_gradeEntry" app:destination="@id/gradeEntryFragment"/>
+        <action android:id="@+id/action_detail_to_studentManage" app:destination="@id/studentManageFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/feedbackThreadFragment"
+        android:name="com.example.studymate.ui.feedback.FeedbackThreadFragment"
+        android:label="@string/qa_feedback"/>
+
+    <fragment
+        android:id="@+id/notificationListFragment"
+        android:name="com.example.studymate.ui.notify.NotificationListFragment"
+        android:label="@string/announcement">
+        <action android:id="@+id/action_list_to_createNotify" app:destination="@id/notificationCreateFragment"/>
+        <action android:id="@+id/action_list_to_detailNotify" app:destination="@id/notificationDetailFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/notificationCreateFragment"
+        android:name="com.example.studymate.ui.notify.NotificationCreateFragment"
+        android:label="Tạo thông báo"/>
+
+    <fragment
+        android:id="@+id/notificationDetailFragment"
+        android:name="com.example.studymate.ui.notify.NotificationDetailFragment"
+        android:label="Chi tiết thông báo"/>
+
+    <fragment
+        android:id="@+id/accountListFragment"
+        android:name="com.example.studymate.ui.account.AccountListFragment"
+        android:label="Tài khoản">
+        <action android:id="@+id/action_acclist_to_create" app:destination="@id/accountCreateFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/accountCreateFragment"
+        android:name="com.example.studymate.ui.account.AccountCreateFragment"
+        android:label="Tạo tài khoản"/>
+
+    <fragment
+        android:id="@+id/gradeListStudentFragment"
+        android:name="com.example.studymate.ui.grade.GradeListStudentFragment"
+        android:label="@string/score"/>
+
+    <fragment
+        android:id="@+id/gradeEntryFragment"
+        android:name="com.example.studymate.ui.grade.GradeEntryFragment"
+        android:label="Nhập/Sửa điểm"/>
+
+    <fragment
+        android:id="@+id/studentManageFragment"
+        android:name="com.example.studymate.ui.classdetail.StudentManageFragment"
+        android:label="Quản lý sĩ số"/>
+</navigation>

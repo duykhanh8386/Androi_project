@@ -1,38 +1,17 @@
 package com.example.studymate.data.local.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import java.util.Date;
 
-@Entity(tableName = "notifications")
+@Entity(tableName = "notification")
 public class Notification {
     @PrimaryKey(autoGenerate = true)
-    private int notificationID;
-    private int classID;
-    private String title;
-    private String content;
-    private Date sentAt;
-    private int teacherID;
+    public long id;
 
-    public Notification(int notificationID, int classID, String title, String content, Date sentAt, int teacherID) {
-        this.notificationID = notificationID;
-        this.classID = classID;
-        this.title = title;
-        this.content = content;
-        this.sentAt = sentAt;
-        this.teacherID = teacherID;
-    }
-
-    public int getNotificationID() { return notificationID; }
-    public void setNotificationID(int notificationID) { this.notificationID = notificationID; }
-    public int getClassID() { return classID; }
-    public void setClassID(int classID) { this.classID = classID; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-    public Date getSentAt() { return sentAt; }
-    public void setSentAt(Date sentAt) { this.sentAt = sentAt; }
-    public int getTeacherID() { return teacherID; }
-    public void setTeacherID(int teacherID) { this.teacherID = teacherID; }
+    public long classId;
+    @NonNull public String title;
+    @NonNull public String content;
+    public long createdAt;
+    public long senderId;
 }

@@ -1,3 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">StudyMate</string>
+    <string name="login">Đăng nhập</string>
+    <string name="logout">Đăng xuất</string>
+
+    <!-- Login/Logout -->
+    <string name="login_success">Đăng nhập thành công</string>
+    <string name="login_invalid">Sai thông tin đăng nhập, vui lòng thử lại.</string>
+    <string name="login_disabled">Tài khoản đã bị khóa, vui lòng liên hệ quản trị viên.</string>
+    <string name="db_error">Lỗi kết nối cơ sở dữ liệu.</string>
+
+    <string name="login_fill_all">Vui lòng nhập đầy đủ thông tin</string>
+
+    <string name="login_wrong_role">Vai trò không khớp, vui lòng chọn đúng vai trò</string>
+
+    <string name="login_inactive">Tài khoản đang ở trạng thái INACTIVE</string>
+
+    <string name="common_db_error">Lỗi kết nối cơ sở dữ liệu</string>
+
+
+    <!-- Logout -->
+
+
+    <string name="role_admin">Quản trị viên</string>
+    <string name="role_teacher">Giáo viên</string>
+    <string name="role_student">Học sinh</string>
+    <string name="username">Tên đăng nhập</string>
+    <string name="password">Mật khẩu</string>
+
+
+
+    <string name="logout_confirm">Bạn có chắc muốn đăng xuất?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Hủy</string>
+    <string name="logged_out">Đã đăng xuất</string>
+
+
+
+    <string name="logout_success">Đăng xuất thành công</string>
+
+    <string name="send">Gửi</string>
+    <string name="type_message">Nhập nội dung...</string>
+    <string name="home_student">Học sinh</string>
+    <string name="home_teacher">Giáo viên</string>
+    <string name="home_admin">Quản trị</string>
+    <string name="class_detail">Lớp học</string>
+    <string name="qa_feedback">Hỏi đáp</string>
+    <string name="announcement">Thông báo</string>
+    <string name="score">Điểm số</string>
+    <string name="info">Thông tin</string>
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
+    <string name="input_required">Vui lòng nhập đầy đủ thông tin</string>
+    <string name="send_success">Gửi thành công!</string>
 </resources>
