@@ -20,10 +20,10 @@ public class LoginViewModel extends AndroidViewModel {
         repo = new UserRepository(app.getApplicationContext());
     }
 
-    /** Đăng nhập: username + password + selectedRole */
-    public void login(String username, String password, String selectedRole) {
+    /** Đăng nhập: truyền mật khẩu thô + role đã chọn */
+    public void login(String username, String password, String role) {
         Executors.newSingleThreadExecutor().execute(() -> {
-            UserRepository.LoginState st = repo.login(username, password, selectedRole);
+            UserRepository.LoginState st = repo.login(username, password, role);
             loginState.postValue(st);
         });
     }

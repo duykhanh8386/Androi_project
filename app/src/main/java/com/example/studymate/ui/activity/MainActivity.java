@@ -1,19 +1,19 @@
 package com.example.studymate.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
-
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
-
 import com.example.studymate.R;
 import com.example.studymate.repository.UserRepository;
+import com.google.android.material.appbar.MaterialToolbar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,9 +21,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Nếu có toolbar trong layout:
-        // MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        // setSupportActionBar(toolbar);
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -43,24 +43,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void showLogoutDialog() {
         new AlertDialog.Builder(this)
-                .setTitle(R.string.logout)
-                .setMessage(R.string.logout_confirm)
-                .setPositiveButton(R.string.ok, (d, w) -> {
-                    // chỉ clear session
-                    new UserRepository(getApplicationContext()).logout();
-                    Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+            .setTitle(R.string.logout)
+            .setMessage(R.string.logout_confirm)
+            .setPositiveButton(R.string.ok, (d, w) -> {
+                // ✅ Clear session
+                new UserRepository(getApplicationContext()).logout();
 
-                    // quay về Login
-                    NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
-                            .findFragmentById(R.id.nav_host_fragment);
-                    if (host != null) {
-                        NavController nav = host.getNavController();
-                        // xóa backstack và về login
-                        nav.popBackStack(R.id.loginFragment, false);
-                        nav.navigate(R.id.loginFragment);
-                    }
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+                // ✅ Clear ViewModel & Nav backstack bằng cách restart Activity
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+
+                Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
     }
 }
