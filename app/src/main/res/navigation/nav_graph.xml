@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
+
 
     <fragment
         android:id="@+id/loginFragment"
@@ -43,12 +45,23 @@
         <action android:id="@+id/action_detail_to_gradeStudent" app:destination="@id/gradeListStudentFragment"/>
         <action android:id="@+id/action_detail_to_gradeEntry" app:destination="@id/gradeEntryFragment"/>
         <action android:id="@+id/action_detail_to_studentManage" app:destination="@id/studentManageFragment"/>
+
     </fragment>
 
     <fragment
         android:id="@+id/feedbackThreadFragment"
         android:name="com.example.studymate.ui.feedback.FeedbackThreadFragment"
-        android:label="@string/qa_feedback"/>
+        android:label="@string/qa_feedback"
+        tools:layout="@layout/fragment_feedback_thread">
+        <action android:id="@+id/action_detail_to_feedback" app:destination="@id/fragment_feedback_detail"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_feedback_detail"
+        android:name="com.example.studymate.ui.feedback.FeedbackDetailFragment"
+        android:label="@string/qa_feedback"
+        tools:layout="@layout/fragment_feedback_detail">
+    </fragment>
 
     <fragment
         android:id="@+id/notificationListFragment"
