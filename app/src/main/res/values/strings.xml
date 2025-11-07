@@ -53,4 +53,26 @@
     <string name="no">Không</string>
     <string name="input_required">Vui lòng nhập đầy đủ thông tin</string>
     <string name="send_success">Gửi thành công!</string>
+    <string name="btn_class_delete">Xóa lớp</string>
+    <string name="btn_class_update">Cập nhật</string>
+    <string name="nav_ask">Hỏi đáp</string>
+    <string name="nav_notification">Thông báo</string>
+    <string name="nav_grade">Điểm số</string>
+    <string name="nav_student">Học sinh</string>
+    <string name="class_choices">Lựa chọn</string>
+    <string name="class_id">Mã lớp:</string>
+    <string name="class_teacher">Giảng viên:</string>
+    <string name="class_students">Số học sinh:</string>
+    <string name="class_time">Thời gian:</string>
+    <string name="btn_go_back">Quay lại</string>
+    <string name="btn_out_class">Rời lớp</string>
+    <string name="final_grade">Điểm tổng kết</string>
+    <string name="grade_ck">Điểm cuối kỳ</string>
+    <string name="grade_gk">Điểm giữa kỳ</string>
+    <string name="grade_tx">Điểm thường xuyên</string>
+    <string name="class_name">Tên lớp:</string>
+    <string name="class_info">Thông tin</string>
+    <string name="add_class">Thêm lớp</string>
+    <string name="teacher">Giáo viên</string>
+    <string name="Student">Student</string>
 </resources>

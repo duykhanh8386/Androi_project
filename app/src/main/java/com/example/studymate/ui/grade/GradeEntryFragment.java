@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.studymate.R;
 import com.example.studymate.ui.viewmodel.GradeViewModel;
-import com.example.studymate.utils.SessionManager;
 import com.google.android.material.snackbar.Snackbar;
 
 public class GradeEntryFragment extends Fragment {
