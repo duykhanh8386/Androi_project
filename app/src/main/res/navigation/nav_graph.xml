@@ -5,6 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
+
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.studymate.ui.auth.LoginFragment"
@@ -47,12 +48,23 @@
         <action android:id="@+id/action_detail_to_gradeStudent" app:destination="@id/gradeStudentFragment"/>
         <action android:id="@+id/action_detail_to_gradeEntry" app:destination="@id/gradeEntryFragment"/>
         <action android:id="@+id/action_detail_to_studentManage" app:destination="@id/studentManageFragment"/>
+
     </fragment>
 
     <fragment
         android:id="@+id/feedbackThreadFragment"
         android:name="com.example.studymate.ui.feedback.FeedbackThreadFragment"
-        android:label="@string/qa_feedback"/>
+        android:label="@string/qa_feedback"
+        tools:layout="@layout/fragment_feedback_thread">
+        <action android:id="@+id/action_detail_to_feedback" app:destination="@id/fragment_feedback_detail"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_feedback_detail"
+        android:name="com.example.studymate.ui.feedback.FeedbackDetailFragment"
+        android:label="@string/qa_feedback"
+        tools:layout="@layout/fragment_feedback_detail">
+    </fragment>
 
     <fragment
         android:id="@+id/notificationListFragment"
