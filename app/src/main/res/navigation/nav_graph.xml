@@ -44,8 +44,7 @@
         android:label="@string/class_detail"
         tools:layout="@layout/fragment_class_detail_teacher">
         <action android:id="@+id/action_detail_to_feedback" app:destination="@id/feedbackThreadFragment"/>
-        <action android:id="@+id/action_detail_to_notifications" app:destination="@id/notificationListFragment"/>
-        <action android:id="@+id/action_detail_to_gradeStudent" app:destination="@id/gradeStudentFragment"/>
+        <action android:id="@+id/action_detail_to_notifications" app:destination="@id/notificationListFragment"/
         <action android:id="@+id/action_detail_to_gradeEntry" app:destination="@id/gradeEntryFragment"/>
         <action android:id="@+id/action_detail_to_studentManage" app:destination="@id/studentManageFragment"/>
 
@@ -71,13 +70,25 @@
         android:name="com.example.studymate.ui.notify.NotificationListFragment"
         android:label="@string/announcement"
         tools:layout="@layout/fragment_notification_list">
-        <action android:id="@+id/action_list_to_createNotify" app:destination="@id/notificationCreateFragment"/>
+        <action android:id="@+id/action_list_to_createNotify" app:destination="@id/notificationItem"/>
         <action android:id="@+id/action_list_to_detailNotify" app:destination="@id/notificationDetailFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/notificationItem"
+        android:name="com.example.studymate.ui.notify.NotificationDetailFragment"
+        tools:layout="@layout/item_notification"
+        android:label="Chi tiết thông báo">
+        <action
+            android:id="@+id/action_CreateNotification"
+            app:destination="@id/notificationCreateFragment" />
+
     </fragment>
 
     <fragment
         android:id="@+id/notificationCreateFragment"
         android:name="com.example.studymate.ui.notify.NotificationCreateFragment"
+        tools:layout="@layout/fragment_notification_create"
         android:label="Tạo thông báo"/>
 
     <fragment
@@ -97,16 +108,35 @@
         android:name="com.example.studymate.ui.account.AccountCreateFragment"
         android:label="Tạo tài khoản"/>
 
-    <fragment
-        android:id="@+id/gradeStudentFragment"
-        android:name="com.example.studymate.ui.grade.GradeListStudentFragment"
-        tools:layout="@layout/fragment_grade_student"
-        android:label="@string/score"/>
 
     <fragment
         android:id="@+id/gradeEntryFragment"
         android:name="com.example.studymate.ui.grade.GradeEntryFragment"
-        android:label="Nhập/Sửa điểm"/>
+        android:label="Quản lý điểm"
+        tools:layout="@layout/fragment_grade_entry">
+
+        <action
+            android:id="@+id/action_gradeEntryFragment_to_gradeEditDialog"
+            app:destination="@id/gradeItemClassRow" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/gradeItemClassRow"
+        android:name="com.example.studymate.ui.grade.GradeEditDialogFragment"
+        tools:layout="@layout/item_notification"
+        android:label="@string/score">
+    <action
+        android:id="@+id/action_gradeEntryFragment_to_gradeEditDialog"
+        app:destination="@id/gradeDialogAddEdit" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/gradeDialogAddEdit"
+        android:name="com.example.studymate.ui.grade.GradeEditDialogFragment"
+        tools:layout="@layout/dialog_add_edit_grade"
+        android:label="@string/score"/>
 
     <fragment
         android:id="@+id/studentManageFragment"
