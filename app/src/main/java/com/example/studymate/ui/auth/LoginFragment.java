@@ -44,17 +44,20 @@ public class LoginFragment extends Fragment {
         TextInputEditText edtPass = v.findViewById(R.id.edtPassword);
         MaterialButton btnLogin = v.findViewById(R.id.btnLogin);
 
+        // Mặc định chọn Học sinh (nếu UI chưa chọn)
+        if (group.getCheckedButtonId() == View.NO_ID) {
+            group.check(R.id.tabStudent);
+            session.setRole("STUDENT");
+        }
+
         // Chọn role -> lưu vào Session
-        group.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
-            @Override
-            public void onButtonChecked(MaterialButtonToggleGroup g, int checkedId, boolean isChecked) {
-                if (!isChecked) return;
-                String role = "STUDENT";
-                if (checkedId == R.id.tabAdmin)   role = "ADMIN";
-                else if (checkedId == R.id.tabTeacher) role = "TEACHER";
-                else if (checkedId == R.id.tabStudent) role = "STUDENT";
-                session.setRole(role);
-            }
+        group.addOnButtonCheckedListener((g, checkedId, isChecked) -> {
+            if (!isChecked) return;
+            String role = "STUDENT";
+            if (checkedId == R.id.tabAdmin)      role = "ADMIN";
+            else if (checkedId == R.id.tabTeacher) role = "TEACHER";
+            else if (checkedId == R.id.tabStudent) role = "STUDENT";
+            session.setRole(role);
         });
 
         // Đăng nhập
@@ -65,9 +68,8 @@ public class LoginFragment extends Fragment {
                 Snackbar.make(v, R.string.login_fill_all, Snackbar.LENGTH_SHORT).show();
                 return;
             }
-            String role = session.getRole();
-            vm.login(u, p, role);
-
+            String role = session.getRole(); // ADMIN | TEACHER | STUDENT
+            vm.login(u, p, role);            // truyền mật khẩu thô + role đã chọn
         });
 
         // Quan sát kết quả login

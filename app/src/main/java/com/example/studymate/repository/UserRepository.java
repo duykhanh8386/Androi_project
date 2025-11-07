@@ -10,7 +10,7 @@ import com.example.studymate.data.local.entity.User;
 import com.example.studymate.utils.HashUtil;
 import com.example.studymate.utils.SessionManager;
 
-import java.util.List;
+import java.util.List; // ❗ cần import để dùng LiveData<List<User>>
 
 public class UserRepository {
     private final UserDao userDao;
@@ -23,7 +23,7 @@ public class UserRepository {
     }
 
     public static class LoginState {
-        public enum Status { SUCCESS, INVALID, WRONG_ROLE, INACTIVE, DISABLED, DB_ERROR }
+        public enum Status { SUCCESS, WRONG_ROLE, INVALID, INACTIVE, DISABLED, DB_ERROR }
         public Status status;
         public String role;
         public long userId;
@@ -31,23 +31,25 @@ public class UserRepository {
         public LoginState(Status s, String role, long userId){ this.status = s; this.role = role; this.userId = userId; }
     }
 
-    /** Đăng nhập với vai trò đã chọn trên UI */
+    /** Đăng nhập: truyền mật khẩu THƯỜNG + role đã chọn */
     public LoginState login(String username, String password, String selectedRole) {
         try {
             User u = userDao.findByUsername(username);
             if (u == null) return new LoginState(LoginState.Status.INVALID);
-
             if (u.disabled) return new LoginState(LoginState.Status.DISABLED);
-            if (!"ACTIVE".equals(u.status)) return new LoginState(LoginState.Status.INACTIVE);
 
+            // Hash đúng 1 lần tại Repository
             String hash = HashUtil.sha256(password);
-            if (!hash.equals(u.passwordHash)) return new LoginState(LoginState.Status.INVALID);
+            if (u.passwordHash == null || !u.passwordHash.equals(hash))
+                return new LoginState(LoginState.Status.INVALID);
 
-            if (selectedRole != null && !selectedRole.equals(u.role)) {
-                return new LoginState(LoginState.Status.WRONG_ROLE, u.role, u.id);
-            }
+            if (selectedRole != null && !selectedRole.equals(u.role))
+                return new LoginState(LoginState.Status.WRONG_ROLE);
 
-            // Lưu session
+            if (!"ACTIVE".equals(u.status))
+                return new LoginState(LoginState.Status.INACTIVE);
+
+            // Lưu phiên làm việc
             session.setUser(u.id, u.role);
             return new LoginState(LoginState.Status.SUCCESS, u.role, u.id);
         } catch (Exception e) {
@@ -55,7 +57,7 @@ public class UserRepository {
         }
     }
 
-    /** Đăng xuất: chỉ xoá session, không đổi status */
+    /** Đăng xuất: chỉ clear session, KHÔNG đổi status trong DB */
     public boolean logout() {
         try {
             session.clearAll();
@@ -67,18 +69,26 @@ public class UserRepository {
 
     public LiveData<User> observe(long id){ return userDao.observeUser(id); }
 
-    // Admin features
+    // ==== Chức năng Admin ====
+
+    /** Tạo tài khoản mới (mật khẩu sẽ được mã hoá) */
     public boolean createAccount(String fullname, String email, String username, String phone, String password, String role, boolean active) {
         try {
             if (userDao.countByUsername(username) > 0) return false; // username tồn tại
             User u = new User();
-            u.fullName = fullname; u.email = email; u.username = username; u.phone = phone;
+            u.fullName = fullname;
+            u.email = email;
+            u.username = username;
+            u.phone = phone;
             u.passwordHash = HashUtil.sha256(password);
-            u.role = role; u.status = active ? "ACTIVE" : "INACTIVE";
+            u.role = role;
+            u.status = active ? "ACTIVE" : "INACTIVE";
             u.disabled = !active;
             userDao.insert(u);
             return true;
-        } catch (Exception e) { return false; }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public LiveData<List<User>> search(String keyword, String role, String status){
@@ -89,6 +99,11 @@ public class UserRepository {
     }
 
     public boolean disable(long userId){
-        try { userDao.disable(userId); return true; } catch (Exception e){ return false; }
+        try {
+            userDao.disable(userId);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
     }
 }
