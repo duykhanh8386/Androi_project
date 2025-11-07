@@ -8,8 +8,17 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.example.studymate.data.local.dao.*;
-import com.example.studymate.data.local.entity.*;
+import com.example.studymate.data.local.dao.ClassDao;
+import com.example.studymate.data.local.dao.FeedbackDao;
+import com.example.studymate.data.local.dao.GradeDao;
+import com.example.studymate.data.local.dao.NotificationDao;
+import com.example.studymate.data.local.dao.UserDao;
+import com.example.studymate.data.local.entity.ClassRoom;
+import com.example.studymate.data.local.entity.Feedback;
+import com.example.studymate.data.local.entity.Grade;
+import com.example.studymate.data.local.entity.Notification;
+import com.example.studymate.data.local.entity.StudentClass;
+import com.example.studymate.data.local.entity.User;
 import com.example.studymate.utils.HashUtil;
 
 import java.util.concurrent.Executors;
@@ -51,10 +60,8 @@ public abstract class StudyMateDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             Executors.newSingleThreadExecutor().execute(() -> {
                 try {
-                    // Hash mật khẩu demo
                     final String passHash = HashUtil.sha256("123456");
 
-                    // ⚠️ Dùng backtick cho table/column để an toàn tên/từ khóa
                     db.execSQL(
                         "INSERT INTO `user`(username, passwordHash, role, status, disabled, fullName) VALUES " +
                             "('admin',    '" + passHash + "', 'ADMIN',   'ACTIVE', 0, 'Quản trị viên')," +
@@ -62,13 +69,11 @@ public abstract class StudyMateDatabase extends RoomDatabase {
                             "('student1', '" + passHash + "', 'STUDENT', 'ACTIVE', 0, 'HS A')"
                     );
 
-                    // Lớp mẫu do giáo viên id=2 phụ trách
                     db.execSQL(
                         "INSERT INTO `class`(code, name, year, maxSize, teacherId) " +
                             "VALUES ('M101', 'Toán 10A1', 2025, 45, 2)"
                     );
 
-                    // Học sinh id=3 là member của class id=1
                     db.execSQL(
                         "INSERT INTO `student_class`(classId, studentId, status) " +
                             "VALUES (1, 3, 'MEMBER')"

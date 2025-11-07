@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
-import com.example.studymate.data.local.entity.Feedback;
 import com.example.studymate.ui.viewmodel.FeedbackViewModel;
 import com.example.studymate.utils.SessionManager;
 import com.google.android.material.snackbar.Snackbar;
