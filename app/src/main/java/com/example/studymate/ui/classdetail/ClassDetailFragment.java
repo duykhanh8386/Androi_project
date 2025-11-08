@@ -27,38 +27,5 @@ public class ClassDetailFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_class_detail_teacher, container, false);
     }
 
-    @Override public void onViewCreated(@NonNull View v, @Nullable Bundle s) {
-        super.onViewCreated(v, s);
-        vm = new ViewModelProvider(requireActivity()).get(ClassViewModel.class);
-        session = new SessionManager(requireContext());
-        NavController nav = Navigation.findNavController(v);
 
-        long classId = getArguments() != null ? getArguments().getLong("classId", 1L) : 1L;
-
-        v.findViewById(R.id.chipFeedback).setOnClickListener(btn -> {
-            Bundle b = new Bundle(); b.putLong("classId", classId);
-            nav.navigate(R.id.action_detail_to_feedback, b);
-        });
-        v.findViewById(R.id.chipNotify).setOnClickListener(btn -> {
-            Bundle b = new Bundle(); b.putLong("classId", classId);
-            nav.navigate(R.id.action_detail_to_notifications, b);
-        });
-        v.findViewById(R.id.chipScore).setOnClickListener(btn -> {
-            Bundle b = new Bundle(); b.putLong("classId", classId);
-            nav.navigate(R.id.action_detail_to_gradeStudent, b);
-        });
-        v.findViewById(R.id.chipStudents).setOnClickListener(btn -> nav.navigate(R.id.action_detail_to_studentManage));
-
-        View btnLeave = v.findViewById(R.id.btnLeaveClass);
-        btnLeave.setVisibility("STUDENT".equals(session.getRole()) ? View.VISIBLE : View.GONE);
-        btnLeave.setOnClickListener(b -> new MaterialAlertDialogBuilder(requireContext())
-            .setMessage("Bạn có chắc muốn rời khỏi lớp học này không?")
-            .setPositiveButton("Có", (d,w) -> vm.leave(classId, session.getUserId()))
-            .setNegativeButton("Không", null).show());
-
-        vm.leaveResult.observe(getViewLifecycleOwner(), ok -> {
-            if (ok != null && ok) Snackbar.make(v, "Rời lớp thành công!", Snackbar.LENGTH_SHORT).show();
-            else if (ok != null) Snackbar.make(v, "Lỗi kết nối! Không thể xử lý.", Snackbar.LENGTH_LONG).show();
-        });
-    }
 }

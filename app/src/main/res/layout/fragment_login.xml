@@ -11,43 +11,48 @@
         android:padding="16dp">
 
         <!-- Chọn vai trò -->
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/tglRole"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:singleSelection="true"
-            app:selectionRequired="true"
-            app:checkedButton="@id/tabStudent">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/tabAdmin"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/role_admin" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/tabTeacher"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/role_teacher" />
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tabStudent"
-                android:layout_width="0dp"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/role_student" />
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+                android:layout_marginEnd="8dp"
+                android:text="@string/role_student"
+                app:cornerRadius="16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabAdmin"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/role_admin"
+                app:cornerRadius="16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabTeacher"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/role_teacher"
+                app:cornerRadius="16dp" />
+
+        </LinearLayout>
+
 
         <!-- Username -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:hintEnabled="true"
-            android:hint="@string/username">
+            android:hint="@string/username"
+            app:hintEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtUsername"
@@ -76,5 +81,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="@string/login" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
     </LinearLayout>
 </ScrollView>

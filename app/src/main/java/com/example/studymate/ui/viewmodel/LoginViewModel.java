@@ -1,32 +1,51 @@
 package com.example.studymate.ui.viewmodel;
 
-import android.app.Application;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.example.studymate.repository.UserRepository;
+import com.example.studymate.data.model.response.LoginResponse;
+import com.example.studymate.data.repository.AuthRepository;
 
-import java.util.concurrent.Executors;
+/**
+ * ViewModel cho LoginActivity.
+ * Chịu trách nhiệm gọi Repository và cung cấp LiveData cho View.
+ */
+public class LoginViewModel extends ViewModel {
 
-public class LoginViewModel extends AndroidViewModel {
-    private final UserRepository repo;
-    private final MutableLiveData<UserRepository.LoginState> loginState = new MutableLiveData<>();
+    private AuthRepository authRepository;
 
-    public LoginViewModel(@NonNull Application app) {
-        super(app);
-        repo = new UserRepository(app.getApplicationContext());
+    // LiveData mà View sẽ quan sát
+    private LiveData<LoginResponse> loginResponseLiveData;
+    private LiveData<String> loginErrorLiveData;
+
+    public LoginViewModel() {
+        // Khởi tạo Repository
+        this.authRepository = new AuthRepository();
+
+        // Lấy LiveData từ Repository
+        // ViewModel sẽ "bê" LiveData từ Repository và "trưng" ra cho View
+        this.loginResponseLiveData = authRepository.getLoginResponseData();
+        this.loginErrorLiveData = authRepository.getLoginErrorData();
     }
 
-    /** Đăng nhập: truyền mật khẩu thô + role đã chọn */
-    public void login(String username, String password, String role) {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            UserRepository.LoginState st = repo.login(username, password, role);
-            loginState.postValue(st);
-        });
+    /**
+     * Hàm này được View (Activity) gọi khi người dùng nhấn nút Đăng nhập.
+     * @param username Tên đăng nhập
+     * @param password Mật khẩu
+     */
+    public void performLogin(String username, String password, String role) {
+        // Truyền "role" xuống cho Repository
+        authRepository.login(username, password, role);
     }
 
-    public LiveData<UserRepository.LoginState> getLoginState() { return loginState; }
+    // --- Getters ---
+    // View (Activity) sẽ dùng các hàm này để lấy LiveData và "quan sát"
+    public LiveData<LoginResponse> getLoginResponse() {
+        return loginResponseLiveData;
+    }
+
+    public LiveData<String> getLoginError() {
+        return loginErrorLiveData;
+    }
 }
