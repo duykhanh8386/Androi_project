@@ -1,41 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.notify.NotificationCreateFragment">
+
+    <TextView
+        android:id="@+id/textViewCreateTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Tạo thông báo mới"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/spinnerLayoutClass"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="24dp"
+        android:hint="Lớp học"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCreateTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextViewClass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textFieldLayoutTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Tiêu đề"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerLayoutClass"
+        app:layout_constraintStart_toStartOf="@+id/spinnerLayoutClass"
+        app:layout_constraintEnd_toEndOf="@+id/spinnerLayoutClass"
+        app:counterEnabled="true"
+        app:counterMaxLength="200"> <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editTextNotificationTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textFieldLayoutContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:hint="Nội dung"
+        app:layout_constraintTop_toBottomOf="@+id/textFieldLayoutTitle"
+        app:layout_constraintStart_toStartOf="@+id/textFieldLayoutTitle"
+        app:layout_constraintEnd_toEndOf="@+id/textFieldLayoutTitle"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLayout"
+        app:counterEnabled="true"
+        app:counterMaxLength="1000"> <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editTextNotificationContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="top|start"
+        android:inputType="textMultiLine|textCapSentences" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/buttonLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textFieldLayoutContent"
+        app:layout_constraintEnd_toEndOf="@+id/textFieldLayoutContent">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Tiêu đề (≤200 ký tự)"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/buttonCancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nội dung"
-                android:minLines="4"/>
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_weight="1"
+            android:text="Hủy"
+            android:layout_marginEnd="8dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSend"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/buttonSendNotification"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Gửi thông báo"/>
+            android:layout_weight="1"
+            android:text="Gửi thông báo"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
-</ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

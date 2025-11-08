@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation; // THAY ĐỔI 1: Thêm import để điều hướng
 
 import com.example.studymate.R;
 import com.example.studymate.ui.viewmodel.NotificationViewModel;
@@ -31,15 +32,29 @@ public class NotificationCreateFragment extends Fragment {
         session = new SessionManager(requireContext());
         long classId = getArguments() != null ? getArguments().getLong("classId", 1L) : 1L;
 
-        EditText edtTitle = v.findViewById(R.id.edtTitle);
-        EditText edtContent = v.findViewById(R.id.edtContent);
-        v.findViewById(R.id.btnSend).setOnClickListener(btn -> {
+        // THAY ĐỔI 2: Dùng đúng ID cho các EditText
+        EditText edtTitle = v.findViewById(R.id.editTextNotificationTitle);
+        EditText edtContent = v.findViewById(R.id.editTextNotificationContent);
+        // (Chúng ta bỏ qua spinner R.id.autoCompleteTextViewClass vì logic của bạn đang nhận classId từ arguments)
+
+        // THAY ĐỔI 3: Dùng đúng ID cho nút Gửi
+        v.findViewById(R.id.buttonSendNotification).setOnClickListener(btn -> {
             vm.create(classId, session.getUserId(), edtTitle.getText().toString(), edtContent.getText().toString());
         });
 
+        // THAY ĐỔI 4: Thêm sự kiện click cho nút Hủy
+        v.findViewById(R.id.buttonCancel).setOnClickListener(btn -> {
+            // Quay lại màn hình trước đó
+            Navigation.findNavController(v).popBackStack();
+        });
+
+        // Đoạn code observe này đã đúng
         vm.createResult.observe(getViewLifecycleOwner(), ok -> {
             if (ok == null) Snackbar.make(v, "Vui lòng nhập đầy đủ thông tin!", Snackbar.LENGTH_SHORT).show();
-            else if (ok) Snackbar.make(v, "Gửi thông báo thành công!", Snackbar.LENGTH_SHORT).show();
+            else if (ok) {
+                Snackbar.make(v, "Gửi thông báo thành công!", Snackbar.LENGTH_SHORT).show();
+                Navigation.findNavController(v).popBackStack(); // Tự động quay lại sau khi gửi
+            }
             else Snackbar.make(v, "Lỗi kết nối! Không thể gửi thông báo.", Snackbar.LENGTH_LONG).show();
         });
     }

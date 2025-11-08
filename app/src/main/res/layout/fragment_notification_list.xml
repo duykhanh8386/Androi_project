@@ -1,118 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"> <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent"
+    tools:context=".ui.notify.NotificationListFragment">
 
     <TextView
-        android:id="@+id/txtClassTitle"
+        android:id="@+id/textViewMainTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="24dp"
-        android:text="Lớp học 1"
+        android:layout_marginTop="16dp"
+        android:text="Thông báo lớp học"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/txtInfoLabel"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/buttonCreateNotification"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Thông tin"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="12dp">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Mã lớp:"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
-        <TextView
-            android:id="@+id/txtClassCode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ANDROID_NC_2025"
-            android:textSize="16sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="12dp">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Giáo viên:"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
-        <TextView
-            android:id="@+id/txtTeacherName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nguyễn Văn A"
-            android:textSize="16sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="24dp">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Sĩ số:"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
-        <TextView
-            android:id="@+id/txtStudentCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="40"
-            android:textSize="16sp"/>
-    </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/txtNotificationLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Thông báo"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:text="Tạo thông báo mới"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewNotifications"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:nestedScrollingEnabled="false"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_notification"
-        tools:itemCount="2" />
+        app:layout_constraintBottom_toTopOf="@+id/buttonCreateNotification"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewMainTitle"
+        tools:listitem="@layout/item_notification" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnBack"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Quay lại"
-        app:cornerRadius="8dp" />
-
-</LinearLayout>
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
