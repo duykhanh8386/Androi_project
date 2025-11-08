@@ -44,7 +44,7 @@
         android:label="@string/class_detail"
         tools:layout="@layout/fragment_class_detail_teacher">
         <action android:id="@+id/action_detail_to_feedback" app:destination="@id/feedbackThreadFragment"/>
-        <action android:id="@+id/action_detail_to_notifications" app:destination="@id/notificationListFragment"/
+        <action android:id="@+id/action_detail_to_notifications" app:destination="@id/notificationListFragment"/>
         <action android:id="@+id/action_detail_to_gradeEntry" app:destination="@id/gradeEntryFragment"/>
         <action android:id="@+id/action_detail_to_studentManage" app:destination="@id/studentManageFragment"/>
 

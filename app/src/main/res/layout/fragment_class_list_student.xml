@@ -27,7 +27,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp" android:layout_marginEnd="16dp" app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2" app:layout_constraintTop_toBottomOf="@id/txtTitle"
-        app:layout_constraintBottom_toTopOf="@id/btnAddClass"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_class_card" />
