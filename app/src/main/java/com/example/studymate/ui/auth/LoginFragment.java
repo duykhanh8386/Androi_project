@@ -131,7 +131,7 @@ public class LoginFragment extends Fragment {
             showLoading(false);
             if (loginResponse != null) {
                 Toast.makeText(getContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                switch (loginResponse.getUser().role) {
+                switch (loginResponse.getUser().getRoleName()) {
                     case "ADMIN":
                         NavHostFragment.findNavController(LoginFragment.this)
                                 .navigate(R.id.action_login_to_homeAdmin);

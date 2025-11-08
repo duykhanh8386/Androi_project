@@ -83,7 +83,7 @@ public class AuthRepository {
                 if (username.equals("student") && role.equals("STUDENT")) {
 
                     // Tạo một User mẫu
-                    User mockUser = new User(1, "STUDENT", "Học Sinh A", "student@test.com");
+                    User mockUser = new User(1, "Học Sinh A", "student@test.com", "STUDENT");
                     // Tạo một Response mẫu
                     LoginResponse mockResponse = new LoginResponse("mock_token_student_123", mockUser);
 
@@ -92,7 +92,7 @@ public class AuthRepository {
                     // Kịch bản 2: Đăng nhập GIÁO VIÊN thành công
                 } else if (username.equals("teacher") && role.equals("TEACHER")) {
 
-                    User mockUser = new User(10, "TEACHER", "Giáo Viên B", "teacher@test.com");
+                    User mockUser = new User(10, "Giáo Viên B", "teacher@test.com", "TEACHER");
                     LoginResponse mockResponse = new LoginResponse("mock_token_teacher_456", mockUser);
 
                     loginResponseData.postValue(mockResponse);
@@ -100,7 +100,7 @@ public class AuthRepository {
                     // Kịch bản 3: Đăng nhập ADMIN thành công
                 } else if (username.equals("admin") && role.equals("ADMIN")) {
 
-                    User mockUser = new User(100, "ADMIN", "Quản Trị Viên", "admin@test.com");
+                    User mockUser = new User(100, "Quản Trị Viên", "admin@test.com", "ADMIN");
                     LoginResponse mockResponse = new LoginResponse("mock_token_admin_789", mockUser);
 
                     loginResponseData.postValue(mockResponse);
