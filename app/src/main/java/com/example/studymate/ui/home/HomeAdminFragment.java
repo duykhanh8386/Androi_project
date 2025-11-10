@@ -13,14 +13,5 @@ import com.example.studymate.R;
 
 public class HomeAdminFragment extends Fragment {
 
-    @Nullable
-    @Override
 
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_admin, container, false);
-    }
-    @Override public void onViewCreated(@NonNull View v, @Nullable Bundle s){
-        super.onViewCreated(v,s);
-        setHasOptionsMenu(true); // dùng menu của MainActivity
-    }
 }

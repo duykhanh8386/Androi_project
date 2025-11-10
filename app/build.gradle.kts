@@ -26,13 +26,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
-// ✅ Kotlin DSL: dùng val
-val room_version = "2.6.1"
+configurations.all {
+    exclude(group = "com.intellij", module = "annotations")
+}
+
 
 dependencies {
     implementation(libs.appcompat)
@@ -44,20 +46,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.navigation:navigation-fragment:2.8.3")
-    implementation("androidx.navigation:navigation-ui:2.8.3")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-livedata:2.8.4")
+    implementation("com.google.android.material:material:1.13.0")
+    implementation("androidx.navigation:navigation-fragment:2.9.6")
+    implementation("androidx.navigation:navigation-ui:2.9.6")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.9.4")
 
-    implementation( "androidx.room:room-runtime:2.6.1")
-    annotationProcessor ("androidx.room:room-compiler:2.6.1")
-
-    // Room dependencies
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-
-    // Nếu muốn dùng LiveData với Room
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 }

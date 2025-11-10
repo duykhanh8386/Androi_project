@@ -1,31 +1,45 @@
 package com.example.studymate.ui.auth;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
+import com.example.studymate.data.model.response.LoginResponse;
 import com.example.studymate.ui.viewmodel.LoginViewModel;
-import com.example.studymate.utils.SessionManager;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginFragment extends Fragment {
 
-    private SessionManager session;
-    private LoginViewModel vm;
+    // === THAY ĐỔI: Khai báo các nút vai trò riêng lẻ ===
+    private MaterialButton tabStudent, tabAdmin, tabTeacher;
+    private List<MaterialButton> roleButtons = new ArrayList<>();
+    private String selectedRole = "STUDENT"; // Vai trò mặc định
+
+    private TextInputEditText edtUsername;
+    private TextInputEditText edtPassword;
+    private Button btnLogin;
+    private ProgressBar progressBar;
+
+    private LoginViewModel loginViewModel;
 
     @Nullable
     @Override
@@ -34,78 +48,126 @@ public class LoginFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View v, @Nullable Bundle s) {
-        super.onViewCreated(v, s);
-        session = new SessionManager(requireContext());
-        vm = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
-        NavController nav = Navigation.findNavController(v);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        MaterialButtonToggleGroup group = v.findViewById(R.id.tglRole);
-        TextInputEditText edtUser = v.findViewById(R.id.edtUsername);
-        TextInputEditText edtPass = v.findViewById(R.id.edtPassword);
-        MaterialButton btnLogin = v.findViewById(R.id.btnLogin);
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-        // Mặc định chọn Học sinh (nếu UI chưa chọn)
-        if (group.getCheckedButtonId() == View.NO_ID) {
-            group.check(R.id.tabStudent);
-            session.setRole("STUDENT");
-        }
+        // Ánh xạ các View
+        edtUsername = view.findViewById(R.id.edtUsername);
+        edtPassword = view.findViewById(R.id.edtPassword);
+        btnLogin = view.findViewById(R.id.btnLogin);
+        progressBar = view.findViewById(R.id.progressBar);
 
-        // Chọn role -> lưu vào Session
-        group.addOnButtonCheckedListener((g, checkedId, isChecked) -> {
-            if (!isChecked) return;
-            String role = "STUDENT";
-            if (checkedId == R.id.tabAdmin)      role = "ADMIN";
-            else if (checkedId == R.id.tabTeacher) role = "TEACHER";
-            else if (checkedId == R.id.tabStudent) role = "STUDENT";
-            session.setRole(role);
+        // === THAY ĐỔI: Ánh xạ các nút vai trò mới ===
+        tabStudent = view.findViewById(R.id.tabStudent);
+        tabAdmin = view.findViewById(R.id.tabAdmin);
+        tabTeacher = view.findViewById(R.id.tabTeacher);
+
+        // Thêm các nút vào danh sách để quản lý
+        roleButtons.add(tabStudent);
+        roleButtons.add(tabAdmin);
+        roleButtons.add(tabTeacher);
+
+        // Thiết lập trạng thái ban đầu cho các nút (Học sinh được chọn mặc định)
+        updateRoleButtonStyles(tabStudent);
+
+        // === THAY ĐỔI: Thiết lập sự kiện click cho từng nút vai trò ===
+        tabStudent.setOnClickListener(v -> {
+            selectedRole = "STUDENT";
+            updateRoleButtonStyles((MaterialButton) v);
         });
 
-        // Đăng nhập
-        btnLogin.setOnClickListener(b -> {
-            String u = edtUser.getText() == null ? "" : edtUser.getText().toString().trim();
-            String p = edtPass.getText() == null ? "" : edtPass.getText().toString().trim();
-            if (TextUtils.isEmpty(u) || TextUtils.isEmpty(p)) {
-                Snackbar.make(v, R.string.login_fill_all, Snackbar.LENGTH_SHORT).show();
+        tabAdmin.setOnClickListener(v -> {
+            selectedRole = "ADMIN";
+            updateRoleButtonStyles((MaterialButton) v);
+        });
+
+        tabTeacher.setOnClickListener(v -> {
+            selectedRole = "TEACHER";
+            updateRoleButtonStyles((MaterialButton) v);
+        });
+
+
+        // Đăng ký sự kiện Click cho nút Đăng nhập
+        btnLogin.setOnClickListener(v -> {
+            String username = edtUsername.getText().toString().trim();
+            String password = edtPassword.getText().toString().trim();
+
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(getContext(), "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
                 return;
             }
-            String role = session.getRole(); // ADMIN | TEACHER | STUDENT
-            vm.login(u, p, role);            // truyền mật khẩu thô + role đã chọn
+
+            showLoading(true);
+            // Sử dụng biến selectedRole đã được cập nhật
+            loginViewModel.performLogin(username, password, selectedRole);
         });
 
-        // Quan sát kết quả login
-        vm.getLoginState().observe(getViewLifecycleOwner(), state -> {
-            if (state == null) return;
-            switch (state.status) {
-                case SUCCESS: {
-                    Snackbar.make(v, R.string.login_success, Snackbar.LENGTH_SHORT).show();
-                    // Điều hướng theo role (ưu tiên role trong state, fallback session)
-                    String role = state.role != null ? state.role : session.getRole();
-                    if ("ADMIN".equals(role)) {
-                        nav.navigate(R.id.action_login_to_homeAdmin);
-                    } else if ("TEACHER".equals(role)) {
-                        nav.navigate(R.id.action_login_to_homeTeacher);
-                    } else {
-                        nav.navigate(R.id.action_login_to_homeStudent);
-                    }
-                    break;
+        setupObservers();
+    }
+
+    private void updateRoleButtonStyles(MaterialButton selectedButton) {
+        for (MaterialButton button : roleButtons) {
+            if (button == selectedButton) {
+                // Nút được chọn: màu nền xanh, chữ trắng
+                button.setBackgroundTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.btn_green)
+                ));
+                button.setTextColor(Color.WHITE);
+            } else {
+                button.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+                button.setTextColor(ContextCompat.getColor(requireContext(), R.color.sm_text_muted));
+            }
+        }
+    }
+
+
+    /**
+     * Quan sát (Observe) LiveData từ ViewModel
+     */
+    private void setupObservers() {
+        loginViewModel.getLoginResponse().observe(getViewLifecycleOwner(), loginResponse -> {
+            showLoading(false);
+            if (loginResponse != null) {
+                Toast.makeText(getContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                switch (loginResponse.getUser().getRoleName()) {
+                    case "ADMIN":
+                        NavHostFragment.findNavController(LoginFragment.this)
+                                .navigate(R.id.action_login_to_homeAdmin);
+                        break;
+                    case "TEACHER":
+                        NavHostFragment.findNavController(LoginFragment.this)
+                                .navigate(R.id.action_login_to_homeTeacher);
+                        break;
+                    case "STUDENT":
+                        NavHostFragment.findNavController(LoginFragment.this)
+                                .navigate(R.id.action_login_to_homeStudent);
+                        break;
                 }
-                case WRONG_ROLE:
-                    Snackbar.make(v, R.string.login_wrong_role, Snackbar.LENGTH_LONG).show();
-                    break;
-                case INVALID:
-                    Snackbar.make(v, R.string.login_invalid, Snackbar.LENGTH_LONG).show();
-                    break;
-                case INACTIVE:
-                    Snackbar.make(v, R.string.login_inactive, Snackbar.LENGTH_LONG).show();
-                    break;
-                case DISABLED:
-                    Snackbar.make(v, R.string.login_disabled, Snackbar.LENGTH_LONG).show();
-                    break;
-                case DB_ERROR:
-                    Snackbar.make(v, R.string.common_db_error, Snackbar.LENGTH_LONG).show();
-                    break;
             }
         });
+
+        loginViewModel.getLoginError().observe(getViewLifecycleOwner(), errorMessage -> {
+            showLoading(false);
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Hàm tiện ích để bật/tắt loading
+     * === THAY ĐỔI: Cập nhật để vô hiệu hóa các nút riêng lẻ ===
+     */
+    private void showLoading(boolean isLoading) {
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        btnLogin.setEnabled(!isLoading);
+        edtUsername.setEnabled(!isLoading);
+        edtPassword.setEnabled(!isLoading);
+        // Vô hiệu hóa/Bật lại các nút vai trò
+        for (MaterialButton button : roleButtons) {
+            button.setEnabled(!isLoading);
+        }
     }
 }

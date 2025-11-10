@@ -21,34 +21,10 @@ import com.example.studymate.ui.viewmodel.ClassViewModel;
 
 public class HomeTeacherFragment extends Fragment {
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_list, container, false);
-    }
-
-    @Override public void onViewCreated(@NonNull View v, @Nullable Bundle s) {
-        super.onViewCreated(v, s);
-
-        ClassViewModel vm = new ViewModelProvider(requireActivity()).get(ClassViewModel.class);
-        NavController nav = Navigation.findNavController(v);
-
-        RecyclerView rv = v.findViewById(R.id.rvClasses);
-        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        ClassAdapter adapter = new ClassAdapter();
-        adapter.setOnItemClick((ClassItem item, int pos) -> {
-            Bundle b = new Bundle();
-            b.putLong("classId", item.getId());              // dùng id thật từ item
-            nav.navigate(R.id.action_home_to_classDetail, b);
-        });
-        rv.setAdapter(adapter);
-
-        // Nạp dữ liệu từ ViewModel (đồng bộ với kiểu List<ClassItem>)
-        vm.getClasses().observe(getViewLifecycleOwner(), adapter::submitList);
-
-        // FAB -> tạo lớp (để TODO sau)
-        v.findViewById(R.id.fabPrimary).setOnClickListener(btn -> {
-            // TODO: mở bottom sheet tạo lớp
-        });
+        return inflater.inflate(R.layout.fragment_class_list_teacher, container, false);
     }
 }
+

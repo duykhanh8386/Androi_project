@@ -18,8 +18,7 @@
         app:titleCentered="true"
         app:menu="@menu/menu_main" />
 
-    <!-- Vùng điều hướng -->
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"

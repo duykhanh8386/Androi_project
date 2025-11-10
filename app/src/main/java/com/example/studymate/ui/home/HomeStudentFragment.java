@@ -23,45 +23,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class HomeStudentFragment extends Fragment {
-    private ClassViewModel vm;
-    private SessionManager session;
-
-    @Nullable @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_list, container, false);
-    }
-
-    @Override public void onViewCreated(@NonNull View v, @Nullable Bundle s) {
-        super.onViewCreated(v, s);
-        vm = new ViewModelProvider(requireActivity()).get(ClassViewModel.class);
-        session = new SessionManager(requireContext());
-        NavController nav = Navigation.findNavController(v);
-        RecyclerView rv = v.findViewById(R.id.rvClasses);
-        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        ClassAdapter adapter = new ClassAdapter();
-        adapter.setOnItemClick((name, pos) -> {
-            Bundle args = new Bundle();
-            args.putLong("classId", pos + 1L);
-            nav.navigate(R.id.action_home_to_classDetail, args); // dùng đúng id trong nav_graph
-        });
-        rv.setAdapter(adapter);
-
-// nạp dữ liệu
-        vm.getClasses().observe(getViewLifecycleOwner(), adapter::submitList);
 
 
-        v.findViewById(R.id.fabPrimary).setOnClickListener(btn -> {
-            BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
-            View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_join_class, null);
-            TextInputEditText edt = sheet.findViewById(R.id.edtCode);
-            MaterialButton join = sheet.findViewById(R.id.btnJoin);
-            join.setOnClickListener(b -> {
-                String code = edt.getText() != null ? edt.getText().toString() : "";
-                vm.joinByCode(code, session.getUserId());
-                dialog.dismiss();
-            });
-            dialog.setContentView(sheet); dialog.show();
-        });
-    }
 }
