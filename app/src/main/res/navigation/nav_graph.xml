@@ -45,7 +45,6 @@
         <action android:id="@+id/action_detail_to_gradeStudent" app:destination="@id/gradeListStudentFragment"/>
         <action android:id="@+id/action_detail_to_gradeEntry" app:destination="@id/gradeEntryFragment"/>
         <action android:id="@+id/action_detail_to_studentManage" app:destination="@id/studentManageFragment"/>
-
     </fragment>
 
     <fragment
