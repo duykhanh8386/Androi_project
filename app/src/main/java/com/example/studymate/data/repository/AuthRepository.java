@@ -20,8 +20,7 @@ public class AuthRepository {
 
     private ApiService apiService;
 
-    // Cải tiến: Dùng MutableLiveData làm thành viên (member)
-    // để quản lý trạng thái.
+    private MutableLiveData<Boolean> logoutSuccessEvent = new MutableLiveData<>();
     private MutableLiveData<LoginResponse> loginResponseData = new MutableLiveData<>();
     private MutableLiveData<String> loginErrorData = new MutableLiveData<>();
 
@@ -31,10 +30,6 @@ public class AuthRepository {
         this.apiService = RetrofitClient.getApiService();
     }
 
-    /**
-     * Hàm gọi API đăng nhập.
-     * Giờ đây nó sẽ trả về void và cập nhật LiveData nội bộ.
-     */
     public void login(String username, String password, String role) {
         // BƯỚC 1: KIỂM TRA CỜ NGAY TẠI ĐÂY
         if (IS_MOCK_MODE) {
@@ -46,9 +41,44 @@ public class AuthRepository {
         }
     }
 
-    /**
-     * Logic gọi API thật (code cũ của bạn)
-     */
+    // ⭐️ THÊM HÀM NÀY:
+    public void logout() {
+        // --- BƯỚC 1: XÓA DỮ LIỆU LOCAL ---
+        // (Trong dự án thật, bạn sẽ gọi SharedPreferences ở đây)
+        // Ví dụ: new UserRepository(context).logout(); như code cũ của bạn [cite: 5]
+        clearLocalUserData(); // Giả lập việc xóa token
+
+        // --- BƯỚC 2: GỌI API ĐỂ VÔ HIỆU HÓA TOKEN (NẾU CẦN) ---
+        // (Trong chế độ MOCK, chúng ta chỉ cần giả lập thành công)
+        if (IS_MOCK_MODE) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                logoutSuccessEvent.postValue(true);
+            }, 500); // Giả lập độ trễ 0.5 giây
+        } else {
+            // Logic gọi API thật
+            apiService.logout().enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    // Dù API thành công hay thất bại, phía client vẫn đăng xuất
+                    logoutSuccessEvent.postValue(true);
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    // Kể cả lỗi mạng, vẫn đăng xuất ở client
+                    logoutSuccessEvent.postValue(true);
+                }
+            });
+        }
+    }
+
+    private void clearLocalUserData() {
+        // TODO: Thêm code xóa SharedPreferences (lưu token) của bạn ở đây
+        System.out.println("Đã xóa dữ liệu token/user local.");
+    }
+
+
+
     private void runRealApiLogic(String username, String password, String role) {
         // Tạo đối tượng Request với 3 tham số
         LoginRequest loginRequest = new LoginRequest(username, password, role);
@@ -120,5 +150,9 @@ public class AuthRepository {
 
     public LiveData<String> getLoginErrorData() {
         return loginErrorData;
+    }
+
+    public LiveData<Boolean> getLogoutSuccessEvent() {
+        return logoutSuccessEvent;
     }
 }
