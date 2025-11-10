@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.StudyMate" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.StudyMate" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">#2E7D32</item>
         <item name="colorSecondary">#00ACC1</item>
         <item name="android:statusBarColor">?attr/colorPrimary</item>
     </style>
+
+    <style name="Theme.StudyMate.AppBarOverlay"
+        parent="ThemeOverlay.Material3.Dark.ActionBar" />
+
+    <style name="Theme.StudyMate.PopupOverlay"
+        parent="ThemeOverlay.Material3.Light" />
 </resources>

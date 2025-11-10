@@ -29,7 +29,7 @@
         android:name="com.example.studymate.ui.home.HomeTeacherFragment"
         android:label="@string/home_teacher"
         tools:layout="@layout/fragment_class_list_teacher">
-        <action android:id="@+id/action_home_to_classDetail" app:destination="@id/teacherClassDetailFragment"/>
+        <action android:id="@+id/action_teacher_home_to_classDetail" app:destination="@id/teacherClassDetailFragment"/>
     </fragment>
 
     <fragment
@@ -37,8 +37,9 @@
         android:name="com.example.studymate.ui.home.HomeStudentFragment"
         android:label="@string/home_student"
         tools:layout="@layout/fragment_class_list_student">
-        <action android:id="@+id/action_home_to_classDetail2" app:destination="@id/studentClassDetailFragment"/>
+        <action android:id="@+id/action_student_home_to_classDetail" app:destination="@id/studentClassDetailFragment"/>
         <action android:id="@+id/action_home_to_joinClass" app:destination="@id/joinClassFragment"/>
+        <action android:id="@+id/action_homeStudentFragment_to_loginFragment" app:destination="@id/loginFragment"/>
     </fragment>
 
     <fragment
@@ -60,7 +61,7 @@
 
     <fragment
         android:id="@+id/studentClassDetailFragment"
-        android:name="com.example.studymate.ui.classdetail.TeacherClassDetailFragment"
+        android:name="com.example.studymate.ui.classdetail.StudentClassDetailFragment"
         android:label="@string/class_detail"
         tools:layout="@layout/fragment_class_detail_student">
         <action android:id="@+id/action_detail_to_feedback" app:destination="@id/feedbackThreadFragment"/>
