@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
 
     // 1. IP của máy tính (giữ nguyên)
-    private static String BASE_URL = "http://192.168.1.10:8080/";
+    private static String BASE_URL = "http://10.0.2.2:8080/";
 
     // 2. Biến Singleton
     private static Retrofit retrofit = null;

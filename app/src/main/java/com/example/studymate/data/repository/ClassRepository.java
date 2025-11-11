@@ -12,6 +12,7 @@ import com.example.studymate.data.model.response.MessageResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,7 +152,11 @@ public class ClassRepository {
                     joinClassSuccess.postValue(response.body().getMessage());
                 } else {
                     // (Nên parse error body ở đây)
-                    joinClassError.postValue("Lỗi: Mã lớp không hợp lệ.");
+                    try {
+                        joinClassError.postValue(new com.google.gson.Gson().fromJson(response.errorBody().string(), MessageResponse.class).getMessage());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
