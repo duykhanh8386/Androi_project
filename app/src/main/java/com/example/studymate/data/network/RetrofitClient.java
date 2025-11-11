@@ -1,20 +1,27 @@
+// app/src/main/java/com/example/studymate/data/network/RetrofitClient.java
 package com.example.studymate.data.network;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RetrofitClient {
+public final class RetrofitClient {
+    private RetrofitClient() {}
 
-    // ⚠️ BẮT BUỘC THAY ĐỔI
-    // Đây là IP của máy tính đang chạy Spring Boot trong mạng LAN của bạn.
-    // KHÔNG dùng "localhost" hay "127.0.0.1".
-    private static final String BASE_URL = "http://192.168.1.10:8080/";
+    // ĐỔI nếu backend không chạy trên máy dev
+    private static String BASE_URL = "http://192.168.0.102:8080/";
 
-    private static Retrofit retrofit = null;
-    private static ApiService apiService = null;
+    private static Retrofit retrofit;
+    private static ApiService apiService;
+    private static String authToken; // JWT nếu có
 
+    /** Gọi sau khi login để gắn JWT (tùy chọn) */
+    public static void setAuthToken(String token) { authToken = token; }
     // ⭐️ HÀM MỚI: Xây dựng OkHttpClient
     private static OkHttpClient buildClient() {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
@@ -44,24 +51,36 @@ public class RetrofitClient {
         return apiService;
     }
 
-    // Phương thức private để khởi tạo Retrofit (chỉ chạy 1 lần)
-    private static Retrofit getRetrofitInstance() {
-        if (retrofit == null) {
-            // Cấu hình Logging Interceptor để debug (xem log request/response)
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+    /** (tùy chọn) đổi baseUrl nếu chạy trên thiết bị thật */
+    public static void setBaseUrl(String baseUrl) {
+        BASE_URL = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+        retrofit = null; apiService = null;
+    }
 
-            // Xây dựng OkHttpClient và thêm Interceptor
-            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-            httpClient.addInterceptor(logging);
+    public static ApiService getApiService() {
+        if (apiService == null) {
+            OkHttpClient ok = new OkHttpClient.Builder()
+                .addInterceptor((Interceptor) chain -> {
+                    Request original = chain.request();
+                    Request.Builder b = original.newBuilder();
+                    if (authToken != null && !authToken.trim().isEmpty()) {
+                        b.header("Authorization", "Bearer " + authToken);
+                    }
+                    return chain.proceed(b.build());
+                })
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
 
-            // Xây dựng Retrofit
             retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create()) // Dùng Gson
-                    .client(httpClient.build()) // Thêm OkHttpClient (để log)
-                    .build();
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(ok)
+                .build();
+
+            apiService = retrofit.create(ApiService.class);
         }
-        return retrofit;
+        return apiService;
     }
 }
