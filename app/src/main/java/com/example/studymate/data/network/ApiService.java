@@ -25,7 +25,7 @@ import retrofit2.http.Query;
 
 public interface ApiService {
     // ===== AUTH =====
-    @POST("api/auth/login")
+    @POST("api/auth/signin")
     Call<LoginResponse> login(@Body LoginRequest loginRequest);
 
 

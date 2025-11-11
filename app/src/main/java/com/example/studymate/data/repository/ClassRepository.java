@@ -22,7 +22,7 @@ import retrofit2.Response;
 public class ClassRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = true; // ⭐️ Vẫn dùng Mock
+    private final boolean IS_MOCK_MODE = false; // ⭐️ Vẫn dùng Mock
 
     // LiveData cho danh sách lớp
     private MutableLiveData<List<StudyClass>> classListLiveData = new MutableLiveData<>();

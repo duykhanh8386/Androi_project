@@ -138,7 +138,7 @@ public class AccountListFragment extends Fragment {
     }
 
     private void confirmDisable(User user) {
-        if (!TextUtils.equals("ACTIVE", user.getStatus())) return;
+        if (!user.getEnable()) return;
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Vô hiệu hóa tài khoản")
             .setMessage("Bạn có chắc muốn vô hiệu hóa tài khoản này?")
@@ -175,8 +175,8 @@ public class AccountListFragment extends Fragment {
             h.txtName.setText(u.getFullName());
             h.txtSub.setText(u.getUserName() + " • " +
                 (u.getRoleName() == null ? "" : u.getRoleName()) + " • " +
-                (u.getStatus() == null ? "" : u.getStatus()));
-            h.btnDisable.setVisibility("ACTIVE".equals(u.getStatus()) ? View.VISIBLE : View.GONE);
+                (u.getEnable() ? "Hoạt động" : "Vô hiệu hóa"));
+            h.btnDisable.setVisibility(u.getEnable() ? View.VISIBLE : View.GONE);
             h.btnDisable.setOnClickListener(v -> listener.onDisable(u));
         }
         @Override public int getItemCount() { return items.size(); }

@@ -14,7 +14,7 @@ public final class RetrofitClient {
     private RetrofitClient() {}
 
     // ĐỔI nếu backend không chạy trên máy dev
-    private static String BASE_URL = "http://192.168.0.102:8080/";
+    private static String BASE_URL = "http://10.0.2.2:8080/";
 
     private static Retrofit retrofit;
     private static ApiService apiService;
@@ -44,12 +44,7 @@ public final class RetrofitClient {
     }
 
     // Hàm public static để các Repository có thể gọi và dùng
-    public static ApiService getApiService() {
-        if (apiService == null) {
-            apiService = getRetrofitInstance().create(ApiService.class);
-        }
-        return apiService;
-    }
+
 
     /** (tùy chọn) đổi baseUrl nếu chạy trên thiết bị thật */
     public static void setBaseUrl(String baseUrl) {

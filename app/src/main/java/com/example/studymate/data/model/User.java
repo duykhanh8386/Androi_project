@@ -8,7 +8,7 @@ public class User {
     @SerializedName("userId")
     private int userId;
 
-    @SerializedName("fullname")
+    @SerializedName("fullName")
     private String fullName;
 
     @SerializedName("username")
@@ -22,7 +22,7 @@ public class User {
     @SerializedName("enable")
     private Boolean enable;
 
-    @SerializedName("role_name")
+    @SerializedName("roleName")
     private String roleName;
 
     // Constructor rỗng (bắt buộc cho Gson)
