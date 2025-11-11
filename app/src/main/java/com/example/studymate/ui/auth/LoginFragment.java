@@ -8,16 +8,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
+import com.example.studymate.constants.RoleConstant;
+import com.example.studymate.data.model.response.LoginResponse;
 import com.example.studymate.ui.viewmodel.LoginViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -27,10 +31,9 @@ import java.util.List;
 
 public class LoginFragment extends Fragment {
 
-    // === THAY ĐỔI: Khai báo các nút vai trò riêng lẻ ===
     private MaterialButton tabStudent, tabAdmin, tabTeacher;
     private List<MaterialButton> roleButtons = new ArrayList<>();
-    private String selectedRole = "STUDENT"; // Vai trò mặc định
+    private String selectedRole = RoleConstant.STUDENT; // Vai trò mặc định
 
     private TextInputEditText edtUsername;
     private TextInputEditText edtPassword;
@@ -72,20 +75,19 @@ public class LoginFragment extends Fragment {
 
         // === THAY ĐỔI: Thiết lập sự kiện click cho từng nút vai trò ===
         tabStudent.setOnClickListener(v -> {
-            selectedRole = "STUDENT";
+            selectedRole = RoleConstant.STUDENT;
             updateRoleButtonStyles((MaterialButton) v);
         });
 
         tabAdmin.setOnClickListener(v -> {
-            selectedRole = "ADMIN";
+            selectedRole = RoleConstant.ADMIN;
             updateRoleButtonStyles((MaterialButton) v);
         });
 
         tabTeacher.setOnClickListener(v -> {
-            selectedRole = "TEACHER";
+            selectedRole = RoleConstant.TEACHER;
             updateRoleButtonStyles((MaterialButton) v);
         });
-
 
         // Đăng ký sự kiện Click cho nút Đăng nhập
         btnLogin.setOnClickListener(v -> {
@@ -93,7 +95,7 @@ public class LoginFragment extends Fragment {
             String password = edtPassword.getText().toString().trim();
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(getContext(), "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.input_required, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -130,15 +132,15 @@ public class LoginFragment extends Fragment {
             if (loginResponse != null) {
                 Toast.makeText(getContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 switch (loginResponse.getUser().getRoleName()) {
-                    case "ROLE_ADMIN":
+                    case "ADMIN":
                         NavHostFragment.findNavController(LoginFragment.this)
                                 .navigate(R.id.action_login_to_homeAdmin);
                         break;
-                    case "ROLE_TEACHER":
+                    case "TEACHER":
                         NavHostFragment.findNavController(LoginFragment.this)
                                 .navigate(R.id.action_login_to_homeTeacher);
                         break;
-                    case "ROLE_STUDENT":
+                    case "STUDENT":
                         NavHostFragment.findNavController(LoginFragment.this)
                                 .navigate(R.id.action_login_to_homeStudent);
                         break;

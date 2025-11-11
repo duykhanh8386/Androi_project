@@ -5,15 +5,27 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
-
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.studymate.ui.auth.LoginFragment"
         android:label="@string/login"
         tools:layout="@layout/fragment_login">
-        <action android:id="@+id/action_login_to_homeAdmin"   app:destination="@id/homeAdminFragment"/>
-        <action android:id="@+id/action_login_to_homeTeacher" app:destination="@id/homeTeacherFragment"/>
-        <action android:id="@+id/action_login_to_homeStudent" app:destination="@id/homeStudentFragment"/>
+
+        <action
+            android:id="@+id/action_login_to_homeAdmin"
+            app:destination="@id/homeAdminFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_login_to_homeTeacher"
+            app:destination="@id/homeTeacherFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_login_to_homeStudent"
+            app:destination="@id/homeStudentFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -21,7 +33,9 @@
         android:name="com.example.studymate.ui.home.HomeAdminFragment"
         android:label="@string/home_admin"
         tools:layout="@layout/fragment_home_admin">
-        <action android:id="@+id/action_admin_to_accounts" app:destination="@id/accountListFragment"/>
+        <action
+            android:id="@+id/action_admin_to_accounts"
+            app:destination="@id/accountListFragment" />
     </fragment>
 
     <fragment
@@ -29,7 +43,14 @@
         android:name="com.example.studymate.ui.home.HomeTeacherFragment"
         android:label="@string/home_teacher"
         tools:layout="@layout/fragment_class_list_teacher">
-        <action android:id="@+id/action_home_to_classDetail" app:destination="@id/teacherClassDetailFragment"/>
+        <action
+            android:id="@+id/action_teacher_home_to_classDetail"
+            app:destination="@id/teacherClassDetailFragment" />
+        <action
+            android:id="@+id/action_homeTeacherFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeTeacherFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -37,96 +58,158 @@
         android:name="com.example.studymate.ui.home.HomeStudentFragment"
         android:label="@string/home_student"
         tools:layout="@layout/fragment_class_list_student">
-        <action android:id="@+id/action_home_to_classDetail2" app:destination="@id/studentClassDetailFragment"/>
-        <action android:id="@+id/action_home_to_joinClass" app:destination="@id/joinClassFragment"/>
+        <action
+            android:id="@+id/action_student_home_to_classDetail"
+            app:destination="@id/studentClassDetailFragment" />
+        <action
+            android:id="@+id/action_home_to_joinClass"
+            app:destination="@id/joinClassFragment" />
+        <action
+            android:id="@+id/action_homeStudentFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeStudentFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
         android:id="@+id/joinClassFragment"
         android:name="com.example.studymate.ui.studyclass.JoinClassFragment"
-        tools:layout="@layout/bottom_sheet_join_class">
-    </fragment>
+        tools:layout="@layout/bottom_sheet_join_class" />
 
     <fragment
         android:id="@+id/teacherClassDetailFragment"
         android:name="com.example.studymate.ui.classdetail.TeacherClassDetailFragment"
         android:label="@string/class_detail"
         tools:layout="@layout/fragment_class_detail_teacher">
-        <action android:id="@+id/action_detail_to_feedback" app:destination="@id/feedbackThreadFragment"/>
-        <action android:id="@+id/action_detail_to_notifications" app:destination="@id/teacherNotificationListFragment"/>
-        <action android:id="@+id/action_detail_to_gradeEntry" app:destination="@id/gradeEntryFragment"/>
-        <action android:id="@+id/action_detail_to_studentManage" app:destination="@id/studentManageFragment"/>
+
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+
+        <action
+            android:id="@+id/action_detail_to_feedback"
+            app:destination="@id/feedbackThreadFragment" />
+        <action
+            android:id="@+id/action_detail_to_notifications"
+            app:destination="@id/teacherNotificationListFragment" />
+        <action
+            android:id="@+id/action_detail_to_gradeEntry"
+            app:destination="@id/gradeEntryFragment" />
+        <action
+            android:id="@+id/action_detail_to_studentManage"
+            app:destination="@id/studentManageFragment" />
+        <action
+            android:id="@+id/action_detail_to_approvalList"
+            app:destination="@id/teacherApprovalFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/studentClassDetailFragment"
-        android:name="com.example.studymate.ui.classdetail.TeacherClassDetailFragment"
+        android:name="com.example.studymate.ui.classdetail.StudentClassDetailFragment"
         android:label="@string/class_detail"
         tools:layout="@layout/fragment_class_detail_student">
-        <action android:id="@+id/action_detail_to_feedback" app:destination="@id/feedbackThreadFragment"/>
-        <action android:id="@+id/action_detail_to_notifications" app:destination="@id/studentNotificationListFragment"/>
+
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+
+        <action
+            android:id="@+id/action_detail_to_feedback"
+            app:destination="@id/feedbackThreadFragment" />
+        <action
+            android:id="@+id/action_detail_to_notifications"
+            app:destination="@id/studentNotificationListFragment" />
+        <action
+            android:id="@+id/action_detail_to_students"
+            app:destination="@id/studentListFragment" />
+
+        <action
+            android:id="@+id/action_detail_to_grades"
+            app:destination="@id/studentGradeFragment" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/studentGradeFragment"
+        android:name="com.example.studymate.ui.grade.StudentGradeFragment"
+        android:label="@string/class_detail"
+        tools:layout="@layout/fragment_grade_student">
+    </fragment>
+
+    <fragment
+        android:id="@+id/studentListFragment"
+        android:name="com.example.studymate.ui.classdetail.StudentListFragment"
+        android:label="@string/class_detail"
+        tools:layout="@layout/fragment_student_list">
+    </fragment>
+
+    <fragment
+        android:id="@+id/teacherApprovalFragment"
+
+        android:name="com.example.studymate.ui.classdetail.TeacherApprovalFragment"
+
+        android:label="@string/class_detail"
+        tools:layout="@layout/fragment_approval_list" />
 
     <fragment
         android:id="@+id/feedbackThreadFragment"
         android:name="com.example.studymate.ui.feedback.FeedbackThreadFragment"
         android:label="@string/qa_feedback"
         tools:layout="@layout/fragment_feedback_thread">
-        <action android:id="@+id/action_detail_to_feedback" app:destination="@id/fragment_feedback_detail"/>
+        <action
+            android:id="@+id/action_detail_to_feedback"
+            app:destination="@id/fragment_feedback_detail" />
     </fragment>
-
     <fragment
         android:id="@+id/fragment_feedback_detail"
         android:name="com.example.studymate.ui.feedback.FeedbackDetailFragment"
         android:label="@string/qa_feedback"
-        tools:layout="@layout/fragment_feedback_detail">
-    </fragment>
-
+        tools:layout="@layout/fragment_feedback_detail" />
     <fragment
         android:id="@+id/teacherNotificationListFragment"
         android:name="com.example.studymate.ui.notify.NotificationListFragment"
         android:label="@string/announcement"
         tools:layout="@layout/fragment_notification_list_teacher">
-        <action android:id="@+id/action_list_to_createNotify" app:destination="@id/notificationCreateFragment"/>
-        <action android:id="@+id/action_list_to_detailNotify" app:destination="@id/notificationDetailFragment"/>
+        <action
+            android:id="@+id/action_list_to_createNotify"
+            app:destination="@id/notificationCreateFragment" />
+        <action
+            android:id="@+id/action_list_to_detailNotify"
+            app:destination="@id/notificationDetailFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/studentNotificationListFragment"
         android:name="com.example.studymate.ui.notify.NotificationListFragment"
         android:label="@string/announcement"
         tools:layout="@layout/fragment_notification_list_student">
-        <action android:id="@+id/action_list_to_notifyDetail" app:destination="@id/notificationDetailFragment"/>
+        <action
+            android:id="@+id/action_list_to_notifyDetail"
+            app:destination="@id/notificationDetailFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/notificationCreateFragment"
         android:name="com.example.studymate.ui.notify.NotificationCreateFragment"
-        tools:layout="@layout/fragment_notification_create"
-        android:label="Tạo thông báo"/>
-
+        android:label="Tạo thông báo"
+        tools:layout="@layout/fragment_notification_create" />
     <fragment
         android:id="@+id/notificationDetailFragment"
         android:name="com.example.studymate.ui.notify.NotificationDetailFragment"
         android:label="Chi tiết thông báo"
-        tools:layout="@layout/fragment_notification_detail"/>
-
+        tools:layout="@layout/fragment_notification_detail" />
     <fragment
         android:id="@+id/accountListFragment"
         android:name="com.example.studymate.ui.account.AccountListFragment"
         android:label="Tài khoản"
         tools:layout="@layout/fragment_account_list">
-        <action android:id="@+id/action_acclist_to_create" app:destination="@id/accountCreateFragment"/>
+        <action
+            android:id="@+id/action_acclist_to_create"
+            app:destination="@id/accountCreateFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/accountCreateFragment"
         android:name="com.example.studymate.ui.account.AccountCreateFragment"
         android:label="Tạo tài khoản"
-        tools:layout="@layout/fragment_account_create"/>
-
-
+        tools:layout="@layout/fragment_account_create" />
     <fragment
         android:id="@+id/gradeEntryFragment"
         android:name="com.example.studymate.ui.grade.GradeEntryFragment"
@@ -138,15 +221,13 @@
             app:destination="@id/gradeDialogAddEdit" />
 
     </fragment>
-
     <fragment
         android:id="@+id/gradeDialogAddEdit"
         android:name="com.example.studymate.ui.grade.GradeEditDialogFragment"
-        tools:layout="@layout/dialog_add_edit_grade"
-        android:label="@string/score"/>
-
+        android:label="@string/score"
+        tools:layout="@layout/dialog_add_edit_grade" />
     <fragment
         android:id="@+id/studentManageFragment"
         android:name="com.example.studymate.ui.classdetail.StudentManageFragment"
-        android:label="Quản lý sĩ số"/>
+        android:label="Quản lý sĩ số" />
 </navigation>

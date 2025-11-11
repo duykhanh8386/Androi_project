@@ -11,6 +11,7 @@ import com.example.studymate.data.model.request.LoginRequest;
 import com.example.studymate.data.model.response.LoginResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
+import com.example.studymate.data.network.SessionManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,9 +20,9 @@ import retrofit2.Response;
 public class AuthRepository {
 
     private ApiService apiService;
+    private SessionManager sessionManager;
 
-    // Cải tiến: Dùng MutableLiveData làm thành viên (member)
-    // để quản lý trạng thái.
+    private MutableLiveData<Boolean> logoutSuccessEvent = new MutableLiveData<>();
     private MutableLiveData<LoginResponse> loginResponseData = new MutableLiveData<>();
     private MutableLiveData<String> loginErrorData = new MutableLiveData<>();
 
@@ -29,12 +30,9 @@ public class AuthRepository {
 
     public AuthRepository() {
         this.apiService = RetrofitClient.getApiService();
+        this.sessionManager = new SessionManager();
     }
 
-    /**
-     * Hàm gọi API đăng nhập.
-     * Giờ đây nó sẽ trả về void và cập nhật LiveData nội bộ.
-     */
     public void login(String username, String password, String role) {
         // BƯỚC 1: KIỂM TRA CỜ NGAY TẠI ĐÂY
         if (IS_MOCK_MODE) {
@@ -46,9 +44,40 @@ public class AuthRepository {
         }
     }
 
-    /**
-     * Logic gọi API thật (code cũ của bạn)
-     */
+    // ⭐️ THÊM HÀM NÀY:
+    public void logout() {
+
+        clearLocalUserData(); // Xóa token
+
+        // --- BƯỚC 2: GỌI API ĐỂ VÔ HIỆU HÓA TOKEN (NẾU CẦN) ---
+        // (Trong chế độ MOCK, chúng ta chỉ cần giả lập thành công)
+        if (IS_MOCK_MODE) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                logoutSuccessEvent.postValue(true);
+            }, 500); // Giả lập độ trễ 0.5 giây
+        } else {
+            // Logic gọi API thật
+            apiService.logout().enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    // Dù API thành công hay thất bại, phía client vẫn đăng xuất
+                    logoutSuccessEvent.postValue(true);
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    // Kể cả lỗi mạng, vẫn đăng xuất ở client
+                    logoutSuccessEvent.postValue(true);
+                }
+            });
+        }
+    }
+
+    private void clearLocalUserData() {
+        sessionManager.clearAuthToken();
+        System.out.println("Đã xóa dữ liệu token/user local.");
+    }
+
     private void runRealApiLogic(String username, String password, String role) {
         // Tạo đối tượng Request với 3 tham số
         LoginRequest loginRequest = new LoginRequest(username, password, role);
@@ -57,7 +86,8 @@ public class AuthRepository {
         apiService.login(loginRequest).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    sessionManager.saveAuthToken(response.body().getToken());
                     loginResponseData.postValue(response.body());
                 } else {
                     loginErrorData.postValue("Lỗi đăng nhập: " + response.code());
@@ -120,5 +150,9 @@ public class AuthRepository {
 
     public LiveData<String> getLoginErrorData() {
         return loginErrorData;
+    }
+
+    public LiveData<Boolean> getLogoutSuccessEvent() {
+        return logoutSuccessEvent;
     }
 }

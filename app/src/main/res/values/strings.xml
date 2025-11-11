@@ -76,4 +76,13 @@
     <string name="teacher">Giáo viên</string>
     <string name="Student">Student</string>
     <string name="join_class">Tham gia lớp học</string>
+    <string name="select_role_label">Đăng nhập với ?</string>
+    <string name="logo_description">Logo ứng dụng StudyMate</string>
+    <string name="accept_join">Phê duyệt</string>
+    <string name="fullname">Họ tên</string>
+    <string name="student_id">Mã HS</string>
+    <string name="reject_all">Từ chối tất cả</string>
+    <string name="accept_all">Phê duyệt tất cả</string>
+    <string name="join">Tham gia</string>
+    <string name="enter_class_code">Nhập mã lớp</string>
 </resources>
