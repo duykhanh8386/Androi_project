@@ -56,4 +56,11 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    // Thêm dòng này để hỗ trợ CookieJar
+    implementation("com.squareup.okhttp3:okhttp-urlconnection:4.12.0")
+
+// (Bạn đã có các dòng này)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }
