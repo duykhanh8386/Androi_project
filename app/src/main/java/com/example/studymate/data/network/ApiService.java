@@ -6,9 +6,7 @@ import com.example.studymate.data.model.response.LoginResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 
 public interface ApiService {
 
@@ -17,7 +15,7 @@ public interface ApiService {
      * @param loginRequest Đối tượng Java (POJO) chứa username và password.
      * @return Một đối tượng Call chứa LoginResponse (ví dụ: token, thông tin user).
      */
-    @POST("api/auth/login") // ⚠️ Đổi đường dẫn này cho khớp với Spring Boot
+    @POST("api/auth/signin") // ⚠️ Đổi đường dẫn này cho khớp với Spring Boot
     Call<LoginResponse> login(@Body LoginRequest loginRequest);
 
     /**

@@ -12,15 +12,15 @@ public class User {
     private String fullName;
 
     @SerializedName("username")
-    private String userName;
+    private String username;
 
     // Password thường không được trả về trong API response,
     // nhưng nếu có thì đây là cách ánh xạ:
     @SerializedName("password")
     private String password;
 
-    @SerializedName("status")
-    private String status;
+    @SerializedName("enable")
+    private Boolean enable;
 
     @SerializedName("role_name")
     private String roleName;
@@ -56,11 +56,11 @@ public class User {
     }
 
     public String getUserName() {
-        return userName;
+        return username;
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.username = userName;
     }
 
     public String getPassword() {
@@ -71,12 +71,12 @@ public class User {
         this.password = password;
     }
 
-    public String getStatus() {
-        return status;
+    public Boolean getEnable() {
+        return enable;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
     }
 
     public String getRoleName() {

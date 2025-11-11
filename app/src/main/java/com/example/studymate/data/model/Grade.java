@@ -2,7 +2,6 @@ package com.example.studymate.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.lang.Class;
 import java.util.Date;
 
 public class Grade {

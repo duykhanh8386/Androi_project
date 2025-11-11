@@ -14,12 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
-import com.example.studymate.data.model.response.LoginResponse;
 import com.example.studymate.ui.viewmodel.LoginViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -132,15 +130,15 @@ public class LoginFragment extends Fragment {
             if (loginResponse != null) {
                 Toast.makeText(getContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 switch (loginResponse.getUser().getRoleName()) {
-                    case "ADMIN":
+                    case "ROLE_ADMIN":
                         NavHostFragment.findNavController(LoginFragment.this)
                                 .navigate(R.id.action_login_to_homeAdmin);
                         break;
-                    case "TEACHER":
+                    case "ROLE_TEACHER":
                         NavHostFragment.findNavController(LoginFragment.this)
                                 .navigate(R.id.action_login_to_homeTeacher);
                         break;
-                    case "STUDENT":
+                    case "ROLE_STUDENT":
                         NavHostFragment.findNavController(LoginFragment.this)
                                 .navigate(R.id.action_login_to_homeStudent);
                         break;

@@ -8,16 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
-import com.example.studymate.ui.home.adapter.ClassAdapter;
-import com.example.studymate.ui.home.model.ClassItem;
-import com.example.studymate.ui.viewmodel.ClassViewModel;
 
 public class HomeTeacherFragment extends Fragment {
 

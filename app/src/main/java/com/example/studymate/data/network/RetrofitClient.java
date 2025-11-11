@@ -10,7 +10,7 @@ public class RetrofitClient {
     // ⚠️ BẮT BUỘC THAY ĐỔI
     // Đây là IP của máy tính đang chạy Spring Boot trong mạng LAN của bạn.
     // KHÔNG dùng "localhost" hay "127.0.0.1".
-    private static final String BASE_URL = "http://192.168.1.10:8080/";
+    private static final String BASE_URL = "http://10.0.2.2:8080/";
 
     private static Retrofit retrofit = null;
     private static ApiService apiService = null;

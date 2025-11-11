@@ -1,13 +1,10 @@
 package com.example.studymate.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import android.view.Menu;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.Menu;
 import com.example.studymate.R;
 import com.google.android.material.appbar.MaterialToolbar;
 
