@@ -1,4 +1,4 @@
-package com.example.studymate.ui.classdetail;
+package com.example.studymate.ui.grade.teacher;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,17 +7,21 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
 
 import com.example.studymate.R;
-import com.example.studymate.ui.viewmodel.ClassViewModel;
+import com.example.studymate.ui.viewmodel.GradeViewModel;
 
-public class TeacherClassDetailFragment extends Fragment {
-    private ClassViewModel vm;
 
-    @Nullable @Override
+public class GradeEditDialogFragment extends DialogFragment {
+
+    private GradeViewModel vm;
+
+
+    @Nullable
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_class_detail_teacher, container, false);
+        return inflater.inflate(R.layout.dialog_add_edit_grade, container, false);
     }
 
 

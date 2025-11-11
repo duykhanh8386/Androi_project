@@ -16,7 +16,7 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/textViewStudentName"
+            android:id="@+id/tvStudentName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Nguyễn Văn An"
@@ -31,16 +31,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Quiz:"
+            android:text="TX:"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewStudentName" />
+            app:layout_constraintTop_toBottomOf="@+id/tvStudentName" />
 
         <TextView
             android:id="@+id/textViewQuiz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="9.0"
+            android:text="-"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@+id/labelQuiz"
             app:layout_constraintStart_toEndOf="@+id/labelQuiz" />
@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="8.5"
+            android:text="-"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@+id/labelMid"
             app:layout_constraintStart_toEndOf="@+id/labelMid" />
@@ -78,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="8.8"
+            android:text="-"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@+id/labelFinal"
             app:layout_constraintStart_toEndOf="@+id/labelFinal" />

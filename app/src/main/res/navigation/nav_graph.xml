@@ -78,7 +78,7 @@
 
     <fragment
         android:id="@+id/teacherClassDetailFragment"
-        android:name="com.example.studymate.ui.classdetail.TeacherClassDetailFragment"
+        android:name="com.example.studymate.ui.classdetail.teacher.ClassDetailFragment"
         android:label="@string/class_detail"
         tools:layout="@layout/fragment_class_detail_teacher">
 
@@ -105,7 +105,7 @@
 
     <fragment
         android:id="@+id/studentClassDetailFragment"
-        android:name="com.example.studymate.ui.classdetail.StudentClassDetailFragment"
+        android:name="com.example.studymate.ui.classdetail.student.ClassDetailFragment"
         android:label="@string/class_detail"
         tools:layout="@layout/fragment_class_detail_student">
 
@@ -131,22 +131,28 @@
 
     <fragment
         android:id="@+id/studentGradeFragment"
-        android:name="com.example.studymate.ui.grade.StudentGradeFragment"
-        android:label="@string/class_detail"
+        android:name="com.example.studymate.ui.grade.student.StudentGradeFragment"
+        android:label="@string/score"
         tools:layout="@layout/fragment_grade_student">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
     </fragment>
 
     <fragment
         android:id="@+id/studentListFragment"
-        android:name="com.example.studymate.ui.classdetail.StudentListFragment"
+        android:name="com.example.studymate.ui.classdetail.student.StudentListFragment"
         android:label="@string/class_detail"
         tools:layout="@layout/fragment_student_list">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
     </fragment>
 
     <fragment
         android:id="@+id/teacherApprovalFragment"
 
-        android:name="com.example.studymate.ui.classdetail.TeacherApprovalFragment"
+        android:name="com.example.studymate.ui.classdetail.teacher.TeacherApprovalFragment"
 
         android:label="@string/class_detail"
         tools:layout="@layout/fragment_approval_list" />
@@ -156,15 +162,22 @@
         android:name="com.example.studymate.ui.feedback.FeedbackThreadFragment"
         android:label="@string/qa_feedback"
         tools:layout="@layout/fragment_feedback_thread">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
         <action
             android:id="@+id/action_detail_to_feedback"
             app:destination="@id/fragment_feedback_detail" />
     </fragment>
     <fragment
         android:id="@+id/fragment_feedback_detail"
-        android:name="com.example.studymate.ui.feedback.FeedbackDetailFragment"
-        android:label="@string/qa_feedback"
-        tools:layout="@layout/fragment_feedback_detail" />
+        android:name="com.example.studymate.ui.feedback.FeedbackResponseFragment"
+        android:label="@string/response"
+        tools:layout="@layout/fragment_feedback_response">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/teacherNotificationListFragment"
         android:name="com.example.studymate.ui.notify.NotificationListFragment"
@@ -182,6 +195,11 @@
         android:name="com.example.studymate.ui.notify.NotificationListFragment"
         android:label="@string/announcement"
         tools:layout="@layout/fragment_notification_list_student">
+
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+
         <action
             android:id="@+id/action_list_to_notifyDetail"
             app:destination="@id/notificationDetailFragment" />
@@ -201,6 +219,9 @@
         android:name="com.example.studymate.ui.account.AccountListFragment"
         android:label="Tài khoản"
         tools:layout="@layout/fragment_account_list">
+        <argument
+            android:name="notificationId"
+            app:argType="integer" />
         <action
             android:id="@+id/action_acclist_to_create"
             app:destination="@id/accountCreateFragment" />
@@ -212,7 +233,7 @@
         tools:layout="@layout/fragment_account_create" />
     <fragment
         android:id="@+id/gradeEntryFragment"
-        android:name="com.example.studymate.ui.grade.GradeEntryFragment"
+        android:name="com.example.studymate.ui.grade.teacher.GradeEntryFragment"
         android:label="Quản lý điểm"
         tools:layout="@layout/fragment_grade_entry">
 
@@ -223,11 +244,11 @@
     </fragment>
     <fragment
         android:id="@+id/gradeDialogAddEdit"
-        android:name="com.example.studymate.ui.grade.GradeEditDialogFragment"
+        android:name="com.example.studymate.ui.grade.teacher.GradeEditDialogFragment"
         android:label="@string/score"
         tools:layout="@layout/dialog_add_edit_grade" />
     <fragment
         android:id="@+id/studentManageFragment"
-        android:name="com.example.studymate.ui.classdetail.StudentManageFragment"
+        android:name="com.example.studymate.ui.classdetail.teacher.StudentManageFragment"
         android:label="Quản lý sĩ số" />
 </navigation>

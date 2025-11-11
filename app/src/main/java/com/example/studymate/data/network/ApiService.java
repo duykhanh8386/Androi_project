@@ -1,14 +1,19 @@
 package com.example.studymate.data.network;
 
 
+import com.example.studymate.data.model.Feedback;
+import com.example.studymate.data.model.Grade;
+import com.example.studymate.data.model.Notification;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.CreateUserRequest;
+import com.example.studymate.data.model.request.FeedbackRequest;
 import com.example.studymate.data.model.request.JoinClassRequest;
 import com.example.studymate.data.model.request.LoginRequest;
 import com.example.studymate.data.model.request.UpdateStatusRequest;
 import com.example.studymate.data.model.response.LoginResponse;
 import com.example.studymate.data.model.response.MessageResponse;
+import com.example.studymate.data.model.response.StudentResponse;
 
 
 import java.util.List;
@@ -16,6 +21,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -32,7 +38,6 @@ public interface ApiService {
     @POST("api/auth/logout")
     Call<Void> logout();
 
-
     // ===== STUDENT =====
     @GET("api/student/classes")
     Call<List<StudyClass>> getStudentClasses();
@@ -40,10 +45,31 @@ public interface ApiService {
     @GET("api/student/classes/{id}")
     Call<StudyClass> getClassDetails(@Path("id") int classId);
 
+    @GET("api/user/classes/{id}/students")
+    Call<List<StudentResponse>> getStudentsInClass(@Path("id") int classId);
+
+    @GET("api/student/classes/{id}/notifications")
+    Call<List<Notification>> getNotifications(@Path("id") int classId);
+
+    @GET("api/student/classes/{classId}/notifications")
+    Call<Notification> getNotificationDetail(@Path("id") int notificationId);
+
+    @GET("api/student/classes/{classId}/grades")
+    Call<List<Grade>> getStudentGrades(@Path("id") int classId);
+
+    @DELETE("api/student/classes/{id}")
+    Call<MessageResponse> leaveClass(@Path("id") int classId);
+
+    // ===== FEEDBACK ======
+    @GET("api/student/classes/{id}/feedback")
+    Call<List<Feedback>> getFeedbackThread(@Path("id") int classId);
+
+    @POST("api/student/feedback")
+    Call<Feedback> sendFeedback(@Body FeedbackRequest feedbackRequest);
+
     // ===== ADMIN: USER MANAGEMENT =====
     @POST("api/admin/users")
     Call<User> createUser(@Body CreateUserRequest body);
-
 
     @GET("api/admin/users/search")
     Call<List<User>> searchUsers(

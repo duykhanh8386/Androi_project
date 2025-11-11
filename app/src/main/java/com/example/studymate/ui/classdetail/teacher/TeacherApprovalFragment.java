@@ -1,4 +1,4 @@
-package com.example.studymate.ui.classdetail;
+package com.example.studymate.ui.classdetail.teacher;
 
 import androidx.fragment.app.Fragment;
 

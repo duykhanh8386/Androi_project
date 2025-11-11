@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="start"
-    android:padding="8dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:gravity="end">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:padding="8dp"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="1dp">
+        android:layout_marginStart="64dp"
+        app:cardBackgroundColor="?attr/colorPrimary">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="12dp">
 
             <TextView
-                android:id="@+id/tvMessage"
+                android:id="@+id/tvSenderInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nội dung"
-                android:textAppearance="?attr/textAppearanceBodyMedium"/>
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                tools:text="Bạn (10:30 11/11/2025)" />
 
             <TextView
-                android:id="@+id/tvTime"
+                android:id="@+id/tvFeedbackContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="12:00 01/01"
-                android:textAppearance="?attr/textAppearanceLabelSmall"/>
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                tools:text="Thưa cô, em xin phép nghỉ ốm ạ." />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

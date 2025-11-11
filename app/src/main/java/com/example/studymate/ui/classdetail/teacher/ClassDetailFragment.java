@@ -1,4 +1,4 @@
-package com.example.studymate.ui.classdetail;
+package com.example.studymate.ui.classdetail.teacher;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,11 +10,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.studymate.R;
+import com.example.studymate.ui.viewmodel.ClassViewModel;
 
-public class StudentManageFragment extends Fragment {
-    @Nullable
-    @Override
+public class ClassDetailFragment extends Fragment {
+    private ClassViewModel vm;
+
+    @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_student_manage, container, false);
+        return inflater.inflate(R.layout.fragment_class_detail_teacher, container, false);
     }
+
+
 }

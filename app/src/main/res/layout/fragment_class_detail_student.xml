@@ -73,6 +73,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvClassId"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -114,6 +115,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvStudentCount"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -134,6 +136,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvClassTime"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -230,12 +233,13 @@
         android:elevation="4dp">
         <Button
             android:id="@+id/btnGoBack"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/btn_go_back"
             android:textSize="14sp"
+            android:textColor="@color/cardview_dark_background"
+            android:backgroundTint="@color/gray_200"
             android:layout_marginEnd="8dp"
             app:cornerRadius="4dp"/>
         <Button
@@ -245,7 +249,7 @@
             android:layout_weight="1"
             android:text="@string/btn_out_class"
             android:textSize="14sp"
-            android:backgroundTint="@color/design_default_color_error"
+            android:backgroundTint="@color/red"
             android:layout_marginStart="8dp"
             app:cornerRadius="4dp"/>
     </LinearLayout>

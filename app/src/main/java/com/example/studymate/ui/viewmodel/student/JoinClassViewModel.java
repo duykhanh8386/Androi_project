@@ -3,27 +3,28 @@ package com.example.studymate.ui.viewmodel.student;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.studymate.data.repository.ClassRepository;
+import com.example.studymate.data.repository.StudentRepository;
 
 public class JoinClassViewModel extends ViewModel {
 
-    private ClassRepository classRepository;
+    private StudentRepository studentRepository;
 
     public JoinClassViewModel() {
-        this.classRepository = new ClassRepository();
+        this.studentRepository = new StudentRepository();
     }
 
     public void performJoinClass(String classCode) {
-        classRepository.joinClass(classCode);
+        studentRepository.joinClass(classCode);
     }
 
     // Getters để Fragment quan sát
     public LiveData<String> getJoinSuccessEvent() {
-        return classRepository.getJoinClassSuccess();
+        return studentRepository.getJoinClassSuccess();
     }
     public LiveData<String> getJoinErrorEvent() {
-        return classRepository.getJoinClassError();
+        return studentRepository.getJoinClassError();
     }
     public LiveData<Boolean> getIsLoading() {
-        return classRepository.getIsJoinClassLoading();
+        return studentRepository.getIsJoinClassLoading();
     }
 }

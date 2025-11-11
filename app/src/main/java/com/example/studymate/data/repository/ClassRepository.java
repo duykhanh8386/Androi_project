@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.studymate.data.model.StudyClass;
+import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.JoinClassRequest;
 import com.example.studymate.data.model.response.MessageResponse;
 import com.example.studymate.data.network.ApiService;
@@ -30,15 +31,16 @@ public class ClassRepository {
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<String> classListError = new MutableLiveData<>();
 
-    // ⭐️ THÊM MỚI: LiveData cho "chi tiết"
+    // LiveData cho chi tiết lớp học
     private MutableLiveData<StudyClass> classDetailLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isDetailLoading = new MutableLiveData<>();
     private MutableLiveData<String> classDetailError = new MutableLiveData<>();
 
-    // ⭐️ THÊM MỚI: LiveData cho sự kiện "Join Class"
-    private MutableLiveData<String> joinClassSuccess = new MutableLiveData<>();
-    private MutableLiveData<String> joinClassError = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isJoinClassLoading = new MutableLiveData<>();
+    // LiveData cho sự kiện "Rời lớp"
+    private MutableLiveData<Boolean> isLeaveLoading = new MutableLiveData<>();
+    private MutableLiveData<String> leaveSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> leaveErrorEvent = new MutableLiveData<>();
+
 
     public ClassRepository() {
         this.apiService = RetrofitClient.getApiService();
@@ -64,12 +66,12 @@ public class ClassRepository {
         }
     }
 
-    public void joinClass(String classCode) {
-        isJoinClassLoading.postValue(true);
+    public void leaveClass(int classId) {
+        isLeaveLoading.postValue(true);
         if (IS_MOCK_MODE) {
-            runMockLogicForJoinClass(classCode);
+            runMockLogicForLeaveClass(classId);
         } else {
-            runRealApiLogicForJoinClass(classCode);
+            runRealApiLogicForLeaveClass(classId);
         }
     }
 
@@ -141,19 +143,27 @@ public class ClassRepository {
         }, 1000);
     }
 
-    // ⭐️ THÊM HÀM MỚI:
-    private void runRealApiLogicForJoinClass(String classCode) {
-        JoinClassRequest request = new JoinClassRequest(classCode);
-        apiService.joinClass(request).enqueue(new Callback<MessageResponse>() {
+    // ⭐️ THÊM HÀM MỚI: (Mock logic)
+    private void runMockLogicForLeaveClass(int classId) {
+        // Giả lập độ trễ 1 giây
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            isLeaveLoading.postValue(false);
+            // Trả về thông báo thành công (theo Use Case 2.4.13)
+            leaveSuccessEvent.postValue("Rời lớp thành công!");
+        }, 1000);
+    }
+
+    // ⭐️ THÊM HÀM MỚI: (Real API logic)
+    private void runRealApiLogicForLeaveClass(int classId) {
+        apiService.leaveClass(classId).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                isJoinClassLoading.postValue(false);
+                isLeaveLoading.postValue(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    joinClassSuccess.postValue(response.body().getMessage());
+                    leaveSuccessEvent.postValue(response.body().getMessage());
                 } else {
-                    // (Nên parse error body ở đây)
                     try {
-                        joinClassError.postValue(new com.google.gson.Gson().fromJson(response.errorBody().string(), MessageResponse.class).getMessage());
+                        leaveErrorEvent.postValue(new com.google.gson.Gson().fromJson(response.errorBody().string(), MessageResponse.class).getMessage());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -162,24 +172,10 @@ public class ClassRepository {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                isJoinClassLoading.postValue(false);
-                joinClassError.postValue("Lỗi mạng: " + t.getMessage());
+                isLeaveLoading.postValue(false);
+                leaveErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
             }
         });
-    }
-
-    // ⭐️ THÊM HÀM MỚI: (Mock logic)
-    private void runMockLogicForJoinClass(String classCode) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            isJoinClassLoading.postValue(false);
-            // Dựa trên Hình 2.7.11[cite: 377], dùng mã "IT202425314"
-            if (classCode.equalsIgnoreCase("IT202425314")) {
-                // Dựa trên Use Case 2.4.12[cite: 292], trả về thông báo
-                joinClassSuccess.postValue("Yêu cầu tham gia lớp đã được gửi. Vui lòng chờ giáo viên duyệt!");
-            } else {
-                joinClassError.postValue("Mã lớp không hợp lệ (dữ liệu mẫu).");
-            }
-        }, 1500); // Trì hoãn 1.5 giây
     }
 
     // --- Getters ---
@@ -204,13 +200,14 @@ public class ClassRepository {
     public LiveData<String> getClassDetailError() {
         return classDetailError;
     }
-    public LiveData<String> getJoinClassSuccess() {
-        return joinClassSuccess;
+
+    public LiveData<Boolean> getIsLeaveLoading() {
+        return isLeaveLoading;
     }
-    public LiveData<String> getJoinClassError() {
-        return joinClassError;
+    public LiveData<String> getLeaveSuccessEvent() {
+        return leaveSuccessEvent;
     }
-    public LiveData<Boolean> getIsJoinClassLoading() {
-        return isJoinClassLoading;
+    public LiveData<String> getLeaveErrorEvent() {
+        return leaveErrorEvent;
     }
 }
