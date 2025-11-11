@@ -1,49 +1,35 @@
 // app/src/main/java/com/example/studymate/data/network/RetrofitClient.java
 package com.example.studymate.data.network;
 
+// Import cho Cookie
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import okhttp3.JavaNetCookieJar;
+
+// Import cho Timeouts
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
+// Import cho OkHttp và Logging
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public final class RetrofitClient {
-    private RetrofitClient() {}
 
-    // ĐỔI nếu backend không chạy trên máy dev
-    private static String BASE_URL = "http://192.168.0.102:8080/";
+public class RetrofitClient {
 
-    private static Retrofit retrofit;
-    private static ApiService apiService;
-    private static String authToken; // JWT nếu có
+    // 1. IP của máy tính (giữ nguyên)
+    private static String BASE_URL = "http://192.168.1.10:8080/";
 
-    /** Gọi sau khi login để gắn JWT (tùy chọn) */
-    public static void setAuthToken(String token) { authToken = token; }
-    // ⭐️ HÀM MỚI: Xây dựng OkHttpClient
-    private static OkHttpClient buildClient() {
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+    // 2. Biến Singleton
+    private static Retrofit retrofit = null;
+    private static ApiService apiService = null;
+    private static OkHttpClient okHttpClient = null; // Thêm vào
 
-        // ⭐️ THÊM INTERCEPTOR CỦA BẠN VÀO ĐÂY
-        httpClientBuilder.addInterceptor(new AuthInterceptor());
-
-        return httpClientBuilder.build();
-    }
-
-    public static Retrofit getClient() {
-        if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .client(buildClient()) // ⭐️ SỬ DỤNG CLIENT ĐÃ BUILD
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-        }
-        return retrofit;
-    }
-
-    // Hàm public static để các Repository có thể gọi và dùng
+    /**
+     * Hàm public duy nhất để các Repository gọi
+     */
     public static ApiService getApiService() {
         if (apiService == null) {
             apiService = getRetrofitInstance().create(ApiService.class);
@@ -51,36 +37,51 @@ public final class RetrofitClient {
         return apiService;
     }
 
-    /** (tùy chọn) đổi baseUrl nếu chạy trên thiết bị thật */
-    public static void setBaseUrl(String baseUrl) {
-        BASE_URL = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
-        retrofit = null; apiService = null;
+    /**
+     * Khởi tạo Retrofit (chỉ chạy 1 lần)
+     * Nó sẽ gọi buildClient()
+     */
+    private static Retrofit getRetrofitInstance() {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getOkHttpClient()) // ⭐️ SỬ DỤNG OkHttpClient DUY NHẤT
+                    .build();
+        }
+        return retrofit;
     }
 
-    public static ApiService getApiService() {
-        if (apiService == null) {
-            OkHttpClient ok = new OkHttpClient.Builder()
-                .addInterceptor((Interceptor) chain -> {
-                    Request original = chain.request();
-                    Request.Builder b = original.newBuilder();
-                    if (authToken != null && !authToken.trim().isEmpty()) {
-                        b.header("Authorization", "Bearer " + authToken);
-                    }
-                    return chain.proceed(b.build());
-                })
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build();
+    /**
+     * Xây dựng OkHttpClient (chỉ chạy 1 lần)
+     * Đây là nơi cấu hình MỌI THỨ (Cookie, Log, Timeout)
+     */
+    private static OkHttpClient getOkHttpClient() {
+        if (okHttpClient == null) {
+            // 1. Cấu hình Cookie
+            CookieHandler cookieHandler = new CookieManager();
 
-            retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(ok)
-                .build();
+            // 3. Xây dựng Client
+            okHttpClient = new OkHttpClient.Builder()
+                    // ⭐️ THÊM COOKIE JAR (cho backend Spring Boot)
+                    .cookieJar(new JavaNetCookieJar(cookieHandler))
 
-            apiService = retrofit.create(ApiService.class);
+                    // ⭐️ THÊM TIMEOUTS
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .build();
         }
-        return apiService;
+        return okHttpClient;
+    }
+
+    /**
+     * (Hàm này giữ nguyên nếu bạn cần đổi IP)
+     */
+    public static void setBaseUrl(String baseUrl) {
+        BASE_URL = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+        retrofit = null;
+        apiService = null;
+        okHttpClient = null; // Xóa client cũ để build lại
     }
 }
