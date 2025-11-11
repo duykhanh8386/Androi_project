@@ -11,11 +11,9 @@ import androidx.fragment.app.Fragment;
 
 import com.example.studymate.R;
 import com.example.studymate.ui.viewmodel.ClassViewModel;
-import com.example.studymate.utils.SessionManager;
 
 public class TeacherClassDetailFragment extends Fragment {
     private ClassViewModel vm;
-    private SessionManager session;
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

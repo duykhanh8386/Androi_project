@@ -2,8 +2,10 @@ package com.example.studymate.data.network;
 
 
 import com.example.studymate.data.model.StudyClass;
+import com.example.studymate.data.model.request.JoinClassRequest;
 import com.example.studymate.data.model.request.LoginRequest;
 import com.example.studymate.data.model.response.LoginResponse;
+import com.example.studymate.data.model.response.MessageResponse;
 
 import java.util.List;
 
@@ -24,6 +26,10 @@ public interface ApiService {
     @GET("api/student/classes")
     Call<List<StudyClass>> getStudentClasses();
 
+    @GET("api/student/classes/{id}")
+    Call<StudyClass> getClassDetails(@Path("id") int classId);
 
+    @POST("api/student/classes/join")
+    Call<MessageResponse> joinClass(@Body JoinClassRequest joinRequest);
 
 }

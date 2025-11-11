@@ -19,16 +19,6 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/txtClassTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lớp học 1"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Thông tin"
@@ -62,6 +52,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvClassNameDetail"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -102,6 +93,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvTeacherNameDetail"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -237,7 +229,7 @@
         android:background="@android:color/white"
         android:elevation="4dp">
         <Button
-            android:id="@+id/btnDeleteClass"
+            android:id="@+id/btnGoBack"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -247,7 +239,7 @@
             android:layout_marginEnd="8dp"
             app:cornerRadius="4dp"/>
         <Button
-            android:id="@+id/btnUpdateClass"
+            android:id="@+id/btnLeaveClass"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -258,4 +250,11 @@
             app:cornerRadius="4dp"/>
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        tools:visibility="visible" />
 </RelativeLayout>

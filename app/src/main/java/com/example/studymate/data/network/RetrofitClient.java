@@ -15,6 +15,27 @@ public class RetrofitClient {
     private static Retrofit retrofit = null;
     private static ApiService apiService = null;
 
+    // ⭐️ HÀM MỚI: Xây dựng OkHttpClient
+    private static OkHttpClient buildClient() {
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+
+        // ⭐️ THÊM INTERCEPTOR CỦA BẠN VÀO ĐÂY
+        httpClientBuilder.addInterceptor(new AuthInterceptor());
+
+        return httpClientBuilder.build();
+    }
+
+    public static Retrofit getClient() {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .client(buildClient()) // ⭐️ SỬ DỤNG CLIENT ĐÃ BUILD
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
+    }
+
     // Hàm public static để các Repository có thể gọi và dùng
     public static ApiService getApiService() {
         if (apiService == null) {

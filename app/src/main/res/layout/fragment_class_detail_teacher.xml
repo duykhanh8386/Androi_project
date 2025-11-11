@@ -19,16 +19,6 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/txtClassTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lớp học 1"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/class_info"
@@ -219,6 +209,25 @@
                     android:text="@string/nav_ask"
                     android:textSize="14sp"
                     android:layout_marginStart="8dp"
+                    app:cornerRadius="4dp"
+                    app:strokeWidth="1dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp"
+                android:weightSum="2">
+                <Button
+                    android:id="@+id/btnAccept"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="1"
+                    android:text="@string/accept_join"
+                    android:textSize="14sp"
+                    android:layout_marginEnd="8dp"
                     app:cornerRadius="4dp"
                     app:strokeWidth="1dp"/>
             </LinearLayout>
