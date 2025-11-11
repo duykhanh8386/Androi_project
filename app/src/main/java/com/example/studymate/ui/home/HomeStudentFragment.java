@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -69,6 +70,16 @@ public class HomeStudentFragment extends Fragment {
 
         // 4. Thiết lập LayoutManager
         rvStudentClasses.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
+        Button btnJoin = view.findViewById(R.id.btnJoinClass);
+        btnJoin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Dùng NavController để đi đến action đã định nghĩa
+                NavHostFragment.findNavController(HomeStudentFragment.this)
+                        .navigate(R.id.action_home_to_joinClass);
+            }
+        });
 
         // 5. Gọi hàm quan sát
         setupObservers();

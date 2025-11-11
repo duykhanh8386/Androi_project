@@ -11,6 +11,7 @@ import com.example.studymate.data.model.request.LoginRequest;
 import com.example.studymate.data.model.response.LoginResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
+import com.example.studymate.data.network.SessionManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,6 +20,7 @@ import retrofit2.Response;
 public class AuthRepository {
 
     private ApiService apiService;
+    private SessionManager sessionManager;
 
     private MutableLiveData<Boolean> logoutSuccessEvent = new MutableLiveData<>();
     private MutableLiveData<LoginResponse> loginResponseData = new MutableLiveData<>();
@@ -28,6 +30,7 @@ public class AuthRepository {
 
     public AuthRepository() {
         this.apiService = RetrofitClient.getApiService();
+        this.sessionManager = new SessionManager();
     }
 
     public void login(String username, String password, String role) {
@@ -43,10 +46,8 @@ public class AuthRepository {
 
     // ⭐️ THÊM HÀM NÀY:
     public void logout() {
-        // --- BƯỚC 1: XÓA DỮ LIỆU LOCAL ---
-        // (Trong dự án thật, bạn sẽ gọi SharedPreferences ở đây)
-        // Ví dụ: new UserRepository(context).logout(); như code cũ của bạn [cite: 5]
-        clearLocalUserData(); // Giả lập việc xóa token
+
+        clearLocalUserData(); // Xóa token
 
         // --- BƯỚC 2: GỌI API ĐỂ VÔ HIỆU HÓA TOKEN (NẾU CẦN) ---
         // (Trong chế độ MOCK, chúng ta chỉ cần giả lập thành công)
@@ -73,11 +74,9 @@ public class AuthRepository {
     }
 
     private void clearLocalUserData() {
-        // TODO: Thêm code xóa SharedPreferences (lưu token) của bạn ở đây
+        sessionManager.clearAuthToken();
         System.out.println("Đã xóa dữ liệu token/user local.");
     }
-
-
 
     private void runRealApiLogic(String username, String password, String role) {
         // Tạo đối tượng Request với 3 tham số
@@ -87,7 +86,8 @@ public class AuthRepository {
         apiService.login(loginRequest).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    sessionManager.saveAuthToken(response.body().getToken());
                     loginResponseData.postValue(response.body());
                 } else {
                     loginErrorData.postValue("Lỗi đăng nhập: " + response.code());

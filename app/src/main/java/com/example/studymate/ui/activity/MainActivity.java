@@ -1,6 +1,7 @@
 package com.example.studymate.ui.activity;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -9,11 +10,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.studymate.R;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
-            NavigationUI.setupActionBarWithNavController(this, navController);
 
             navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
                 @Override
@@ -44,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
                                                  @NonNull NavDestination destination,
                                                  @Nullable Bundle arguments) {
 
+                    // Tự set title (lấy từ android:label trong nav_graph)
+                    if (getSupportActionBar() != null && destination.getLabel() != null) {
+                        getSupportActionBar().setTitle(destination.getLabel());
+                    }
+
+                    // Logic ẩn/hiện Toolbar (giữ nguyên)
                     if (destination.getId() == R.id.loginFragment) {
                         appBarLayout.setVisibility(View.GONE);
                     } else {
@@ -56,7 +66,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        return (navController != null && navController.navigateUp())
-                || super.onSupportNavigateUp();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 }
