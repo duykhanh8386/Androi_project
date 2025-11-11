@@ -2,29 +2,30 @@ package com.example.studymate.ui.viewmodel.student;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+import com.example.studymate.data.model.User;
 import com.example.studymate.data.repository.ClassRepository;
 import com.example.studymate.data.repository.StudentRepository;
 
-public class JoinClassViewModel extends ViewModel {
+import java.util.List;
+
+public class StudentListViewModel extends ViewModel {
 
     private StudentRepository studentRepository;
 
-    public JoinClassViewModel() {
+    public StudentListViewModel() {
         this.studentRepository = new StudentRepository();
     }
 
-    public void performJoinClass(String classCode) {
-        studentRepository.joinClass(classCode);
+    // Fragment sẽ gọi hàm này
+    public void loadStudentList(int classId) {
+        studentRepository.fetchStudentList(classId);
     }
 
     // Getters để Fragment quan sát
-    public LiveData<String> getJoinSuccessEvent() {
-        return studentRepository.getJoinClassSuccess();
-    }
-    public LiveData<String> getJoinErrorEvent() {
-        return studentRepository.getJoinClassError();
+    public LiveData<List<User>> getStudentList() {
+        return studentRepository.getStudentListLiveData();
     }
     public LiveData<Boolean> getIsLoading() {
-        return studentRepository.getIsJoinClassLoading();
+        return studentRepository.getIsStudentListLoading();
     }
 }

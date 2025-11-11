@@ -1,4 +1,4 @@
-package com.example.studymate.ui.notify;
+package com.example.studymate.ui.classdetail.student;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,14 +16,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
-import com.example.studymate.ui.notify.adapter.NotificationListAdapter;
-import com.example.studymate.ui.viewmodel.NotificationListViewModel;
+import com.example.studymate.ui.classdetail.adapter.StudentListAdapter;
+import com.example.studymate.ui.viewmodel.student.StudentListViewModel;
 
-public class NotificationListFragment extends Fragment {
+public class StudentListFragment extends Fragment {
 
-    private NotificationListViewModel viewModel;
-    private RecyclerView rvNotifications;
-    private NotificationListAdapter adapter;
+    private StudentListViewModel viewModel;
+    private RecyclerView rvStudents;
+    private StudentListAdapter adapter;
     private ProgressBar progressBar;
 
     private int classId;
@@ -32,7 +32,7 @@ public class NotificationListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // LẤY ID LỚP HỌC (từ Bước 3 và Bước 9)
+        // ⭐️ LẤY ID LỚP HỌC (từ Bước 1 và Bước 9)
         if (getArguments() != null) {
             classId = getArguments().getInt("classId");
         } else {
@@ -44,8 +44,7 @@ public class NotificationListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Dùng layout đã sửa ở Bước 1
-        return inflater.inflate(R.layout.fragment_notification_list_student, container, false);
+        return inflater.inflate(R.layout.fragment_student_list, container, false);
     }
 
     @Override
@@ -54,22 +53,22 @@ public class NotificationListFragment extends Fragment {
 
         // Ánh xạ View
         progressBar = view.findViewById(R.id.progressBar);
-        rvNotifications = view.findViewById(R.id.recyclerViewNotifications);
+        rvStudents = view.findViewById(R.id.rvStudents);
 
         // Khởi tạo ViewModel
-        viewModel = new ViewModelProvider(this).get(NotificationListViewModel.class);
+        viewModel = new ViewModelProvider(this).get(StudentListViewModel.class);
 
         // Setup Adapter
-        adapter = new NotificationListAdapter();
-        rvNotifications.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvNotifications.setAdapter(adapter);
+        adapter = new StudentListAdapter();
+        rvStudents.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvStudents.setAdapter(adapter);
 
         // Quan sát
         setupObservers();
 
         // Tải dữ liệu
         if (classId > 0) {
-            viewModel.loadNotificationList(classId);
+            viewModel.loadStudentList(classId);
         }
     }
 
@@ -77,12 +76,12 @@ public class NotificationListFragment extends Fragment {
         // Quan sát Loading
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            rvNotifications.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+            rvStudents.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         });
 
         // Quan sát Dữ liệu
-        viewModel.getNotificationList().observe(getViewLifecycleOwner(), notifications -> {
-            adapter.submitList(notifications);
+        viewModel.getStudentList().observe(getViewLifecycleOwner(), students -> {
+            adapter.submitList(students);
         });
     }
 }

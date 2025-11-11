@@ -26,7 +26,7 @@ public class AuthRepository {
     private MutableLiveData<LoginResponse> loginResponseData = new MutableLiveData<>();
     private MutableLiveData<String> loginErrorData = new MutableLiveData<>();
 
-    private final boolean IS_MOCK_MODE = false;
+    private final boolean IS_MOCK_MODE = true;
 
     public AuthRepository() {
         this.apiService = RetrofitClient.getApiService();
@@ -110,27 +110,27 @@ public class AuthRepository {
             @Override
             public void run() {
                 // Kịch bản 1: Đăng nhập HỌC SINH thành công
-                if (username.equals("student") && role.equals("STUDENT")) {
+                if (username.equals("student") && role.equals("ROLE_STUDENT")) {
 
                     // Tạo một User mẫu
-                    User mockUser = new User(1, "Học Sinh A", "student@test.com", "STUDENT");
+                    User mockUser = new User(1, "Học Sinh A", "student@test.com", "ROLE_STUDENT");
                     // Tạo một Response mẫu
                     LoginResponse mockResponse = new LoginResponse("mock_token_student_123", mockUser);
 
                     loginResponseData.postValue(mockResponse);
 
                     // Kịch bản 2: Đăng nhập GIÁO VIÊN thành công
-                } else if (username.equals("teacher") && role.equals("TEACHER")) {
+                } else if (username.equals("teacher") && role.equals("ROLE_TEACHER")) {
 
-                    User mockUser = new User(10, "Giáo Viên B", "teacher@test.com", "TEACHER");
+                    User mockUser = new User(10, "Giáo Viên B", "teacher@test.com", "ROLE_TEACHER");
                     LoginResponse mockResponse = new LoginResponse("mock_token_teacher_456", mockUser);
 
                     loginResponseData.postValue(mockResponse);
 
                     // Kịch bản 3: Đăng nhập ADMIN thành công
-                } else if (username.equals("admin") && role.equals("ADMIN")) {
+                } else if (username.equals("admin") && role.equals("ROLE_ADMIN")) {
 
-                    User mockUser = new User(100, "Quản Trị Viên", "admin@test.com", "ADMIN");
+                    User mockUser = new User(100, "Quản Trị Viên", "admin@test.com", "ROLE_ADMIN");
                     LoginResponse mockResponse = new LoginResponse("mock_token_admin_789", mockUser);
 
                     loginResponseData.postValue(mockResponse);

@@ -85,4 +85,9 @@
     <string name="accept_all">Phê duyệt tất cả</string>
     <string name="join">Tham gia</string>
     <string name="enter_class_code">Nhập mã lớp</string>
+    <string name="notify">Thông báo lớp học</string>
+    <string name="response">Trả lời</string>
+    <string name="grade">Điểm số</string>
+    <string name="leave_class">Rời lớp học</string>
+    <string name="leave_class_confirm">Bạn có chắc chắn muốn rời lớp học này không ?</string>
 </resources>

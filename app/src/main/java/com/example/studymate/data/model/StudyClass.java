@@ -27,6 +27,10 @@ public class StudyClass {
     @SerializedName("teacher")
     private User teacher;
 
+    public StudyClass() {
+
+    }
+
     public StudyClass(int classId, String className, String classTime) {
         this.classId = classId;
         this.className = className;

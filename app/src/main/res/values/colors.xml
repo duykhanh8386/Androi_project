@@ -3,4 +3,6 @@
     <color name="sm_text_muted">#6B7280</color>
     <color name="btn_green">#6db33f</color>
     <color name="red">#EF0515</color>
+    <color name="gray_200">#DCD7D9</color>
+
 </resources>

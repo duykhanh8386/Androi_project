@@ -16,7 +16,7 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/textViewStudentName"
+            android:id="@+id/tvStudentName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Nguyễn Văn An"
@@ -31,9 +31,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Quiz:"
+            android:text="TX:"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewStudentName" />
+            app:layout_constraintTop_toBottomOf="@+id/tvStudentName" />
 
         <TextView
             android:id="@+id/textViewQuiz"

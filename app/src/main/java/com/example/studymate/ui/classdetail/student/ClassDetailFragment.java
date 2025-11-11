@@ -1,4 +1,4 @@
-package com.example.studymate.ui.classdetail;
+package com.example.studymate.ui.classdetail.student;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -26,9 +27,8 @@ import com.example.studymate.R;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.ui.viewmodel.ClassDetailViewModel;
 import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
-import com.example.studymate.ui.viewmodel.LoginViewModel;
 
-public class StudentClassDetailFragment extends Fragment {
+public class ClassDetailFragment extends Fragment {
 
     private ClassDetailViewModel viewModel;
 
@@ -38,6 +38,7 @@ public class StudentClassDetailFragment extends Fragment {
 
     private Button btnStudents, btnScore, btnNotify, btnFeedback, btnLeaveClass, btnGoBack;
     private ScrollView scrollContent;
+    private LinearLayout bottomButtons;
     private int classId;
 
     @Override
@@ -75,6 +76,8 @@ public class StudentClassDetailFragment extends Fragment {
         btnLeaveClass = view.findViewById(R.id.btnLeaveClass);
         btnGoBack = view.findViewById(R.id.btnGoBack);
 
+        bottomButtons = view.findViewById(R.id.bottomButtons);
+
         // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(ClassDetailViewModel.class);
 
@@ -95,6 +98,7 @@ public class StudentClassDetailFragment extends Fragment {
             public void onChanged(Boolean isLoading) {
                 progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 scrollContent.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+                bottomButtons.setVisibility(isLoading ? View.GONE : View.VISIBLE);
 
                 // ⭐️ Ẩn/hiện các nút dưới cùng (LinearLayout chứa btnGoBack)
                 View bottomButtons = getView().findViewById(R.id.bottomButtons);
@@ -114,6 +118,31 @@ public class StudentClassDetailFragment extends Fragment {
                 }
             }
         });
+
+        // ⭐️ THÊM MỚI: Quan sát trạng thái RỜI LỚP
+        viewModel.getIsLeaveLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            // Vô hiệu hóa các nút khi đang xử lý
+            btnLeaveClass.setEnabled(!isLoading);
+            btnGoBack.setEnabled(!isLoading);
+            if (isLoading) {
+                btnLeaveClass.setText("Đang rời...");
+            } else {
+                btnLeaveClass.setText(R.string.btn_out_class); // Reset text
+            }
+        });
+
+        // ⭐️ THÊM MỚI: Quan sát RỜI LỚP THÀNH CÔNG
+        viewModel.getLeaveSuccess().observe(getViewLifecycleOwner(), successMessage -> {
+            Toast.makeText(getContext(), successMessage, Toast.LENGTH_LONG).show();
+            // Rời lớp thành công, quay về màn hình Home
+            // (Pop cho đến Home, KHÔNG bao gồm Home)
+            NavHostFragment.findNavController(this).popBackStack(R.id.homeStudentFragment, false);
+        });
+
+        // ⭐️ THÊM MỚI: Quan sát RỜI LỚP THẤT BẠI
+        viewModel.getLeaveError().observe(getViewLifecycleOwner(), errorMessage -> {
+            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void setupClickListeners() {
@@ -121,36 +150,43 @@ public class StudentClassDetailFragment extends Fragment {
         // Nút Xem Học sinh
         btnStudents.setOnClickListener(v -> {
             // (Dùng ID action từ nav_graph của bạn)
+            Bundle bundle = new Bundle();
+            bundle.putInt("classId", classId);
+
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_detail_to_students);
+                    .navigate(R.id.action_detail_to_students, bundle);
         });
 
         // Nút Xem Thông báo
         btnNotify.setOnClickListener(v -> {
             // (Dùng ID action từ nav_graph của bạn)
+            Bundle bundle = new Bundle();
+            bundle.putInt("classId", classId);
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_detail_to_notifications);
+                    .navigate(R.id.action_detail_to_notifications, bundle);
         });
 
         // Nút Hỏi đáp (Feedback)
         btnFeedback.setOnClickListener(v -> {
             // (Dùng ID action từ nav_graph của bạn)
+            Bundle bundle = new Bundle();
+            bundle.putInt("classId", classId);
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_detail_to_feedback);
+                    .navigate(R.id.action_detail_to_feedback, bundle);
         });
 
         // Nút Xem Điểm
         btnScore.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("classId", classId);
              NavHostFragment.findNavController(this)
-                     .navigate(R.id.action_detail_to_grades);
+                     .navigate(R.id.action_detail_to_grades, bundle);
         });
 
         // Nút Rời lớp
         btnLeaveClass.setOnClickListener(v -> {
-            // TODO: Hiển thị dialog xác nhận, sau đó gọi ViewModel
-            // new AlertDialog.Builder(getContext())...
-            // viewModel.performLeaveClass(classId);
-            Toast.makeText(getContext(), "Chức năng Rời lớp (chưa làm)", Toast.LENGTH_SHORT).show();
+            // Hiển thị hộp thoại xác nhận
+            showLeaveClassDialog();
         });
 
         btnGoBack.setOnClickListener(v -> {
@@ -159,6 +195,18 @@ public class StudentClassDetailFragment extends Fragment {
         });
     }
 
+    // ⭐️ THÊM HÀM MỚI: Hiển thị hộp thoại (dựa trên Use Case 2.4.13)
+    private void showLeaveClassDialog() {
+        new AlertDialog.Builder(requireContext()) // (Dùng requireContext() cho an toàn)
+                .setTitle(R.string.leave_class)
+                .setMessage(R.string.leave_class_confirm) // (Bạn cần thêm string này vào strings.xml)
+                .setPositiveButton("Có", (dialog, which) -> {
+                    // Người dùng bấm "Có" -> Gọi ViewModel
+                    viewModel.performLeaveClass(classId);
+                })
+                .setNegativeButton("Không", null) // Bấm "Không" -> không làm gì
+                .show();
+    }
 
     // (onCreateOptionsMenu, onOptionsItemSelected, showLogoutDialog không đổi)
     @Override

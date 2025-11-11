@@ -1,32 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:context=".ui.grade.student.StudentGradeFragment">
 
     <ScrollView
         android:id="@+id/scrollContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomButton"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/txtClassTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lớp học 1"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="24dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -42,13 +36,14 @@
                 android:background="@android:color/darker_gray"
                 android:layout_marginBottom="12dp"/>
 
-            <!-- Thông tin lớp học -->
+            <!-- ⭐️ THÔNG TIN LỚP HỌC (ĐÃ KHÔI PHỤC ĐẦY ĐỦ) ⭐️ -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginBottom="8dp">
 
+                <!-- Tên lớp -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -62,13 +57,15 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvClassNameDetail"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Lớp học Android"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        tools:text="Lớp học Android"/>
                 </LinearLayout>
 
+                <!-- Mã lớp (⭐️ ĐÃ KHÔI PHỤC) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -82,13 +79,15 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvClassIdValue"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="AND101"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        tools:text="AND101"/>
                 </LinearLayout>
 
+                <!-- Giáo viên -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -102,13 +101,15 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvTeacherNameDetail"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Nguyễn Văn A"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        tools:text="Nguyễn Văn A"/>
                 </LinearLayout>
 
+                <!-- Sĩ số (⭐️ ĐÃ KHÔI PHỤC) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -122,13 +123,15 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvStudentCount"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="35 học sinh"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        tools:text="35 học sinh"/>
                 </LinearLayout>
 
+                <!-- Thời gian (⭐️ ĐÃ KHÔI PHỤC) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -142,11 +145,12 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvClassTimeValue"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Thứ 2, 4, 6 (7:00 - 9:00)"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        tools:text="Thứ 2, 4, 6 (7:00 - 9:00)"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -165,77 +169,66 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Điểm thường xuyên -->
+            <!-- Điểm thường xuyên (Đã có ID) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/grade_tx"
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvGradeTxValue"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="8"
-                    android:textSize="14sp"
-                    android:layout_marginEnd="32dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="8"
-                    android:textSize="14sp"/>
-            </LinearLayout>
+                android:text="-"
+                android:textSize="14sp"
+                android:layout_marginBottom="16dp"
+                tools:text="8.0   8.5"/>
 
-            <!-- Điểm giữa kỳ -->
+            <!-- Điểm giữa kỳ (Đã có ID) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/grade_gk"
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp"/>
-
             <TextView
+                android:id="@+id/tvGradeGkValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="9"
+                android:text="-"
                 android:textSize="14sp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp"
+                tools:text="9.0"/>
 
-            <!-- Điểm cuối kỳ -->
+            <!-- Điểm cuối kỳ (Đã có ID) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/grade_ck"
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp"/>
-
             <TextView
+                android:id="@+id/tvGradeCkValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10"
+                android:text="-"
                 android:textSize="14sp"
-                android:layout_marginBottom="32dp"/>
+                android:layout_marginBottom="32dp"
+                tools:text="10.0"/>
 
-            <!-- Điểm tổng kết -->
+            <!-- Điểm tổng kết (Đã có ID) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Điểm tổng kết"
                 android:textSize="14sp"
                 android:layout_marginBottom="12dp"/>
-
-            <!-- Bảng điểm tổng kết -->
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:stretchColumns="*"
                 android:layout_marginBottom="32dp">
-
                 <TableRow
                     android:background="@android:color/darker_gray"
                     android:padding="4dp">
@@ -258,32 +251,32 @@
                         android:padding="4dp"
                         android:gravity="center"/>
                 </TableRow>
-
                 <TableRow
                     android:background="@android:color/white"
                     android:padding="8dp">
                     <TextView
+                        android:id="@+id/tvAverageScore"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:text="8.6"
+                        android:text="-"
                         android:textSize="14sp"
                         android:padding="4dp"
                         android:gravity="center"/>
                     <TextView
+                        android:id="@+id/tvRankValue"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:text="Giỏi"
+                        android:text="-"
                         android:textSize="14sp"
                         android:padding="4dp"
                         android:gravity="center"/>
                 </TableRow>
-
             </TableLayout>
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Button -->
+    <!-- Bottom Button (Giữ nguyên) -->
     <LinearLayout
         android:id="@+id/bottomButton"
         android:layout_width="match_parent"
@@ -293,7 +286,9 @@
         android:padding="16dp"
         android:gravity="center"
         android:background="@android:color/white"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        android:visibility="gone"
+        tools:visibility="visible">
         <Button
             android:id="@+id/btnBack"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -306,4 +301,12 @@
             app:cornerRadius="4dp"/>
     </LinearLayout>
 
+    <!-- ProgressBar (Đã có) -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        tools:visibility="visible" />
 </RelativeLayout>
