@@ -1,5 +1,6 @@
 package com.example.studymate.ui.studyclass.adapter;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,19 +62,20 @@ public class ClassListAdapter extends ListAdapter<StudyClass, ClassListAdapter.C
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Lấy vị trí của item được bấm
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
 
-                        // Lấy đối tượng StudyClass tại vị trí đó
                         StudyClass clickedClass = getItem(position);
+                        int classId = clickedClass.getClassId();
 
-                        // ⭐️ BƯỚC 3: ĐIỀU HƯỚNG TỚI MÀN HÌNH CHI TIẾT
-                        // (Giả sử bạn đã tạo một action trong nav_graph
-                        //  để đi từ HomeStudentFragment -> ClassDetailFragment)
+                        // 1. Tạo một Bundle để chứa classId
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("classId", classId); // "classId" phải khớp với tên 'argument' trong nav_graph
 
-                        // Nếu chưa có action, bạn có thể gọi ID của hành động:
-                         Navigation.findNavController(itemView).navigate(R.id.action_student_home_to_classDetail);
+                        // 2. Tìm NavController và điều hướng
+                        // Dùng action ID chúng ta đã tạo ở Bước 1
+                        Navigation.findNavController(itemView)
+                                .navigate(R.id.action_student_home_to_classDetail, bundle);
                     }
                 }
             });
