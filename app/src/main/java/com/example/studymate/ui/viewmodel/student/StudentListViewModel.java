@@ -3,6 +3,7 @@ package com.example.studymate.ui.viewmodel.student;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.studymate.data.model.User;
+import com.example.studymate.data.model.response.StudentResponse;
 import com.example.studymate.data.repository.ClassRepository;
 import com.example.studymate.data.repository.StudentRepository;
 
@@ -22,7 +23,7 @@ public class StudentListViewModel extends ViewModel {
     }
 
     // Getters để Fragment quan sát
-    public LiveData<List<User>> getStudentList() {
+    public LiveData<List<StudentResponse>> getStudentList() {
         return studentRepository.getStudentListLiveData();
     }
     public LiveData<Boolean> getIsLoading() {

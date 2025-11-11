@@ -10,6 +10,7 @@ import com.example.studymate.data.model.Grade;
 import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.JoinClassRequest;
 import com.example.studymate.data.model.response.MessageResponse;
+import com.example.studymate.data.model.response.StudentResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 
@@ -23,7 +24,7 @@ import retrofit2.Response;
 
 public class StudentRepository {
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = true; // ⭐️ Vẫn dùng Mock
+    private final boolean IS_MOCK_MODE = false; // ⭐️ Vẫn dùng Mock
 
 
     // LiveData cho sự kiện "Join Class"
@@ -32,7 +33,7 @@ public class StudentRepository {
     private MutableLiveData<Boolean> isJoinClassLoading = new MutableLiveData<>();
 
     // LiveData cho danh sách học sinh
-    private MutableLiveData<List<User>> studentListLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<StudentResponse>> studentListLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isStudentListLoading = new MutableLiveData<>();
     private MutableLiveData<String> studentListError = new MutableLiveData<>();
 
@@ -117,23 +118,27 @@ public class StudentRepository {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             ArrayList<User> mockStudents = new ArrayList<>();
             // (Dùng constructor User(id, fullName, email, role) bạn đã có)
-            mockStudents.add(new User(2, "Nguyễn Văn A", "nva@test.com", "STUDENT"));
-            mockStudents.add(new User(3, "Trần Thị B", "ttb@test.com", "STUDENT"));
-            mockStudents.add(new User(4, "Lê Văn C", "lvc@test.com", "STUDENT"));
-            mockStudents.add(new User(5, "Lê Văn D", "lvc@test.com", "STUDENT"));
-            mockStudents.add(new User(6, "Trần Văn F", "lvc@test.com", "STUDENT"));
-            mockStudents.add(new User(7, "Lê Văn C", "lvc@test.com", "STUDENT"));
-            mockStudents.add(new User(8, "Lê Văn C", "lvc@test.com", "STUDENT"));
-            mockStudents.add(new User(9, "Lê Văn C", "lvc@test.com", "STUDENT"));
+            Grade grade = new Grade(1, "TX", 8.0);
+            User user = new User(3, "Trần Thị B", "ttb@test.com", "STUDENT");
+            List<StudentResponse> studentResponses = List.of(new StudentResponse(user, List.of(grade)));
+
+//            mockStudents.add(new User(2, "Nguyễn Văn A", "nva@test.com", "STUDENT"));
+//            mockStudents.add(new User(3, "Trần Thị B", "ttb@test.com", "STUDENT"));
+//            mockStudents.add(new User(4, "Lê Văn C", "lvc@test.com", "STUDENT"));
+//            mockStudents.add(new User(5, "Lê Văn D", "lvc@test.com", "STUDENT"));
+//            mockStudents.add(new User(6, "Trần Văn F", "lvc@test.com", "STUDENT"));
+//            mockStudents.add(new User(7, "Lê Văn C", "lvc@test.com", "STUDENT"));
+//            mockStudents.add(new User(8, "Lê Văn C", "lvc@test.com", "STUDENT"));
+//            mockStudents.add(new User(9, "Lê Văn C", "lvc@test.com", "STUDENT"));
             isStudentListLoading.postValue(false);
-            studentListLiveData.postValue(mockStudents);
+            studentListLiveData.postValue(studentResponses);
         }, 1000); // Trì hoãn 1 giây
     }
 
     private void runRealApiLogicForStudentList(int classId) {
-        apiService.getStudentsInClass(classId).enqueue(new Callback<List<User>>() {
+        apiService.getStudentsInClass(classId).enqueue(new Callback<List<StudentResponse>>() {
             @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+            public void onResponse(Call<List<StudentResponse>> call, Response<List<StudentResponse>> response) {
                 isStudentListLoading.postValue(false);
                 if (response.isSuccessful()) {
                     studentListLiveData.postValue(response.body());
@@ -142,7 +147,7 @@ public class StudentRepository {
                 }
             }
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
+            public void onFailure(Call<List<StudentResponse>> call, Throwable t) {
                 isStudentListLoading.postValue(false);
                 studentListError.postValue("Lỗi mạng: " + t.getMessage());
             }
@@ -196,7 +201,7 @@ public class StudentRepository {
         return isJoinClassLoading;
     }
 
-    public LiveData<List<User>> getStudentListLiveData() {
+    public LiveData<List<StudentResponse>> getStudentListLiveData() {
         return studentListLiveData;
     }
     public LiveData<Boolean> getIsStudentListLoading() {

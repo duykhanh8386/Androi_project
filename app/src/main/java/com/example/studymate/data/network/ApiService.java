@@ -13,6 +13,7 @@ import com.example.studymate.data.model.request.LoginRequest;
 import com.example.studymate.data.model.request.UpdateStatusRequest;
 import com.example.studymate.data.model.response.LoginResponse;
 import com.example.studymate.data.model.response.MessageResponse;
+import com.example.studymate.data.model.response.StudentResponse;
 
 
 import java.util.List;
@@ -45,7 +46,7 @@ public interface ApiService {
     Call<StudyClass> getClassDetails(@Path("id") int classId);
 
     @GET("api/user/classes/{id}/students")
-    Call<List<User>> getStudentsInClass(@Path("id") int classId);
+    Call<List<StudentResponse>> getStudentsInClass(@Path("id") int classId);
 
     @GET("api/student/classes/{id}/notifications")
     Call<List<Notification>> getNotifications(@Path("id") int classId);

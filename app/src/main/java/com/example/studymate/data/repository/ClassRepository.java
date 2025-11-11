@@ -24,7 +24,7 @@ import retrofit2.Response;
 public class ClassRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = true; // ⭐️ Vẫn dùng Mock
+    private final boolean IS_MOCK_MODE = false; // ⭐️ Vẫn dùng Mock
 
     // LiveData cho danh sách lớp
     private MutableLiveData<List<StudyClass>> classListLiveData = new MutableLiveData<>();
@@ -162,7 +162,11 @@ public class ClassRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     leaveSuccessEvent.postValue(response.body().getMessage());
                 } else {
-                    leaveErrorEvent.postValue("Lỗi: Không thể rời lớp.");
+                    try {
+                        leaveErrorEvent.postValue(new com.google.gson.Gson().fromJson(response.errorBody().string(), MessageResponse.class).getMessage());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
