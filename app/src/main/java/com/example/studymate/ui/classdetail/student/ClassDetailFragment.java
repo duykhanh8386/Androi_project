@@ -36,7 +36,7 @@ public class ClassDetailFragment extends Fragment {
     private TextView tvClassNameDetail, tvTeacherNameDetail;
     private ProgressBar progressBar;
 
-    private Button btnStudents, btnScore, btnNotify, btnFeedback, btnDeleteClass, btnUpdateClass, btnAccept;;
+    private Button btnStudents, btnScore, btnNotify, btnFeedback, btnLeaveClass, btnGoBack;
     private ScrollView scrollContent;
     private LinearLayout bottomButtons;
     private int classId;
@@ -73,9 +73,8 @@ public class ClassDetailFragment extends Fragment {
         btnScore = view.findViewById(R.id.btnScore);
         btnNotify = view.findViewById(R.id.btnNotify);
         btnFeedback = view.findViewById(R.id.btnFeedback);
-        btnDeleteClass = view.findViewById(R.id.btnDeleteClass);
-        btnUpdateClass = view.findViewById(R.id.btnUpdateClass);
-        btnAccept = view.findViewById(R.id.btnAccept);
+        btnLeaveClass = view.findViewById(R.id.btnLeaveClass);
+        btnGoBack = view.findViewById(R.id.btnGoBack);
 
         bottomButtons = view.findViewById(R.id.bottomButtons);
 
@@ -119,6 +118,31 @@ public class ClassDetailFragment extends Fragment {
                 }
             }
         });
+
+        // ⭐️ THÊM MỚI: Quan sát trạng thái RỜI LỚP
+        viewModel.getIsLeaveLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            // Vô hiệu hóa các nút khi đang xử lý
+            btnLeaveClass.setEnabled(!isLoading);
+            btnGoBack.setEnabled(!isLoading);
+            if (isLoading) {
+                btnLeaveClass.setText("Đang rời...");
+            } else {
+                btnLeaveClass.setText(R.string.btn_out_class); // Reset text
+            }
+        });
+
+        // ⭐️ THÊM MỚI: Quan sát RỜI LỚP THÀNH CÔNG
+        viewModel.getLeaveSuccess().observe(getViewLifecycleOwner(), successMessage -> {
+            Toast.makeText(getContext(), successMessage, Toast.LENGTH_LONG).show();
+            // Rời lớp thành công, quay về màn hình Home
+            // (Pop cho đến Home, KHÔNG bao gồm Home)
+            NavHostFragment.findNavController(this).popBackStack(R.id.homeStudentFragment, false);
+        });
+
+        // ⭐️ THÊM MỚI: Quan sát RỜI LỚP THẤT BẠI
+        viewModel.getLeaveError().observe(getViewLifecycleOwner(), errorMessage -> {
+            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void setupClickListeners() {
@@ -159,15 +183,15 @@ public class ClassDetailFragment extends Fragment {
                      .navigate(R.id.action_detail_to_grades, bundle);
         });
 
-        //Nút phê duyệt học sinh
-        btnAccept.setOnClickListener(v -> {
-            // 1. Tạo Bundle
-            Bundle bundle = new Bundle();
-            bundle.putInt("classId", classId);
+        // Nút Rời lớp
+        btnLeaveClass.setOnClickListener(v -> {
+            // Hiển thị hộp thoại xác nhận
+            showLeaveClassDialog();
+        });
 
-            // 2. Điều hướng (dùng ID action từ nav_graph)
-            NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_detail_to_approvalList, bundle);
+        btnGoBack.setOnClickListener(v -> {
+            // Đơn giản là quay lại màn hình trước đó
+            NavHostFragment.findNavController(this).popBackStack();
         });
     }
 

@@ -158,6 +158,16 @@ public class ClassDetailFragment extends Fragment {
                     .navigate(R.id.action_detail_to_gradeEntry, bundle);
         });
 
+        btnAccept.setOnClickListener(v -> {
+            // 1. Tạo Bundle
+            Bundle bundle = new Bundle();
+            bundle.putInt("classId", classId);
+
+            // 2. Điều hướng (dùng ID action từ nav_graph)
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_detail_to_approvalList, bundle);
+        });
+
     }
 
     // (onCreateOptionsMenu, onOptionsItemSelected, showLogoutDialog không đổi)
