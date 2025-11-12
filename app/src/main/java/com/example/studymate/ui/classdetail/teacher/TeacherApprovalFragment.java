@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.User;
-import com.example.studymate.ui.classdetail.teacher.adapter.TeacherApprovalAdapter;
+import com.example.studymate.ui.classdetail.adapter.TeacherApprovalAdapter;
 import com.example.studymate.ui.viewmodel.teacher.TeacherApprovalViewModel;
 
 public class TeacherApprovalFragment extends Fragment implements TeacherApprovalAdapter.OnApprovalClickListener {

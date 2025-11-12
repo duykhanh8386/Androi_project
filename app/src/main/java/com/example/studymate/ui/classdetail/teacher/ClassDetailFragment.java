@@ -25,6 +25,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudyClass;
+import com.example.studymate.data.model.response.ClassDetailResponse;
 import com.example.studymate.ui.viewmodel.ClassDetailViewModel;
 import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
 
@@ -108,9 +109,9 @@ public class ClassDetailFragment extends Fragment {
         });
 
         // Quan sát dữ liệu chi tiết
-        viewModel.getClassDetail().observe(getViewLifecycleOwner(), new Observer<StudyClass>() {
+        viewModel.getClassDetail().observe(getViewLifecycleOwner(), new Observer<ClassDetailResponse>() {
             @Override
-            public void onChanged(StudyClass studyClass) {
+            public void onChanged(ClassDetailResponse studyClass) {
                 if (studyClass != null) {
                     tvClassNameDetail.setText(studyClass.getClassName());
                     tvTeacherNameDetail.setText(studyClass.getClassTime());

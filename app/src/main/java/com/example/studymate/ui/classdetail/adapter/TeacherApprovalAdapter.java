@@ -1,4 +1,4 @@
-package com.example.studymate.ui.classdetail.teacher.adapter;
+package com.example.studymate.ui.classdetail.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

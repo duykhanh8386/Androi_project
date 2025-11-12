@@ -9,11 +9,13 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.JoinClassRequest;
+import com.example.studymate.data.model.response.ClassDetailResponse;
 import com.example.studymate.data.model.response.MessageResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ import retrofit2.Response;
 public class ClassRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = true; // ⭐️ Vẫn dùng Mock
+    private final boolean IS_MOCK_MODE = false; // ⭐️ Vẫn dùng Mock
 
     // LiveData cho danh sách lớp
     private MutableLiveData<List<StudyClass>> classListLiveData = new MutableLiveData<>();
@@ -32,7 +34,7 @@ public class ClassRepository {
     private MutableLiveData<String> classListError = new MutableLiveData<>();
 
     // LiveData cho chi tiết lớp học
-    private MutableLiveData<StudyClass> classDetailLiveData = new MutableLiveData<>();
+    private MutableLiveData<ClassDetailResponse> classDetailLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isDetailLoading = new MutableLiveData<>();
     private MutableLiveData<String> classDetailError = new MutableLiveData<>();
 
@@ -113,9 +115,9 @@ public class ClassRepository {
     }
 
     private void runRealApiLogicForDetail(int classId) {
-        apiService.getClassDetails(classId).enqueue(new Callback<StudyClass>() {
+        apiService.getClassDetails(classId).enqueue(new Callback<ClassDetailResponse>() {
             @Override
-            public void onResponse(Call<StudyClass> call, Response<StudyClass> response) {
+            public void onResponse(Call<ClassDetailResponse> call, Response<ClassDetailResponse> response) {
                 isDetailLoading.postValue(false);
                 if (response.isSuccessful()) {
                     classDetailLiveData.postValue(response.body());
@@ -124,7 +126,7 @@ public class ClassRepository {
                 }
             }
             @Override
-            public void onFailure(Call<StudyClass> call, Throwable t) {
+            public void onFailure(Call<ClassDetailResponse> call, Throwable t) {
                 isDetailLoading.postValue(false);
                 classDetailError.postValue("Lỗi mạng: " + t.getMessage());
             }
@@ -136,8 +138,9 @@ public class ClassRepository {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             // Giả lập tìm thấy lớp học dựa trên ID
             // (id, className, classTime/teacherName)
-            StudyClass mockClass = new StudyClass(classId, "Chi tiết lớp " + classId, "GV: Nguyễn Văn Z");
-
+//            StudyClass mockClass = new StudyClass(classId, "Chi tiết lớp " + classId, "GV: Nguyễn Văn Z");
+            ClassDetailResponse mockClass = new ClassDetailResponse(3, "Lớp 10A1", "L10A1",
+                    "Thứ 2 - 7h30", null, null, "Teacher User", 35);
             isDetailLoading.postValue(false);
             classDetailLiveData.postValue(mockClass);
         }, 1000);
@@ -191,7 +194,7 @@ public class ClassRepository {
         return classListError;
     }
 
-    public LiveData<StudyClass> getClassDetailLiveData() {
+    public LiveData<ClassDetailResponse> getClassDetailLiveData() {
         return classDetailLiveData;
     }
     public LiveData<Boolean> getIsDetailLoading() {
