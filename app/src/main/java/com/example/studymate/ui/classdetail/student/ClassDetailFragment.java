@@ -128,6 +128,16 @@ public class ClassDetailFragment extends Fragment {
             }
         });
 
+        // Quan sát lỗi
+        viewModel.getError().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String error) {
+                if (error != null) {
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + error, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         // ⭐️ THÊM MỚI: Quan sát trạng thái RỜI LỚP
         viewModel.getIsLeaveLoading().observe(getViewLifecycleOwner(), isLoading -> {
             // Vô hiệu hóa các nút khi đang xử lý

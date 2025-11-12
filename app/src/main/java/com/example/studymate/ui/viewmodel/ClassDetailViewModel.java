@@ -42,6 +42,10 @@ public class ClassDetailViewModel extends ViewModel {
         return isLoading;
     }
 
+    public LiveData<String> getError() {
+        return error;
+    }
+
     public void performLeaveClass(int classId) {
         classRepository.leaveClass(classId);
     }
