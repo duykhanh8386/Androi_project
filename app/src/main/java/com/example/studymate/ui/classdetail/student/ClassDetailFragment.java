@@ -122,8 +122,6 @@ public class ClassDetailFragment extends Fragment {
                     tvClassId.setText(studyClass.getClassJoinCode());
                     tvStudentCount.setText(String.valueOf(studyClass.getStudentCount()));
                     tvClassTime.setText(studyClass.getClassTime());
-                }else {
-                    Toast.makeText(getContext(), "Lỗi: Không tìm thấy lớp học", Toast.LENGTH_SHORT).show();
                 }
             }
         });

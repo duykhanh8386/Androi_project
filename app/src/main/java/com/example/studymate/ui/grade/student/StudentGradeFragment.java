@@ -98,7 +98,7 @@ public class StudentGradeFragment extends Fragment {
 
         // Quan sát Dữ liệu (⭐️ Hơi phức tạp)
         viewModel.getGradeList().observe(getViewLifecycleOwner(), gradeList -> {
-            if (gradeList != null) {
+            if (gradeList != null || !gradeList.isEmpty()) {
                 // Xử lý logic để hiển thị điểm
                 updateGradeUI(gradeList);
             }
@@ -118,14 +118,14 @@ public class StudentGradeFragment extends Fragment {
         for (Grade g : gradeList) {
             if (g.getGradeType().equalsIgnoreCase("TX")) {
                 txScores.append(g.getScore()).append("   ");
-                totalTx += g.getScore();
+                totalTx += Double.parseDouble(g.getScore());
                 countTx++;
             } else if (g.getGradeType().equalsIgnoreCase("GK")) {
                 gkScore = String.valueOf(g.getScore());
-                gk = g.getScore();
+                gk = Double.parseDouble(g.getScore());
             } else if (g.getGradeType().equalsIgnoreCase("CK")) {
                 ckScore = String.valueOf(g.getScore());
-                ck = g.getScore();
+                ck = Double.parseDouble(g.getScore());
             }
         }
 

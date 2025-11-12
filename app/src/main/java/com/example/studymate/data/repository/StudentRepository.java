@@ -118,7 +118,7 @@ public class StudentRepository {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             ArrayList<User> mockStudents = new ArrayList<>();
             // (Dùng constructor User(id, fullName, email, role) bạn đã có)
-            Grade grade = new Grade(1, "TX", 8.0);
+            Grade grade = new Grade(1, "TX", "8.0");
             User user = new User(3, "Trần Thị B", "ttb@test.com", "STUDENT");
             List<StudentResponse> studentResponses = List.of(new StudentResponse(user, List.of(grade)));
 
@@ -160,10 +160,10 @@ public class StudentRepository {
             ArrayList<Grade> mockList = new ArrayList<>();
             // (Dựa trên Grade POJO)
             // (Giả sử constructor là (id, type, score))
-            mockList.add(new Grade(1, "TX", 8.0));
-            mockList.add(new Grade(2, "TX", 8.5));
-            mockList.add(new Grade(3, "GK", 9.0));
-            mockList.add(new Grade(4, "CK", 10.0));
+            mockList.add(new Grade(1, "TX", "8.0"));
+            mockList.add(new Grade(2, "TX", "8.5"));
+            mockList.add(new Grade(3, "GK", "9.0"));
+            mockList.add(new Grade(4, "CK", "10.0"));
 
             isLoading.postValue(false);
             gradeListLiveData.postValue(mockList);
