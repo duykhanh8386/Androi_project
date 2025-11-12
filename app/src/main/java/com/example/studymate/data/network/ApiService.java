@@ -65,11 +65,11 @@ public interface ApiService {
     @GET("api/user/classes/{id}/notifications")
     Call<List<Notification>> getNotifications(@Path("id") int classId);
 
-    @GET("api/student/classes/{classId}/notifications")
+    @GET("api/user/classes/notifications/{id}")
     Call<Notification> getNotificationDetail(@Path("id") int notificationId);
 
     @GET("api/student/classes/{classId}/grades")
-    Call<List<Grade>> getStudentGrades(@Path("id") int classId);
+    Call<List<Grade>> getStudentGrades(@Path("classId") int classId);
 
     @DELETE("api/student/classes/{id}")
     Call<MessageResponse> leaveClass(@Path("id") int classId);

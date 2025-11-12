@@ -7,21 +7,17 @@ public class ClassDetailResponse {
     private String className;
     private String classJoinCode;
     private String classTime;
-    private LocalDate createdAt;
-    private LocalDate modifiedAt;
     private String teacherName;
     private int studentCount;
 
     public ClassDetailResponse() {
     }
 
-    public ClassDetailResponse(int classId, String className, String classJoinCode, String classTime, LocalDate createdAt, LocalDate modifiedAt, String teacherName, int studentCount) {
+    public ClassDetailResponse(int classId, String className, String classJoinCode, String classTime, String teacherName, int studentCount) {
         this.classId = classId;
         this.className = className;
         this.classJoinCode = classJoinCode;
         this.classTime = classTime;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
         this.teacherName = teacherName;
         this.studentCount = studentCount;
     }
@@ -56,22 +52,6 @@ public class ClassDetailResponse {
 
     public void setClassTime(String classTime) {
         this.classTime = classTime;
-    }
-
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDate getModifiedAt() {
-        return modifiedAt;
-    }
-
-    public void setModifiedAt(LocalDate modifiedAt) {
-        this.modifiedAt = modifiedAt;
     }
 
     public String getTeacherName() {

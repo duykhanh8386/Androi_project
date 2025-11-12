@@ -2,7 +2,8 @@ package com.example.studymate.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Date;
+import java.math.BigDecimal;
+// ⭐️ XÓA: import java.util.Date;
 
 public class Grade {
 
@@ -13,22 +14,43 @@ public class Grade {
     private String gradeType;
 
     @SerializedName("score")
-    private double score;
+    private String score;
 
-    @SerializedName("modified_at")
-    private Date modifiedAt;
+    // ⭐️ SỬA LẠI:
+    // Khớp với JSON ("modifiedAt" là một String)
+    @SerializedName("modifiedAt")
+    private String modifiedAt;
 
-    @SerializedName("student")
-    private User student;
+    // ⭐️ THÊM VÀO:
+    // Khớp với JSON (studentId là một số, có thể null)
+    @SerializedName("studentId")
+    private Integer studentId; // Dùng Integer (object) để chấp nhận null
 
-    @SerializedName("class")
-    private StudyClass studyClass;
+    // ⭐️ THÊM VÀO:
+    // Khớp với JSON (classId là một số, có thể null)
+    @SerializedName("classId")
+    private Integer classId;
 
-    public Grade(int gradeId, String gradeType, double score) {
+    // (Constructor cho Mock (giữ nguyên))
+    public Grade(int gradeId, String gradeType, String score) {
         this.gradeId = gradeId;
         this.score = score;
         this.gradeType = gradeType;
     }
+
+    public Grade(int gradeId, String gradeType, String score, String modifiedAt, Integer studentId, Integer classId) {
+        this.gradeId = gradeId;
+        this.gradeType = gradeType;
+        this.score = score;
+        this.modifiedAt = modifiedAt;
+        this.studentId = studentId;
+        this.classId = classId;
+    }
+
+    public Grade() {
+    }
+
+    // --- Getters và Setters ---
 
     public int getGradeId() {
         return gradeId;
@@ -38,11 +60,11 @@ public class Grade {
         this.gradeId = gradeId;
     }
 
-    public double getScore() {
+    public String getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(String score) {
         this.score = score;
     }
 
@@ -54,27 +76,28 @@ public class Grade {
         this.gradeType = gradeType;
     }
 
-    public Date getModifiedAt() {
+    // ⭐️ THÊM GETTERS/SETTERS CHO CÁC TRƯỜNG MỚI
+    public String getModifiedAt() {
         return modifiedAt;
     }
 
-    public void setModifiedAt(Date modifiedAt) {
+    public void setModifiedAt(String modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
 
-    public User getStudent() {
-        return student;
+    public Integer getStudentId() {
+        return studentId;
     }
 
-    public void setStudent(User student) {
-        this.student = student;
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
     }
 
-    public StudyClass getStudyClass() {
-        return studyClass;
+    public Integer getClassId() {
+        return classId;
     }
 
-    public void setStudyClass(StudyClass studyClass) {
-        this.studyClass = studyClass;
+    public void setClassId(Integer classId) {
+        this.classId = classId;
     }
 }

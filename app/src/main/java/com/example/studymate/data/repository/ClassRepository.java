@@ -140,7 +140,7 @@ public class ClassRepository {
             // (id, className, classTime/teacherName)
 //            StudyClass mockClass = new StudyClass(classId, "Chi tiết lớp " + classId, "GV: Nguyễn Văn Z");
             ClassDetailResponse mockClass = new ClassDetailResponse(3, "Lớp 10A1", "L10A1",
-                    "Thứ 2 - 7h30", null, null, "Teacher User", 35);
+                    "Thứ 2 - 7h30", "Teacher User", 35);
             isDetailLoading.postValue(false);
             classDetailLiveData.postValue(mockClass);
         }, 1000);
