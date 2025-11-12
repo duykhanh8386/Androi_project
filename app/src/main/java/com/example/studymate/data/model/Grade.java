@@ -15,14 +15,14 @@ public class Grade {
     @SerializedName("score")
     private double score;
 
-    @SerializedName("modified_at")
-    private Date modifiedAt;
-
-    @SerializedName("student")
-    private User student;
-
-    @SerializedName("class")
-    private StudyClass studyClass;
+//    @SerializedName("modified_at")
+//    private Date modifiedAt;
+//
+//    @SerializedName("student")
+//    private User student;
+//
+//    @SerializedName("class")
+//    private StudyClass studyClass;
 
     public Grade(int gradeId, String gradeType, double score) {
         this.gradeId = gradeId;
@@ -54,27 +54,27 @@ public class Grade {
         this.gradeType = gradeType;
     }
 
-    public Date getModifiedAt() {
-        return modifiedAt;
-    }
-
-    public void setModifiedAt(Date modifiedAt) {
-        this.modifiedAt = modifiedAt;
-    }
-
-    public User getStudent() {
-        return student;
-    }
-
-    public void setStudent(User student) {
-        this.student = student;
-    }
-
-    public StudyClass getStudyClass() {
-        return studyClass;
-    }
-
-    public void setStudyClass(StudyClass studyClass) {
-        this.studyClass = studyClass;
-    }
+//    public Date getModifiedAt() {
+//        return modifiedAt;
+//    }
+//
+//    public void setModifiedAt(Date modifiedAt) {
+//        this.modifiedAt = modifiedAt;
+//    }
+//
+//    public User getStudent() {
+//        return student;
+//    }
+//
+//    public void setStudent(User student) {
+//        this.student = student;
+//    }
+//
+//    public StudyClass getStudyClass() {
+//        return studyClass;
+//    }
+//
+//    public void setStudyClass(StudyClass studyClass) {
+//        this.studyClass = studyClass;
+//    }
 }
