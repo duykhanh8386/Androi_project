@@ -41,8 +41,8 @@ public class SessionManager {
         return prefs.getString(KEY_AUTH_TOKEN, null);
     }
 
-    public String getUserId() {
-        return prefs.getString(USER_ID, null);
+    public Long getUserId() {
+        return prefs.getLong(USER_ID, -1);
     }
     /**
      * Xóa token khi đăng xuất

@@ -42,6 +42,8 @@ public class StudentGradeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        viewModel = new ViewModelProvider(this).get(StudentGradeViewModel.class);
+
         // LẤY ID LỚP HỌC (từ Bước 2 và 7)
         if (getArguments() != null) {
             classId = getArguments().getInt("classId");
@@ -73,7 +75,7 @@ public class StudentGradeFragment extends Fragment {
         tvRankValue = view.findViewById(R.id.tvRankValue);
 
         // Khởi tạo ViewModel
-        viewModel = new ViewModelProvider(this).get(StudentGradeViewModel.class);
+//        viewModel = new ViewModelProvider(this).get(StudentGradeViewModel.class);
 
         // Setup Nút "Back"
         Button btnBack = view.findViewById(R.id.btnBack);
@@ -103,7 +105,6 @@ public class StudentGradeFragment extends Fragment {
                 updateGradeUI(gradeList);
             }
         });
-
         // Quan sát lỗi
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
             Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
@@ -123,14 +124,14 @@ public class StudentGradeFragment extends Fragment {
         for (Grade g : gradeList) {
             if (g.getGradeType().equalsIgnoreCase("TX")) {
                 txScores.append(g.getScore()).append("   ");
-                totalTx += Double.parseDouble(g.getScore());
+                totalTx += g.getScore();
                 countTx++;
             } else if (g.getGradeType().equalsIgnoreCase("GK")) {
                 gkScore = String.valueOf(g.getScore());
-                gk = Double.parseDouble(g.getScore());
+                gk = g.getScore();
             } else if (g.getGradeType().equalsIgnoreCase("CK")) {
                 ckScore = String.valueOf(g.getScore());
-                ck = Double.parseDouble(g.getScore());
+                ck = g.getScore();
             }
         }
 
