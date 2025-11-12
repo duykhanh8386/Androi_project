@@ -13,32 +13,30 @@ public class Grade {
     @SerializedName("gradeType")
     private String gradeType;
 
-    @SerializedName("score")
-    private String score;
-
     // ⭐️ SỬA LẠI:
-    // Khớp với JSON ("modifiedAt" là một String)
+    // JSON trả về 8.00 (một con số), không phải "8.00" (một chuỗi)
+    // Dùng Double (hoặc BigDecimal) để khớp
+    @SerializedName("score")
+    private Double score; // Sửa từ String -> Double
+
     @SerializedName("modifiedAt")
     private String modifiedAt;
 
-    // ⭐️ THÊM VÀO:
-    // Khớp với JSON (studentId là một số, có thể null)
     @SerializedName("studentId")
-    private Integer studentId; // Dùng Integer (object) để chấp nhận null
+    private Long studentId;
 
-    // ⭐️ THÊM VÀO:
-    // Khớp với JSON (classId là một số, có thể null)
     @SerializedName("classId")
-    private Integer classId;
+    private Long classId;
 
-    // (Constructor cho Mock (giữ nguyên))
-    public Grade(int gradeId, String gradeType, String score) {
+    // (Constructor cho Mock (sửa lại))
+    public Grade(int gradeId, String gradeType, Double score) { // Sửa kiểu
         this.gradeId = gradeId;
         this.score = score;
         this.gradeType = gradeType;
     }
 
-    public Grade(int gradeId, String gradeType, String score, String modifiedAt, Integer studentId, Integer classId) {
+    // Constructor đầy đủ (sửa lại)
+    public Grade(int gradeId, String gradeType, Double score, String modifiedAt, Long studentId, Long classId) { // Sửa kiểu
         this.gradeId = gradeId;
         this.gradeType = gradeType;
         this.score = score;
@@ -60,11 +58,12 @@ public class Grade {
         this.gradeId = gradeId;
     }
 
-    public String getScore() {
+    // ⭐️ SỬA GETTER/SETTER CHO score
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(String score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 
@@ -76,7 +75,6 @@ public class Grade {
         this.gradeType = gradeType;
     }
 
-    // ⭐️ THÊM GETTERS/SETTERS CHO CÁC TRƯỜNG MỚI
     public String getModifiedAt() {
         return modifiedAt;
     }
@@ -85,19 +83,19 @@ public class Grade {
         this.modifiedAt = modifiedAt;
     }
 
-    public Integer getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(Integer studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 
-    public Integer getClassId() {
+    public Long getClassId() {
         return classId;
     }
 
-    public void setClassId(Integer classId) {
+    public void setClassId(Long classId) {
         this.classId = classId;
     }
 }

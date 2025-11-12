@@ -26,4 +26,8 @@ public class StudentGradeViewModel extends ViewModel {
     public LiveData<Boolean> getIsLoading() {
         return studentRepository.getIsLoading(); // ⭐️
     }
+
+    public LiveData<String> getError() {
+        return studentRepository.getError();
+    }
 }

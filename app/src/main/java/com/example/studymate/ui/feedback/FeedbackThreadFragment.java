@@ -102,5 +102,11 @@ public class FeedbackThreadFragment extends Fragment {
                 rvFeedback.smoothScrollToPosition(feedbackList.size() - 1);
             }
         });
+
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        });
     }
+
+
 }

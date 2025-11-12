@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.Feedback;
+import com.example.studymate.data.network.SessionManager;
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -19,7 +21,8 @@ public class FeedbackListAdapter extends ListAdapter<Feedback, FeedbackListAdapt
 
     // ⭐️ Giả sử ID của học sinh đang đăng nhập (sẽ lấy từ SessionManager)
     // Dùng 123 để khớp với logic mock
-    private final int currentUserId = 123;
+    private SessionManager sessionManager = new SessionManager();
+    private final Long currentUserId = sessionManager.getUserId();
 
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
@@ -32,7 +35,7 @@ public class FeedbackListAdapter extends ListAdapter<Feedback, FeedbackListAdapt
     @Override
     public int getItemViewType(int position) {
         Feedback feedback = getItem(position);
-        if (feedback.getSender().getUserId() == currentUserId) {
+        if (feedback.getSenderId() == currentUserId) {
             return VIEW_TYPE_SENT;
         } else {
             return VIEW_TYPE_RECEIVED;
@@ -80,7 +83,7 @@ public class FeedbackListAdapter extends ListAdapter<Feedback, FeedbackListAdapt
         }
 
         void bind(Feedback feedback) {
-            tvSenderInfo.setText("Bạn (" + formatDate(feedback.getCreatedAt()) + ")");
+            tvSenderInfo.setText("Bạn (" + feedback.getCreatedAt() + ")");
             tvFeedbackContent.setText(feedback.getFeedbackContent());
         }
     }
@@ -97,7 +100,7 @@ public class FeedbackListAdapter extends ListAdapter<Feedback, FeedbackListAdapt
         }
 
         void bind(Feedback feedback) {
-            tvSenderInfo.setText("Giáo viên (" + formatDate(feedback.getCreatedAt()) + ")");
+            tvSenderInfo.setText("Giáo viên (" + feedback.getCreatedAt() + ")");
             tvFeedbackContent.setText(feedback.getFeedbackContent());
         }
     }

@@ -9,28 +9,43 @@ public class Feedback {
     @SerializedName("feedbackId")
     private int feedbackId;
 
-    @SerializedName("feedbackContent")
+    @SerializedName("content")
     private String feedbackContent;
 
     @SerializedName("createdAt")
-    private Date createdAt;
+    private String createdAt;
 
-    @SerializedName("isRead")
-    private String isRead;
+    @SerializedName("senderId")
+    private Long senderId;
 
-    @SerializedName("class")
-    private StudyClass studyClass;
+    @SerializedName("senderName")
+    private String senderName;
 
-    @SerializedName("sender")
-    private User sender;
+    @SerializedName("receiverId")
+    private Long receiverId;
 
-    public Feedback(int feedbackId, String feedbackContent, Date createdAt, String isRead, StudyClass studyClass, User sender) {
+    @SerializedName("receiverName")
+    private String receiverName;
+
+    @SerializedName("conversationId")
+    private String conversationId;
+
+    @SerializedName("read")
+    private boolean isRead;
+
+    public Feedback() {
+    }
+
+    public Feedback(int feedbackId, String feedbackContent, String createdAt, Long senderId, String senderName, Long receiverId, String receiverName, String conversationId, boolean isRead) {
         this.feedbackId = feedbackId;
         this.feedbackContent = feedbackContent;
         this.createdAt = createdAt;
+        this.senderId = senderId;
+        this.senderName = senderName;
+        this.receiverId = receiverId;
+        this.receiverName = receiverName;
+        this.conversationId = conversationId;
         this.isRead = isRead;
-        this.studyClass = studyClass;
-        this.sender = sender;
     }
 
     public int getFeedbackId() {
@@ -49,35 +64,59 @@ public class Feedback {
         this.feedbackContent = feedbackContent;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getIsRead() {
+    public Long getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public Long getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(Long receiverId) {
+        this.receiverId = receiverId;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public boolean isRead() {
         return isRead;
     }
 
-    public void setIsRead(String isRead) {
-        this.isRead = isRead;
-    }
-
-    public StudyClass getStudyClass() {
-        return studyClass;
-    }
-
-    public void setStudyClass(StudyClass studyClass) {
-        this.studyClass = studyClass;
-    }
-
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }

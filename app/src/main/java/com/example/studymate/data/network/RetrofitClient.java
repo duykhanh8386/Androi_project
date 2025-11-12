@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/studymate/data/network/RetrofitClient.java
 package com.example.studymate.data.network;
 
 // Import cho Cookie
@@ -11,10 +10,10 @@ import java.util.concurrent.TimeUnit;
 
 // Import cho OkHttp và Logging
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor; // ⭐️ THÊM IMPORT NÀY
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 
 
 public class RetrofitClient {
@@ -25,7 +24,7 @@ public class RetrofitClient {
     // 2. Biến Singleton
     private static Retrofit retrofit = null;
     private static ApiService apiService = null;
-    private static OkHttpClient okHttpClient = null; // Thêm vào
+    private static OkHttpClient okHttpClient = null;
 
     /**
      * Hàm public duy nhất để các Repository gọi
@@ -46,7 +45,7 @@ public class RetrofitClient {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .client(getOkHttpClient()) // ⭐️ SỬ DỤNG OkHttpClient DUY NHẤT
+                    .client(getOkHttpClient()) // SỬ DỤNG OkHttpClient DUY NHẤT
                     .build();
         }
         return retrofit;
@@ -58,19 +57,22 @@ public class RetrofitClient {
      */
     private static OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
-            // 1. Cấu hình Cookie
+            // 1. Cấu hình Cookie (giữ nguyên)
             CookieHandler cookieHandler = new CookieManager();
+            // ⭐️ TẠO INTERCEPTOR LOGGING TRỰC TIẾP
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // 3. Xây dựng Client
-            okHttpClient = new OkHttpClient.Builder()
-                    // ⭐️ THÊM COOKIE JAR (cho backend Spring Boot)
+            // 2. Xây dựng Client Builder
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
                     .cookieJar(new JavaNetCookieJar(cookieHandler))
-
-                    // ⭐️ THÊM TIMEOUTS
                     .connectTimeout(15, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)
-                    .build();
+                    .addInterceptor(loggingInterceptor); // ⭐️ Thêm log vào đây
+
+            // 4. Build client
+            okHttpClient = builder.build();
         }
         return okHttpClient;
     }

@@ -75,10 +75,10 @@ public interface ApiService {
     Call<MessageResponse> leaveClass(@Path("id") int classId);
 
     // ===== FEEDBACK ======
-    @GET("api/student/classes/{id}/feedback")
+    @GET("api/student/feedback/{id}/conversations")
     Call<List<Feedback>> getFeedbackThread(@Path("id") int classId);
 
-    @POST("api/student/feedback")
+    @POST("api/student/feedback/send")
     Call<Feedback> sendFeedback(@Body FeedbackRequest feedbackRequest);
 
     // ===== ADMIN: USER MANAGEMENT =====
