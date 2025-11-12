@@ -154,8 +154,12 @@
 
         android:name="com.example.studymate.ui.classdetail.teacher.TeacherApprovalFragment"
 
-        android:label="@string/class_detail"
-        tools:layout="@layout/fragment_approval_list" />
+        android:label="@string/join"
+        tools:layout="@layout/fragment_approval_list">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+    </fragment>
 
     <fragment
         android:id="@+id/feedbackThreadFragment"

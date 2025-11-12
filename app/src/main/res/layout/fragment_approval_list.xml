@@ -6,17 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".ApprovalFragment"> <TextView
-    android:id="@+id/tvTitle"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Danh sách chờ phê duyệt"
-    android:textSize="20sp"
-    android:textStyle="bold"
-    android:textColor="@android:color/black"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+    tools:context="com.example.studymate.ui.classdetail.teacher.TeacherApprovalFragment">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Danh sách chờ phê duyệt"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/headerLayout"
@@ -48,7 +50,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
-            android:text="@string/accept_join"
+            android:text="Hành động"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -61,7 +63,20 @@
         app:layout_constraintBottom_toTopOf="@id/bottomButtonLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/list_item_approval" /> <LinearLayout
+        tools:listitem="@layout/list_item_approval" />
+
+    <!-- ⭐️ THÊM PROGRESS BAR ĐÈ LÊN TRÊN ⭐️ -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/recyclerViewApproval"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerViewApproval"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
         android:id="@+id/bottomButtonLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

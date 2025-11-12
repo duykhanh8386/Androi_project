@@ -3,12 +3,13 @@ package com.example.studymate.ui.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.studymate.data.model.StudyClass;
+import com.example.studymate.data.model.response.ClassDetailResponse;
 import com.example.studymate.data.repository.ClassRepository;
 
 public class ClassDetailViewModel extends ViewModel {
 
     private ClassRepository classRepository;
-    private LiveData<StudyClass> classDetail;
+    private LiveData<ClassDetailResponse> classDetail;
     private LiveData<Boolean> isLoading;
     private LiveData<String> error;
 
@@ -33,12 +34,16 @@ public class ClassDetailViewModel extends ViewModel {
     }
 
     // Getters để Fragment quan sát
-    public LiveData<StudyClass> getClassDetail() {
+    public LiveData<ClassDetailResponse> getClassDetail() {
         return classDetail;
     }
 
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
+    }
+
+    public LiveData<String> getError() {
+        return error;
     }
 
     public void performLeaveClass(int classId) {

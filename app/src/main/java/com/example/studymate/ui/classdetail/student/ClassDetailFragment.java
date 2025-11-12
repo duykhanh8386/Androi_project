@@ -25,6 +25,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudyClass;
+import com.example.studymate.data.model.response.ClassDetailResponse;
 import com.example.studymate.ui.viewmodel.ClassDetailViewModel;
 import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
 
@@ -33,7 +34,7 @@ public class ClassDetailFragment extends Fragment {
     private ClassDetailViewModel viewModel;
 
     private HomeStudentViewModel homeStudentViewModel;
-    private TextView tvClassNameDetail, tvTeacherNameDetail;
+    private TextView tvClassNameDetail, tvClassId, tvTeacherNameDetail, tvStudentCount, tvClassTime;
     private ProgressBar progressBar;
 
     private Button btnStudents, btnScore, btnNotify, btnFeedback, btnLeaveClass, btnGoBack;
@@ -67,6 +68,9 @@ public class ClassDetailFragment extends Fragment {
         // Ánh xạ View
         tvClassNameDetail = view.findViewById(R.id.tvClassNameDetail);
         tvTeacherNameDetail = view.findViewById(R.id.tvTeacherNameDetail);
+        tvClassId = view.findViewById(R.id.tvClassId);
+        tvStudentCount = view.findViewById(R.id.tvStudentCount);
+        tvClassTime = view.findViewById(R.id.tvClassTime);
         progressBar = view.findViewById(R.id.progressBar);
         scrollContent = view.findViewById(R.id.scrollContent);
         btnStudents = view.findViewById(R.id.btnStudents);
@@ -109,12 +113,25 @@ public class ClassDetailFragment extends Fragment {
         });
 
         // Quan sát dữ liệu chi tiết
-        viewModel.getClassDetail().observe(getViewLifecycleOwner(), new Observer<StudyClass>() {
+        viewModel.getClassDetail().observe(getViewLifecycleOwner(), new Observer<ClassDetailResponse>() {
             @Override
-            public void onChanged(StudyClass studyClass) {
+            public void onChanged(ClassDetailResponse studyClass) {
                 if (studyClass != null) {
                     tvClassNameDetail.setText(studyClass.getClassName());
-                    tvTeacherNameDetail.setText(studyClass.getClassTime());
+                    tvTeacherNameDetail.setText(studyClass.getTeacherName());
+                    tvClassId.setText(studyClass.getClassJoinCode());
+                    tvStudentCount.setText(String.valueOf(studyClass.getStudentCount()));
+                    tvClassTime.setText(studyClass.getClassTime());
+                }
+            }
+        });
+
+        // Quan sát lỗi
+        viewModel.getError().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String error) {
+                if (error != null) {
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + error, Toast.LENGTH_LONG).show();
                 }
             }
         });

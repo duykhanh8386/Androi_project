@@ -2,7 +2,8 @@ package com.example.studymate.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Date;
+import java.math.BigDecimal;
+// ⭐️ XÓA: import java.util.Date;
 
 public class Grade {
 
@@ -12,23 +13,42 @@ public class Grade {
     @SerializedName("gradeType")
     private String gradeType;
 
+    // ⭐️ SỬA LẠI:
+    // JSON trả về 8.00 (một con số), không phải "8.00" (một chuỗi)
+    // Dùng Double (hoặc BigDecimal) để khớp
     @SerializedName("score")
-    private double score;
+    private Double score; // Sửa từ String -> Double
 
-    @SerializedName("modified_at")
-    private Date modifiedAt;
+    @SerializedName("modifiedAt")
+    private String modifiedAt;
 
-    @SerializedName("student")
-    private User student;
+    @SerializedName("studentId")
+    private Long studentId;
 
-    @SerializedName("class")
-    private StudyClass studyClass;
+    @SerializedName("classId")
+    private Long classId;
 
-    public Grade(int gradeId, String gradeType, double score) {
+    // (Constructor cho Mock (sửa lại))
+    public Grade(int gradeId, String gradeType, Double score) { // Sửa kiểu
         this.gradeId = gradeId;
         this.score = score;
         this.gradeType = gradeType;
     }
+
+    // Constructor đầy đủ (sửa lại)
+    public Grade(int gradeId, String gradeType, Double score, String modifiedAt, Long studentId, Long classId) { // Sửa kiểu
+        this.gradeId = gradeId;
+        this.gradeType = gradeType;
+        this.score = score;
+        this.modifiedAt = modifiedAt;
+        this.studentId = studentId;
+        this.classId = classId;
+    }
+
+    public Grade() {
+    }
+
+    // --- Getters và Setters ---
 
     public int getGradeId() {
         return gradeId;
@@ -38,11 +58,12 @@ public class Grade {
         this.gradeId = gradeId;
     }
 
-    public double getScore() {
+    // ⭐️ SỬA GETTER/SETTER CHO score
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 
@@ -54,27 +75,27 @@ public class Grade {
         this.gradeType = gradeType;
     }
 
-    public Date getModifiedAt() {
+    public String getModifiedAt() {
         return modifiedAt;
     }
 
-    public void setModifiedAt(Date modifiedAt) {
+    public void setModifiedAt(String modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
 
-    public User getStudent() {
-        return student;
+    public Long getStudentId() {
+        return studentId;
     }
 
-    public void setStudent(User student) {
-        this.student = student;
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
     }
 
-    public StudyClass getStudyClass() {
-        return studyClass;
+    public Long getClassId() {
+        return classId;
     }
 
-    public void setStudyClass(StudyClass studyClass) {
-        this.studyClass = studyClass;
+    public void setClassId(Long classId) {
+        this.classId = classId;
     }
 }

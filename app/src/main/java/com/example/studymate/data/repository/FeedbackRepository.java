@@ -70,9 +70,9 @@ public class FeedbackRepository {
             User teacher = new User(456, "Học sinh A", "a@gmail.com", RoleConstant.STUDENT);
 
             // Giả sử ID học sinh là 123, ID giáo viên là 456
-            mockList.add(new Feedback(1, "Thưa cô, em xin phép nghỉ ốm ạ.", new Date(), "false", studyClass, student));
-            mockList.add(new Feedback(2, "Ok em, nhớ nộp bài bù nhé.", new Date(), "false", studyClass, teacher));
-            mockList.add(new Feedback(3, "Dạ vâng ạ.", new Date(), "false", studyClass, student));
+//            mockList.add(new Feedback(1, "Thưa cô, em xin phép nghỉ ốm ạ.", new Date(), "false", studyClass, student));
+//            mockList.add(new Feedback(2, "Ok em, nhớ nộp bài bù nhé.", new Date(), "false", studyClass, teacher));
+//            mockList.add(new Feedback(3, "Dạ vâng ạ.", new Date(), "false", studyClass, student));
 
             isLoading.postValue(false);
             feedbackListLiveData.postValue(mockList);
@@ -107,14 +107,15 @@ public class FeedbackRepository {
             StudyClass studyClass = new StudyClass();
             studyClass.setClassId(classId);
             User student = new User(123, "Học sinh A", "a@gmail.com", RoleConstant.STUDENT);
-            Feedback newFeedback = new Feedback(
-                    (int) (Math.random() * 1000), // ID ngẫu nhiên
-                    content,
-                    new Date(),
-                    "false",
-                    studyClass,
-                    student // Gửi từ "Bạn" (khớp mock ID)
-            );
+//            Feedback newFeedback = new Feedback(
+//                    (int) (Math.random() * 1000), // ID ngẫu nhiên
+//                    content,
+//                    new Date(),
+//                    "false",
+//                    studyClass,
+//                    student // Gửi từ "Bạn" (khớp mock ID)
+//            );
+            Feedback newFeedback = new Feedback();
 
             isSending.postValue(false);
             sendSuccessLiveData.postValue(newFeedback);

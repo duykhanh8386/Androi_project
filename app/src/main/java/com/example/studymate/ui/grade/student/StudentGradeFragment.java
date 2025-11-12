@@ -42,6 +42,8 @@ public class StudentGradeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        viewModel = new ViewModelProvider(this).get(StudentGradeViewModel.class);
+
         // LẤY ID LỚP HỌC (từ Bước 2 và 7)
         if (getArguments() != null) {
             classId = getArguments().getInt("classId");
@@ -73,7 +75,7 @@ public class StudentGradeFragment extends Fragment {
         tvRankValue = view.findViewById(R.id.tvRankValue);
 
         // Khởi tạo ViewModel
-        viewModel = new ViewModelProvider(this).get(StudentGradeViewModel.class);
+//        viewModel = new ViewModelProvider(this).get(StudentGradeViewModel.class);
 
         // Setup Nút "Back"
         Button btnBack = view.findViewById(R.id.btnBack);
@@ -98,10 +100,14 @@ public class StudentGradeFragment extends Fragment {
 
         // Quan sát Dữ liệu (⭐️ Hơi phức tạp)
         viewModel.getGradeList().observe(getViewLifecycleOwner(), gradeList -> {
-            if (gradeList != null) {
+            if (gradeList != null || !gradeList.isEmpty()) {
                 // Xử lý logic để hiển thị điểm
                 updateGradeUI(gradeList);
             }
+        });
+        // Quan sát lỗi
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         });
     }
 
