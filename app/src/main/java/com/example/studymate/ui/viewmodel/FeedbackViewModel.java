@@ -26,4 +26,8 @@ public class FeedbackViewModel extends ViewModel {
     public LiveData<Boolean> getIsLoading() {
         return feedbackRepository.getIsLoading(); // ⭐️
     }
+
+    public LiveData<String> getError() {
+        return feedbackRepository.getError();
+    }
 }

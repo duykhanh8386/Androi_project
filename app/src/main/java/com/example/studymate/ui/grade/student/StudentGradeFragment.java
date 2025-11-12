@@ -103,6 +103,11 @@ public class StudentGradeFragment extends Fragment {
                 updateGradeUI(gradeList);
             }
         });
+
+        // Quan sát lỗi
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        });
     }
 
     // ⭐️ HÀM MỚI: Xử lý và hiển thị điểm
