@@ -6,6 +6,7 @@ import com.example.studymate.data.model.Grade;
 import com.example.studymate.data.model.Notification;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
+import com.example.studymate.data.model.request.ApprovalRequest;
 import com.example.studymate.data.model.request.CreateUserRequest;
 import com.example.studymate.data.model.request.FeedbackRequest;
 import com.example.studymate.data.model.request.JoinClassRequest;
@@ -25,6 +26,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -34,21 +36,32 @@ public interface ApiService {
     @POST("api/auth/signin")
     Call<LoginResponse> login(@Body LoginRequest loginRequest);
 
-
     @POST("api/auth/logout")
     Call<Void> logout();
+
+    // ===== TEACHER =====
+
+    @GET("api/teacher/classes/{id}/pending")
+    Call<List<User>> getPendingStudents(@Path("id") int classId);
+
+    @PUT("api/teacher/classes/students/{studentClassId}")
+    Call<MessageResponse> approveOrRejectStudent(
+            @Path("studentClassId") int studentClassId,
+            @Body ApprovalRequest approvalRequest
+    );
+
 
     // ===== STUDENT =====
     @GET("api/student/classes")
     Call<List<StudyClass>> getStudentClasses();
 
-    @GET("api/student/classes/{id}")
+    @GET("api/user/classes/{id}")
     Call<StudyClass> getClassDetails(@Path("id") int classId);
 
     @GET("api/user/classes/{id}/students")
     Call<List<StudentResponse>> getStudentsInClass(@Path("id") int classId);
 
-    @GET("api/student/classes/{id}/notifications")
+    @GET("api/user/classes/{id}/notifications")
     Call<List<Notification>> getNotifications(@Path("id") int classId);
 
     @GET("api/student/classes/{classId}/notifications")

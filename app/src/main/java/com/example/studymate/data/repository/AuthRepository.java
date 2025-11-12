@@ -26,7 +26,7 @@ public class AuthRepository {
     private MutableLiveData<LoginResponse> loginResponseData = new MutableLiveData<>();
     private MutableLiveData<String> loginErrorData = new MutableLiveData<>();
 
-    private final boolean IS_MOCK_MODE = false;
+    private final boolean IS_MOCK_MODE = true;
 
     public AuthRepository() {
         this.apiService = RetrofitClient.getApiService();

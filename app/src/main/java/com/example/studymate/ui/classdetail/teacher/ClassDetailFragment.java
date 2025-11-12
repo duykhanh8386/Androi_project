@@ -1,24 +1,194 @@
 package com.example.studymate.ui.classdetail.teacher;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
-import com.example.studymate.ui.viewmodel.ClassViewModel;
+import com.example.studymate.data.model.StudyClass;
+import com.example.studymate.ui.viewmodel.ClassDetailViewModel;
+import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
 
 public class ClassDetailFragment extends Fragment {
-    private ClassViewModel vm;
+
+    private ClassDetailViewModel viewModel;
+
+    private HomeStudentViewModel homeStudentViewModel;
+    private TextView tvClassNameDetail, tvTeacherNameDetail;
+    private ProgressBar progressBar;
+
+    private Button btnStudents, btnScore, btnNotify, btnFeedback, btnAccept;
+    private ScrollView scrollContent;
+    private LinearLayout bottomButtons;
+    private int classId;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
+        // Nhận classId từ Bundle (được gửi từ Adapter)
+        if (getArguments() != null) {
+            classId = getArguments().getInt("classId");
+        } else {
+            // Xử lý lỗi nếu không nhận được ID
+            Toast.makeText(getContext(), "Lỗi: Không tìm thấy ID lớp học", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_class_detail_teacher, container, false);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        // Ánh xạ View
+        tvClassNameDetail = view.findViewById(R.id.tvClassNameDetail);
+        tvTeacherNameDetail = view.findViewById(R.id.tvTeacherNameDetail);
+        progressBar = view.findViewById(R.id.progressBar);
+        scrollContent = view.findViewById(R.id.scrollContent);
+        btnStudents = view.findViewById(R.id.btnStudents);
+        btnScore = view.findViewById(R.id.btnScore);
+        btnNotify = view.findViewById(R.id.btnNotify);
+        btnFeedback = view.findViewById(R.id.btnFeedback);
+        btnAccept = view.findViewById(R.id.btnAccept);
+
+        bottomButtons = view.findViewById(R.id.bottomButtons);
+
+        // Khởi tạo ViewModel
+        viewModel = new ViewModelProvider(this).get(ClassDetailViewModel.class);
+
+        // Thiết lập observers
+        setupObservers();
+
+        // Thêm hàm setup Click Listeners
+        setupClickListeners();
+
+        // Yêu cầu ViewModel tải dữ liệu
+        viewModel.loadClassDetails(classId);
+    }
+
+    private void setupObservers() {
+        // Quan sát trạng thái loading
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isLoading) {
+                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                scrollContent.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+                bottomButtons.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+
+                // ⭐️ Ẩn/hiện các nút dưới cùng (LinearLayout chứa btnGoBack)
+                View bottomButtons = getView().findViewById(R.id.bottomButtons);
+                if (bottomButtons != null) {
+                    bottomButtons.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+                }
+            }
+        });
+
+        // Quan sát dữ liệu chi tiết
+        viewModel.getClassDetail().observe(getViewLifecycleOwner(), new Observer<StudyClass>() {
+            @Override
+            public void onChanged(StudyClass studyClass) {
+                if (studyClass != null) {
+                    tvClassNameDetail.setText(studyClass.getClassName());
+                    tvTeacherNameDetail.setText(studyClass.getClassTime());
+                }
+            }
+        });
+
+    }
+
+    private void setupClickListeners() {
+
+        // Nút Xem Học sinh
+        btnStudents.setOnClickListener(v -> {
+            // (Dùng ID action từ nav_graph của bạn)
+            Bundle bundle = new Bundle();
+            bundle.putInt("classId", classId);
+
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_detail_to_students, bundle);
+        });
+
+        // Nút Xem Thông báo
+        btnNotify.setOnClickListener(v -> {
+            // (Dùng ID action từ nav_graph của bạn)
+            Bundle bundle = new Bundle();
+            bundle.putInt("classId", classId);
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_detail_to_notifications, bundle);
+        });
+
+        // Nút Hỏi đáp (Feedback)
+        btnFeedback.setOnClickListener(v -> {
+            // (Dùng ID action từ nav_graph của bạn)
+            Bundle bundle = new Bundle();
+            bundle.putInt("classId", classId);
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_detail_to_feedback, bundle);
+        });
+
+        // Nút Xem Điểm
+        btnScore.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("classId", classId);
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_detail_to_gradeEntry, bundle);
+        });
+
+    }
+
+    // (onCreateOptionsMenu, onOptionsItemSelected, showLogoutDialog không đổi)
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            showLogoutDialog();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.logout)
+                .setMessage(R.string.logout_confirm)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        homeStudentViewModel.performLogout();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
 }
+
