@@ -7,15 +7,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.studymate.data.model.StudyClass;
-import com.example.studymate.data.model.User;
-import com.example.studymate.data.model.request.JoinClassRequest;
 import com.example.studymate.data.model.response.ClassDetailResponse;
 import com.example.studymate.data.model.response.MessageResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +25,15 @@ public class ClassRepository {
     private ApiService apiService;
     private final boolean IS_MOCK_MODE = false; // ⭐️ Vẫn dùng Mock
 
-    // LiveData cho danh sách lớp
-    private MutableLiveData<List<StudyClass>> classListLiveData = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
-    private MutableLiveData<String> classListError = new MutableLiveData<>();
+    // LiveData cho danh sách lớp của học sinh
+    private MutableLiveData<List<StudyClass>> studentClassListLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isStudentClassListLoading = new MutableLiveData<>();
+    private MutableLiveData<String> studentClassListError = new MutableLiveData<>();
+
+    // LiveData cho danh sách lớp của giáo viên
+    private MutableLiveData<List<StudyClass>> teacherClassListLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isTeacherClassListLoading = new MutableLiveData<>();
+    private MutableLiveData<String> teacherClassListError = new MutableLiveData<>();
 
     // LiveData cho chi tiết lớp học
     private MutableLiveData<ClassDetailResponse> classDetailLiveData = new MutableLiveData<>();
@@ -50,13 +52,58 @@ public class ClassRepository {
 
     // ViewModel sẽ gọi hàm này
     public void fetchStudentClasses() {
-        isLoading.postValue(true); // Báo là đang tải
+        isStudentClassListLoading.postValue(true); // Báo là đang tải
 
         if (IS_MOCK_MODE) {
             runMockLogic();
         } else {
             runRealApiLogic();
         }
+    }
+
+    public void fetchTeacherClasses() {
+        isTeacherClassListLoading.postValue(true); // Báo là đang tải
+
+        if (IS_MOCK_MODE) {
+            runMockLogicForClassListTeacher();
+        } else {
+            runRealApiLogicForClassListTeacher();
+        }
+    }
+
+    private void runRealApiLogicForClassListTeacher() {
+        // Giả lập độ trễ 1.5 giây
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            ArrayList<StudyClass> mockList = new ArrayList<>();
+            mockList.add(new StudyClass(1, "Toán 10A1", "GV: Nguyễn Văn A"));
+            mockList.add(new StudyClass(2, "Lý 11B2", "GV: Trần Thị B"));
+            mockList.add(new StudyClass(3, "Hóa 12C3", "GV: Lê Văn C"));
+            mockList.add(new StudyClass(4, "Sinh 10A4", "GV: Phạm Thị D"));
+            mockList.add(new StudyClass(5, "Anh 11E5", "GV: Bùi Văn E"));
+
+            isTeacherClassListLoading.postValue(false); // Tải xong
+            teacherClassListLiveData.postValue(mockList); // Gửi dữ liệu
+        }, 1500); // Trì hoãn 1.5 giây
+    }
+
+    private void runMockLogicForClassListTeacher() {
+        apiService.getTeacherClasses().enqueue(new Callback<List<StudyClass>>() {
+            @Override
+            public void onResponse(Call<List<StudyClass>> call, Response<List<StudyClass>> response) {
+                isTeacherClassListLoading.postValue(false); // Tải xong
+                if (response.isSuccessful()) {
+                    teacherClassListLiveData.postValue(response.body());
+                } else {
+                    teacherClassListError.postValue("Lỗi: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<StudyClass>> call, Throwable t) {
+                isTeacherClassListLoading.postValue(false); // Tải xong
+                teacherClassListError.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
     }
 
     public void fetchClassDetails(int classId) {
@@ -82,18 +129,18 @@ public class ClassRepository {
         apiService.getStudentClasses().enqueue(new Callback<List<StudyClass>>() {
             @Override
             public void onResponse(Call<List<StudyClass>> call, Response<List<StudyClass>> response) {
-                isLoading.postValue(false); // Tải xong
+                isStudentClassListLoading.postValue(false); // Tải xong
                 if (response.isSuccessful()) {
-                    classListLiveData.postValue(response.body());
+                    studentClassListLiveData.postValue(response.body());
                 } else {
-                    classListError.postValue("Lỗi: " + response.code());
+                    studentClassListError.postValue("Lỗi: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<List<StudyClass>> call, Throwable t) {
-                isLoading.postValue(false); // Tải xong
-                classListError.postValue("Lỗi mạng: " + t.getMessage());
+                isStudentClassListLoading.postValue(false); // Tải xong
+                studentClassListError.postValue("Lỗi mạng: " + t.getMessage());
             }
         });
     }
@@ -109,8 +156,8 @@ public class ClassRepository {
             mockList.add(new StudyClass(4, "Sinh 10A4", "GV: Phạm Thị D"));
             mockList.add(new StudyClass(5, "Anh 11E5", "GV: Bùi Văn E"));
 
-            isLoading.postValue(false); // Tải xong
-            classListLiveData.postValue(mockList); // Gửi dữ liệu
+            isStudentClassListLoading.postValue(false); // Tải xong
+            studentClassListLiveData.postValue(mockList); // Gửi dữ liệu
         }, 1500); // Trì hoãn 1.5 giây
     }
 
@@ -182,16 +229,28 @@ public class ClassRepository {
     }
 
     // --- Getters ---
-    public LiveData<List<StudyClass>> getClassListLiveData() {
-        return classListLiveData;
+    public LiveData<List<StudyClass>> getStudentClassListLiveData() {
+        return studentClassListLiveData;
     }
 
-    public LiveData<Boolean> getIsLoading() {
-        return isLoading;
+    public LiveData<Boolean> getIsStudentClassListLoading() {
+        return isStudentClassListLoading;
     }
 
-    public LiveData<String> getClassListError() {
-        return classListError;
+    public LiveData<String> getStudentClassListError() {
+        return studentClassListError;
+    }
+
+    public LiveData<List<StudyClass>> getTeacherClassListLiveData() {
+        return studentClassListLiveData;
+    }
+
+    public LiveData<Boolean> getIsTeacherClassListLoading() {
+        return isTeacherClassListLoading;
+    }
+
+    public LiveData<String> getTeacherClassListError() {
+        return teacherClassListError;
     }
 
     public LiveData<ClassDetailResponse> getClassDetailLiveData() {

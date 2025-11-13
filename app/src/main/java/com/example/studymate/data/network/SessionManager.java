@@ -11,6 +11,8 @@ public class SessionManager {
     private static final String KEY_AUTH_TOKEN = "auth_token";
 
     private static final String USER_ID = "user_id";
+
+    private static final String USER_ROLE = "user_role";
     private SharedPreferences prefs;
 
     public SessionManager() {
@@ -34,11 +36,21 @@ public class SessionManager {
         editor.apply();
     }
 
+    public void saveUserRole(String userRole) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(USER_ROLE, userRole);
+        editor.apply();
+    }
+
     /**
      * Lấy token để Interceptor sử dụng
      */
     public String getAuthToken() {
         return prefs.getString(KEY_AUTH_TOKEN, null);
+    }
+
+    public String getUserRole() {
+        return prefs.getString(USER_ROLE, null);
     }
 
     public Long getUserId() {
@@ -51,6 +63,7 @@ public class SessionManager {
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove(KEY_AUTH_TOKEN);
         editor.remove(USER_ID);
+        editor.remove(USER_ROLE);
         editor.apply();
     }
 }

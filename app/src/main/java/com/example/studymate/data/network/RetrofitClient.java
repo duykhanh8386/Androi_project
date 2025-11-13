@@ -1,11 +1,14 @@
 package com.example.studymate.data.network;
 
 // Import cho Cookie
+import com.example.studymate.MyApplication;
+
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import okhttp3.JavaNetCookieJar;
 
 // Import cho Timeouts
+import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
 
 // Import cho OkHttp và Logging
@@ -58,14 +61,15 @@ public class RetrofitClient {
     private static OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
             // 1. Cấu hình Cookie (giữ nguyên)
-            CookieHandler cookieHandler = new CookieManager();
+            PersistentCookieStore cookieStore = new PersistentCookieStore(MyApplication.getAppContext());
+
             // ⭐️ TẠO INTERCEPTOR LOGGING TRỰC TIẾP
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             // 2. Xây dựng Client Builder
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .cookieJar(new JavaNetCookieJar(cookieHandler))
+                    .cookieJar(cookieStore)
                     .connectTimeout(15, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)

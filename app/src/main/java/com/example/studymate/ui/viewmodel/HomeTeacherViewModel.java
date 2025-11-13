@@ -2,6 +2,7 @@ package com.example.studymate.ui.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.repository.AuthRepository;
 import com.example.studymate.data.repository.ClassRepository;
@@ -9,7 +10,7 @@ import com.example.studymate.data.repository.ClassRepository;
 import java.util.List;
 
 
-public class HomeStudentViewModel extends ViewModel {
+public class HomeTeacherViewModel extends ViewModel {
 
 
     private AuthRepository authRepository;
@@ -20,7 +21,7 @@ public class HomeStudentViewModel extends ViewModel {
     private LiveData<List<StudyClass>> classListLiveData;
     private LiveData<Boolean> isLoading;
 
-    public HomeStudentViewModel() {
+    public HomeTeacherViewModel() {
         // Khởi tạo Auth Repo
         this.authRepository = new AuthRepository();
         this.logoutSuccessEvent = authRepository.getLogoutSuccessEvent();
@@ -28,14 +29,14 @@ public class HomeStudentViewModel extends ViewModel {
         // ⭐️ Khởi tạo Class Repo
         this.classRepository = new ClassRepository();
         // ⭐️ Lấy LiveData từ Class Repo
-        this.classListLiveData = classRepository.getStudentClassListLiveData();
-        this.isLoading = classRepository.getIsStudentClassListLoading();
+        this.classListLiveData = classRepository.getTeacherClassListLiveData();
+        this.isLoading = classRepository.getIsTeacherClassListLoading();
 
     }
 
     // ⭐️ THÊM: Hàm để Fragment gọi
-    public void fetchStudentClasses() {
-        classRepository.fetchStudentClasses();
+    public void fetchTeacherClasses() {
+        classRepository.fetchTeacherClasses();
     }
 
     // Getter để Fragment có thể "quan sát"
