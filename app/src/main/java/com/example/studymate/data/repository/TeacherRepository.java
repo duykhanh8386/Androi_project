@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.ApprovalRequest;
 import com.example.studymate.data.model.response.MessageResponse;
@@ -21,7 +23,7 @@ public class TeacherRepository {
     private final boolean IS_MOCK_MODE = false;
 
     // LiveData cho danh sách chờ
-    private MutableLiveData<List<User>> pendingListLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<StudentClass>> pendingListLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<String> error = new MutableLiveData<>();
 
@@ -46,20 +48,20 @@ public class TeacherRepository {
 
     private void runMockLogicForList(int classId) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            ArrayList<User> mockList = new ArrayList<>();
+            ArrayList<StudentClass> mockList = new ArrayList<>();
             // (Mock User: id, fullName, email, role)
             // (Quan trọng: ID ở đây là *studentClassId* (ID bảng trung gian), không phải UserID)
-            mockList.add(new User(1, "Học Sinh Chờ 1", "wait1@test.com", "STUDENT"));
-            mockList.add(new User(2, "Học Sinh Chờ 2", "wait2@test.com", "STUDENT"));
+//            mockList.add(new User(1, "Học Sinh Chờ 1", "wait1@test.com", "STUDENT"));
+//            mockList.add(new User(2, "Học Sinh Chờ 2", "wait2@test.com", "STUDENT"));
             isLoading.postValue(false);
             pendingListLiveData.postValue(mockList);
         }, 1000);
     }
 
     private void runRealApiLogicForList(int classId) {
-        apiService.getPendingStudents(classId).enqueue(new Callback<List<User>>() {
+        apiService.getPendingStudents(classId).enqueue(new Callback<List<StudentClass>>() {
             @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+            public void onResponse(Call<List<StudentClass>> call, Response<List<StudentClass>> response) {
                 isLoading.postValue(false);
                 if (response.isSuccessful()) {
                     pendingListLiveData.postValue(response.body());
@@ -68,7 +70,7 @@ public class TeacherRepository {
                 }
             }
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
+            public void onFailure(Call<List<StudentClass>> call, Throwable t) {
                 isLoading.postValue(false);
                 error.postValue("Lỗi mạng: " + t.getMessage());
             }
@@ -86,13 +88,12 @@ public class TeacherRepository {
                 approvalSuccessEvent.postValue(status + " thành công!");
             }, 500); // Giả lập 0.5 giây
         } else {
-            ApprovalRequest request = new ApprovalRequest(status);
-            apiService.approveOrRejectStudent(studentClassId, request).enqueue(new Callback<MessageResponse>() {
+            apiService.approveOrRejectStudent(studentClassId, status).enqueue(new Callback<MessageResponse>() {
                 @Override
                 public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                     isUpdating.postValue(false);
                     if (response.isSuccessful() && response.body() != null) {
-                        approvalSuccessEvent.postValue(response.body().getMessage());
+                        approvalSuccessEvent.postValue("Phê duyệt thành công");
                     } else {
                         approvalErrorEvent.postValue("Lỗi: " + response.code());
                     }
@@ -116,7 +117,7 @@ public class TeacherRepository {
     }
 
     // --- Getters ---
-    public LiveData<List<User>> getPendingList() { return pendingListLiveData; }
+    public LiveData<List<StudentClass>> getPendingList() { return pendingListLiveData; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
     public LiveData<String> getError() { return error; }
     public LiveData<Boolean> getIsUpdating() { return isUpdating; }

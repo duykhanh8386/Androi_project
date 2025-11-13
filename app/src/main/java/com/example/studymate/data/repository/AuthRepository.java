@@ -89,6 +89,7 @@ public class AuthRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     sessionManager.saveAuthToken(response.body().getToken());
                     sessionManager.saveUserId((long) response.body().getUser().getUserId());
+                    sessionManager.saveUserRole(response.body().getUser().getRoleName());
                     loginResponseData.postValue(response.body());
                 } else {
                     loginErrorData.postValue("Lỗi đăng nhập: " + response.code());

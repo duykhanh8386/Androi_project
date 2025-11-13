@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
@@ -51,6 +52,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvClassNameDetail"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -71,6 +73,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvClassId"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -91,6 +94,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvTeacherNameDetail"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -111,6 +115,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvStudentCount"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -131,6 +136,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
+                        android:id="@+id/tvClassTime"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -265,4 +271,11 @@
             app:cornerRadius="4dp"/>
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        tools:visibility="visible" />
 </RelativeLayout>
