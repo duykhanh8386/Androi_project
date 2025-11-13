@@ -29,14 +29,14 @@ public class HomeTeacherViewModel extends ViewModel {
         // ⭐️ Khởi tạo Class Repo
         this.classRepository = new ClassRepository();
         // ⭐️ Lấy LiveData từ Class Repo
-        this.classListLiveData = classRepository.getClassListLiveData();
-        this.isLoading = classRepository.getIsLoading();
+        this.classListLiveData = classRepository.getTeacherClassListLiveData();
+        this.isLoading = classRepository.getIsTeacherClassListLoading();
 
     }
 
     // ⭐️ THÊM: Hàm để Fragment gọi
-    public void fetchStudentClasses() {
-        classRepository.fetchStudentClasses();
+    public void fetchTeacherClasses() {
+        classRepository.fetchTeacherClasses();
     }
 
     // Getter để Fragment có thể "quan sát"

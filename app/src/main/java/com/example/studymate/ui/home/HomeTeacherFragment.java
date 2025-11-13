@@ -8,7 +8,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.ui.studyclass.adapter.ClassListAdapter;
-import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
 import com.example.studymate.ui.viewmodel.HomeTeacherViewModel;
 
 import java.util.List;
@@ -75,7 +73,7 @@ public class HomeTeacherFragment extends Fragment {
         setupObservers();
 
         // 6. Yêu cầu tải dữ liệu (đã có)
-        viewModel.fetchStudentClasses();
+        viewModel.fetchTeacherClasses();
 
         // (TODO: Xử lý btnJoinClass)
     }

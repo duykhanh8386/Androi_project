@@ -1,13 +1,11 @@
 package com.example.studymate.ui.viewmodel;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.repository.AuthRepository;
 import com.example.studymate.data.repository.ClassRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,8 +28,8 @@ public class HomeStudentViewModel extends ViewModel {
         // ⭐️ Khởi tạo Class Repo
         this.classRepository = new ClassRepository();
         // ⭐️ Lấy LiveData từ Class Repo
-        this.classListLiveData = classRepository.getClassListLiveData();
-        this.isLoading = classRepository.getIsLoading();
+        this.classListLiveData = classRepository.getStudentClassListLiveData();
+        this.isLoading = classRepository.getIsStudentClassListLoading();
 
     }
 

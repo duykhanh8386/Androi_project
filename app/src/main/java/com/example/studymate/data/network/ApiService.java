@@ -54,7 +54,6 @@ public interface ApiService {
     @GET("api/teacher/classes")
     Call<List<StudyClass>> getTeacherClasses();
 
-
     // ===== STUDENT =====
     @GET("api/student/classes")
     Call<List<StudyClass>> getStudentClasses();
