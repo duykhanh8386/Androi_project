@@ -19,7 +19,7 @@ public class StudyClass {
     private String classTime;
 
     @SerializedName("createdAt")
-    private Date createdAt; // Gson có thể tự parse Date nếu định dạng chuẩn (ISO 8601)
+    private Date createdAt;
 
     @SerializedName("modifiedAt")
     private Date modifiedAt;
