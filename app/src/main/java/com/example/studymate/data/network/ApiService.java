@@ -51,6 +51,9 @@ public interface ApiService {
             @Body ApprovalRequest approvalRequest
     );
 
+    @GET("api/teacher/classes")
+    Call<List<StudyClass>> getTeacherClasses();
+
 
     // ===== STUDENT =====
     @GET("api/student/classes")
