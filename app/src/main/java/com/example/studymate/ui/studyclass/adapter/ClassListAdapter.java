@@ -12,11 +12,14 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudyClass;
+import com.example.studymate.data.network.SessionManager;
 
 public class ClassListAdapter extends ListAdapter<StudyClass, ClassListAdapter.ClassViewHolder> {
 
-    public ClassListAdapter() {
+    private  SessionManager sessionManager;
+    public ClassListAdapter(@NonNull SessionManager sessionManager) {
         super(DIFF_CALLBACK);
+        sessionManager = new SessionManager();
     }
 
     // Định nghĩa cách RecyclerView so sánh các item (tối ưu hiệu suất)
@@ -74,8 +77,13 @@ public class ClassListAdapter extends ListAdapter<StudyClass, ClassListAdapter.C
 
                         // 2. Tìm NavController và điều hướng
                         // Dùng action ID chúng ta đã tạo ở Bước 1
-                        Navigation.findNavController(itemView)
-                                .navigate(R.id.action_student_home_to_classDetail, bundle);
+                        if(sessionManager.getUserRole().equals("ROLE_TEACHER")) {
+                            Navigation.findNavController(itemView)
+                                    .navigate(R.id.action_teacher_home_to_classDetail, bundle);
+                        } else if(sessionManager.getUserRole().equals("ROLE_STUDENT")) {
+                            Navigation.findNavController(itemView)
+                                    .navigate(R.id.action_student_home_to_classDetail, bundle);
+                        }
                     }
                 }
             });
