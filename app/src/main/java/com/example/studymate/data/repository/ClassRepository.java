@@ -72,21 +72,6 @@ public class ClassRepository {
     }
 
     private void runRealApiLogicForClassListTeacher() {
-        // Giả lập độ trễ 1.5 giây
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            ArrayList<StudyClass> mockList = new ArrayList<>();
-            mockList.add(new StudyClass(1, "Toán 10A1", "GV: Nguyễn Văn A"));
-            mockList.add(new StudyClass(2, "Lý 11B2", "GV: Trần Thị B"));
-            mockList.add(new StudyClass(3, "Hóa 12C3", "GV: Lê Văn C"));
-            mockList.add(new StudyClass(4, "Sinh 10A4", "GV: Phạm Thị D"));
-            mockList.add(new StudyClass(5, "Anh 11E5", "GV: Bùi Văn E"));
-
-            isTeacherClassListLoading.postValue(false); // Tải xong
-            teacherClassListLiveData.postValue(mockList); // Gửi dữ liệu
-        }, 1500); // Trì hoãn 1.5 giây
-    }
-
-    private void runMockLogicForClassListTeacher() {
         apiService.getTeacherClasses().enqueue(new Callback<List<StudyClass>>() {
             @Override
             public void onResponse(Call<List<StudyClass>> call, Response<List<StudyClass>> response) {
@@ -104,6 +89,21 @@ public class ClassRepository {
                 teacherClassListError.postValue("Lỗi mạng: " + t.getMessage());
             }
         });
+    }
+
+    private void runMockLogicForClassListTeacher() {
+        // Giả lập độ trễ 1.5 giây
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            ArrayList<StudyClass> mockList = new ArrayList<>();
+            mockList.add(new StudyClass(1, "Toán 10A1", "GV: Nguyễn Văn A"));
+            mockList.add(new StudyClass(2, "Lý 11B2", "GV: Trần Thị B"));
+            mockList.add(new StudyClass(3, "Hóa 12C3", "GV: Lê Văn C"));
+            mockList.add(new StudyClass(4, "Sinh 10A4", "GV: Phạm Thị D"));
+            mockList.add(new StudyClass(5, "Anh 11E5", "GV: Bùi Văn E"));
+
+            isTeacherClassListLoading.postValue(false); // Tải xong
+            teacherClassListLiveData.postValue(mockList); // Gửi dữ liệu
+        }, 1500); // Trì hoãn 1.5 giây
     }
 
     public void fetchClassDetails(int classId) {
@@ -242,7 +242,7 @@ public class ClassRepository {
     }
 
     public LiveData<List<StudyClass>> getTeacherClassListLiveData() {
-        return studentClassListLiveData;
+        return teacherClassListLiveData;
     }
 
     public LiveData<Boolean> getIsTeacherClassListLoading() {
