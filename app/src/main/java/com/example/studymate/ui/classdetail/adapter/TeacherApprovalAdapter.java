@@ -10,14 +10,15 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.studymate.R;
+import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.User;
 
-public class TeacherApprovalAdapter extends ListAdapter<User, TeacherApprovalAdapter.ApprovalViewHolder> {
+public class TeacherApprovalAdapter extends ListAdapter<StudentClass, TeacherApprovalAdapter.ApprovalViewHolder> {
 
     // 1. Định nghĩa Interface
     public interface OnApprovalClickListener {
-        void onApproveClick(User user);
-        void onRejectClick(User user);
+        void onApproveClick(StudentClass user);
+        void onRejectClick(StudentClass user);
     }
 
     private OnApprovalClickListener listener;
@@ -41,7 +42,7 @@ public class TeacherApprovalAdapter extends ListAdapter<User, TeacherApprovalAda
 
     @Override
     public void onBindViewHolder(@NonNull ApprovalViewHolder holder, int position) {
-        User currentUser = getItem(position);
+        StudentClass currentUser = getItem(position);
         holder.bind(currentUser);
     }
 
@@ -74,22 +75,22 @@ public class TeacherApprovalAdapter extends ListAdapter<User, TeacherApprovalAda
             });
         }
 
-        public void bind(User user) {
+        public void bind(StudentClass user) {
             // (Giả sử getUserId() trả về student_class_id, và getEmail() trả về student_id thật)
-            tvStudentId.setText(user.getEmail()); // Hiển thị ID/email thật
+            tvStudentId.setText(user.getUsername()); // Hiển thị ID/email thật
             tvStudentName.setText(user.getFullName());
         }
     }
 
     // --- DiffUtil ---
-    private static final DiffUtil.ItemCallback<User> DIFF_CALLBACK =
-            new DiffUtil.ItemCallback<User>() {
+    private static final DiffUtil.ItemCallback<StudentClass> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<StudentClass>() {
                 @Override
-                public boolean areItemsTheSame(@NonNull User oldItem, @NonNull User newItem) {
-                    return oldItem.getUserId() == newItem.getUserId(); // So sánh student_class_id
+                public boolean areItemsTheSame(@NonNull StudentClass oldItem, @NonNull StudentClass newItem) {
+                    return oldItem.getStudentClassId() == newItem.getStudentClassId(); // So sánh student_class_id
                 }
                 @Override
-                public boolean areContentsTheSame(@NonNull User oldItem, @NonNull User newItem) {
+                public boolean areContentsTheSame(@NonNull StudentClass oldItem, @NonNull StudentClass newItem) {
                     return oldItem.getFullName().equals(newItem.getFullName());
                 }
             };

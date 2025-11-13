@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
+import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.User;
 import com.example.studymate.ui.classdetail.adapter.TeacherApprovalAdapter;
 import com.example.studymate.ui.viewmodel.teacher.TeacherApprovalViewModel;
@@ -105,14 +106,14 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
 
     // 3. Hàm được gọi từ Adapter khi bấm nút "Check"
     @Override
-    public void onApproveClick(User user) {
+    public void onApproveClick(StudentClass user) {
         // (user.getUserId() ở đây là studentClassId)
-        viewModel.approveStudent(user.getUserId());
+        viewModel.approveStudent(user.getStudentClassId());
     }
 
     // 4. Hàm được gọi từ Adapter khi bấm nút "Close"
     @Override
-    public void onRejectClick(User user) {
-        viewModel.rejectStudent(user.getUserId());
+    public void onRejectClick(StudentClass user) {
+        viewModel.rejectStudent(user.getStudentClassId());
     }
 }

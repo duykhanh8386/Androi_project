@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudyClass;
 // ⭐️ Sử dụng package adapter mới của bạn
+import com.example.studymate.data.network.SessionManager;
 import com.example.studymate.ui.studyclass.adapter.ClassListAdapter;
 // ⭐️ Sử dụng package viewmodel mới của bạn
 import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
@@ -33,6 +34,7 @@ import java.util.List;
 
 public class HomeStudentFragment extends Fragment {
 
+    private SessionManager sessionManager = new SessionManager();
     private HomeStudentViewModel viewModel;
     private RecyclerView rvStudentClasses;
     private ClassListAdapter adapter;
@@ -65,7 +67,7 @@ public class HomeStudentFragment extends Fragment {
         rvStudentClasses = view.findViewById(R.id.rvStudentClasses);
 
         // 3. Thiết lập Adapter
-        adapter = new ClassListAdapter();
+        adapter = new ClassListAdapter(sessionManager);
         rvStudentClasses.setAdapter(adapter);
 
         // 4. Thiết lập LayoutManager

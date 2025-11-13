@@ -34,7 +34,7 @@ public class ClassDetailFragment extends Fragment {
     private ClassDetailViewModel viewModel;
 
     private HomeStudentViewModel homeStudentViewModel;
-    private TextView tvClassNameDetail, tvTeacherNameDetail;
+    private TextView tvClassNameDetail, tvClassId, tvTeacherNameDetail, tvStudentCount, tvClassTime;
     private ProgressBar progressBar;
 
     private Button btnStudents, btnScore, btnNotify, btnFeedback, btnAccept;
@@ -68,6 +68,9 @@ public class ClassDetailFragment extends Fragment {
         // Ánh xạ View
         tvClassNameDetail = view.findViewById(R.id.tvClassNameDetail);
         tvTeacherNameDetail = view.findViewById(R.id.tvTeacherNameDetail);
+        tvClassId = view.findViewById(R.id.tvClassId);
+        tvStudentCount = view.findViewById(R.id.tvStudentCount);
+        tvClassTime = view.findViewById(R.id.tvClassTime);
         progressBar = view.findViewById(R.id.progressBar);
         scrollContent = view.findViewById(R.id.scrollContent);
         btnStudents = view.findViewById(R.id.btnStudents);
@@ -114,7 +117,10 @@ public class ClassDetailFragment extends Fragment {
             public void onChanged(ClassDetailResponse studyClass) {
                 if (studyClass != null) {
                     tvClassNameDetail.setText(studyClass.getClassName());
-                    tvTeacherNameDetail.setText(studyClass.getClassTime());
+                    tvTeacherNameDetail.setText(studyClass.getTeacherName());
+                    tvClassId.setText(studyClass.getClassJoinCode());
+                    tvStudentCount.setText(String.valueOf(studyClass.getStudentCount()));
+                    tvClassTime.setText(studyClass.getClassTime());
                 }
             }
         });

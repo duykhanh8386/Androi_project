@@ -4,6 +4,7 @@ package com.example.studymate.data.network;
 import com.example.studymate.data.model.Feedback;
 import com.example.studymate.data.model.Grade;
 import com.example.studymate.data.model.Notification;
+import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.ApprovalRequest;
@@ -43,12 +44,12 @@ public interface ApiService {
     // ===== TEACHER =====
 
     @GET("api/teacher/classes/{id}/pending")
-    Call<List<User>> getPendingStudents(@Path("id") int classId);
+    Call<List<StudentClass>> getPendingStudents(@Path("id") int classId);
 
     @PUT("api/teacher/classes/students/{studentClassId}")
     Call<MessageResponse> approveOrRejectStudent(
             @Path("studentClassId") int studentClassId,
-            @Body ApprovalRequest approvalRequest
+            @Query("status") String status // ⭐️ ĐỔI TỪ @Body thành @Query
     );
 
     @GET("api/teacher/classes")

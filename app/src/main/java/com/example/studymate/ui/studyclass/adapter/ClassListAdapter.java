@@ -17,9 +17,9 @@ import com.example.studymate.data.network.SessionManager;
 public class ClassListAdapter extends ListAdapter<StudyClass, ClassListAdapter.ClassViewHolder> {
 
     private  SessionManager sessionManager;
-    public ClassListAdapter() {
+    public ClassListAdapter(@NonNull SessionManager sessionManager) {
         super(DIFF_CALLBACK);
-        sessionManager = new SessionManager();
+        this.sessionManager = sessionManager;
     }
 
     // Định nghĩa cách RecyclerView so sánh các item (tối ưu hiệu suất)

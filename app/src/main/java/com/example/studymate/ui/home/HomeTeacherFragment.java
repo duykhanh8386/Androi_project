@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudyClass;
+import com.example.studymate.data.network.SessionManager;
 import com.example.studymate.ui.studyclass.adapter.ClassListAdapter;
 import com.example.studymate.ui.viewmodel.HomeTeacherViewModel;
 
@@ -30,6 +31,7 @@ import java.util.List;
 
 public class HomeTeacherFragment extends Fragment {
 
+    private SessionManager sessionManager = new SessionManager();
     private HomeTeacherViewModel viewModel;
     private RecyclerView rvStudentClasses;
     private ClassListAdapter adapter;
@@ -46,7 +48,7 @@ public class HomeTeacherFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_class_list_student, container, false);
+        return inflater.inflate(R.layout.fragment_class_list_teacher, container, false);
     }
 
 
@@ -62,7 +64,7 @@ public class HomeTeacherFragment extends Fragment {
         rvStudentClasses = view.findViewById(R.id.rvStudentClasses);
 
         // 3. Thiết lập Adapter
-        adapter = new ClassListAdapter();
+        adapter = new ClassListAdapter(sessionManager);
         rvStudentClasses.setAdapter(adapter);
 
         // 4. Thiết lập LayoutManager
