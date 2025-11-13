@@ -26,7 +26,7 @@ public class AuthRepository {
     private MutableLiveData<LoginResponse> loginResponseData = new MutableLiveData<>();
     private MutableLiveData<String> loginErrorData = new MutableLiveData<>();
 
-    private final boolean IS_MOCK_MODE = false;
+    private final boolean IS_MOCK_MODE = true;
 
     public AuthRepository() {
         this.apiService = RetrofitClient.getApiService();
@@ -118,7 +118,8 @@ public class AuthRepository {
                     User mockUser = new User(1, "Học Sinh A", "student@test.com", "ROLE_STUDENT");
                     // Tạo một Response mẫu
                     LoginResponse mockResponse = new LoginResponse("mock_token_student_123", mockUser);
-
+                    sessionManager.saveUserId(1L);
+                    sessionManager.saveUserRole("ROLE_STUDENT");
                     loginResponseData.postValue(mockResponse);
 
                     // Kịch bản 2: Đăng nhập GIÁO VIÊN thành công
@@ -126,7 +127,8 @@ public class AuthRepository {
 
                     User mockUser = new User(10, "Giáo Viên B", "teacher@test.com", "ROLE_TEACHER");
                     LoginResponse mockResponse = new LoginResponse("mock_token_teacher_456", mockUser);
-
+                    sessionManager.saveUserId(10L);
+                    sessionManager.saveUserRole("ROLE_TEACHER");
                     loginResponseData.postValue(mockResponse);
 
                     // Kịch bản 3: Đăng nhập ADMIN thành công
@@ -134,7 +136,8 @@ public class AuthRepository {
 
                     User mockUser = new User(100, "Quản Trị Viên", "admin@test.com", "ROLE_ADMIN");
                     LoginResponse mockResponse = new LoginResponse("mock_token_admin_789", mockUser);
-
+                    sessionManager.saveUserId(100L);
+                    sessionManager.saveUserRole("ROLE_ADMIN");
                     loginResponseData.postValue(mockResponse);
 
                     // Kịch bản 4: Đăng nhập thất bại (sai thông tin)

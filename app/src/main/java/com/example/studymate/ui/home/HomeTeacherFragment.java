@@ -33,7 +33,7 @@ public class HomeTeacherFragment extends Fragment {
 
     private SessionManager sessionManager = new SessionManager();
     private HomeTeacherViewModel viewModel;
-    private RecyclerView rvStudentClasses;
+    private RecyclerView rvTeacherClasses;
     private ClassListAdapter adapter;
 
     private ProgressBar progressBar; // Biến đã có
@@ -61,14 +61,14 @@ public class HomeTeacherFragment extends Fragment {
 
         // 2. Ánh xạ View (đã có)
         progressBar = view.findViewById(R.id.progressBar);
-        rvStudentClasses = view.findViewById(R.id.rvStudentClasses);
+        rvTeacherClasses = view.findViewById(R.id.rvTeacherClasses);
 
         // 3. Thiết lập Adapter
         adapter = new ClassListAdapter(sessionManager);
-        rvStudentClasses.setAdapter(adapter);
+        rvTeacherClasses.setAdapter(adapter);
 
         // 4. Thiết lập LayoutManager
-        rvStudentClasses.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        rvTeacherClasses.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
 
         // 5. Gọi hàm quan sát
@@ -77,7 +77,6 @@ public class HomeTeacherFragment extends Fragment {
         // 6. Yêu cầu tải dữ liệu (đã có)
         viewModel.fetchTeacherClasses();
 
-        // (TODO: Xử lý btnJoinClass)
     }
 
     // (onCreateOptionsMenu, onOptionsItemSelected, showLogoutDialog không đổi)
@@ -129,10 +128,10 @@ public class HomeTeacherFragment extends Fragment {
             public void onChanged(Boolean isLoading) {
                 if (isLoading) {
                     progressBar.setVisibility(View.VISIBLE);
-                    rvStudentClasses.setVisibility(View.GONE);
+                    rvTeacherClasses.setVisibility(View.GONE);
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    rvStudentClasses.setVisibility(View.VISIBLE);
+                    rvTeacherClasses.setVisibility(View.VISIBLE);
                 }
             }
         });

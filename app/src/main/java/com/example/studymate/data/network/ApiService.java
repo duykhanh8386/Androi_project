@@ -52,6 +52,12 @@ public interface ApiService {
             @Query("status") String status // ⭐️ ĐỔI TỪ @Body thành @Query
     );
 
+    @PUT("api/teacher/classes/{id}/update-all")
+    Call<MessageResponse> updateAllPendingStatus(
+            @Path("id") int classId,
+            @Query("status") String status // (APPROVED hoặc REJECTED)
+    );
+
     @GET("api/teacher/classes")
     Call<List<StudyClass>> getTeacherClasses();
 

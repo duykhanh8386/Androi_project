@@ -18,7 +18,7 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:textColor="@android:color/black"
+            android:textColor="@color/cardview_dark_background"
             android:layout_marginBottom="16dp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -66,8 +66,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Hủy bỏ"
-            android:textColor="@android:color/white"
-            android:backgroundTint="@android:color/red"
+            android:textColor="@color/cardview_light_background"
+            android:backgroundTint="@color/red"
             app:cornerRadius="20dp"/>
 
     </LinearLayout>

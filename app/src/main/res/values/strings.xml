@@ -69,12 +69,12 @@
     <string name="final_grade">Điểm tổng kết</string>
     <string name="grade_ck">Điểm cuối kỳ</string>
     <string name="grade_gk">Điểm giữa kỳ</string>
-    <string name="grade_tx">Điểm thường xuyên</string>
+    <string name="grade_tx">Điểm TX</string>
     <string name="class_name">Tên lớp:</string>
     <string name="class_info">Thông tin</string>
     <string name="add_class">Thêm lớp</string>
     <string name="teacher">Giáo viên</string>
-    <string name="Student">Student</string>
+    <string name="Student">Học sinh</string>
     <string name="join_class">Tham gia lớp học</string>
     <string name="select_role_label">Đăng nhập với ?</string>
     <string name="logo_description">Logo ứng dụng StudyMate</string>
@@ -90,4 +90,7 @@
     <string name="grade">Điểm số</string>
     <string name="leave_class">Rời lớp học</string>
     <string name="leave_class_confirm">Bạn có chắc chắn muốn rời lớp học này không ?</string>
+    <string name="enter_score">Nhập điểm</string>
+    <string name="delete">Xóa</string>
+    <string name="accept_list_pending">Danh sách chờ phê duyệt</string>
 </resources>

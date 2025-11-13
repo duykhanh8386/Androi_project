@@ -23,7 +23,7 @@ import retrofit2.Response;
 public class ClassRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = false; // ⭐️ Vẫn dùng Mock
+    private final boolean IS_MOCK_MODE = true; // ⭐️ Vẫn dùng Mock
 
     // LiveData cho danh sách lớp của học sinh
     private MutableLiveData<List<StudyClass>> studentClassListLiveData = new MutableLiveData<>();
@@ -184,8 +184,6 @@ public class ClassRepository {
         // Giả lập độ trễ 1 giây
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             // Giả lập tìm thấy lớp học dựa trên ID
-            // (id, className, classTime/teacherName)
-//            StudyClass mockClass = new StudyClass(classId, "Chi tiết lớp " + classId, "GV: Nguyễn Văn Z");
             ClassDetailResponse mockClass = new ClassDetailResponse(3, "Lớp 10A1", "L10A1",
                     "Thứ 2 - 7h30", "Teacher User", 35);
             isDetailLoading.postValue(false);

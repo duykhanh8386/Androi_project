@@ -6,8 +6,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.studymate.data.model.StudentClass;
-import com.example.studymate.data.model.User;
-import com.example.studymate.data.model.request.ApprovalRequest;
 import com.example.studymate.data.model.response.MessageResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
@@ -20,7 +18,7 @@ import retrofit2.Response;
 public class TeacherRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = false;
+    private final boolean IS_MOCK_MODE = true;
 
     // LiveData cho danh sách chờ
     private MutableLiveData<List<StudentClass>> pendingListLiveData = new MutableLiveData<>();
@@ -30,7 +28,12 @@ public class TeacherRepository {
     // LiveData cho sự kiện Phê duyệt/Từ chối (để báo cho Fragment)
     private MutableLiveData<String> approvalSuccessEvent = new MutableLiveData<>();
     private MutableLiveData<String> approvalErrorEvent = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isUpdating = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isApprovalLoading = new MutableLiveData<>();
+
+    // LiveData cho sự kiện (HÀNG LOẠT)
+    private MutableLiveData<Boolean> isBulkLoading = new MutableLiveData<>();
+    private MutableLiveData<String> bulkSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> bulkErrorEvent = new MutableLiveData<>();
 
     public TeacherRepository() {
         this.apiService = RetrofitClient.getApiService();
@@ -77,21 +80,21 @@ public class TeacherRepository {
         });
     }
 
-    // --- Xử lý Phê duyệt/Từ chối ---
+    // --- Xử lý Phê duyệt/Từ chối đơn le ---
 
     // (Helper chung)
     private void processApproval(int studentClassId, String status) {
-        isUpdating.postValue(true);
+        isApprovalLoading.postValue(true);
         if (IS_MOCK_MODE) {
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                isUpdating.postValue(false);
+                isApprovalLoading.postValue(false);
                 approvalSuccessEvent.postValue(status + " thành công!");
-            }, 500); // Giả lập 0.5 giây
+            }, 500);
         } else {
             apiService.approveOrRejectStudent(studentClassId, status).enqueue(new Callback<MessageResponse>() {
                 @Override
                 public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                    isUpdating.postValue(false);
+                    isApprovalLoading.postValue(false);
                     if (response.isSuccessful() && response.body() != null) {
                         approvalSuccessEvent.postValue("Phê duyệt thành công");
                     } else {
@@ -100,7 +103,7 @@ public class TeacherRepository {
                 }
                 @Override
                 public void onFailure(Call<MessageResponse> call, Throwable t) {
-                    isUpdating.postValue(false);
+                    isApprovalLoading.postValue(false);
                     approvalErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
                 }
             });
@@ -116,11 +119,72 @@ public class TeacherRepository {
         processApproval(studentClassId, "REJECTED");
     }
 
+    // (Phê duyệt/Từ chối - HÀNG LOẠT)
+    public void approveAllPending(int classId) {
+        isBulkLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForApproveAll(classId);
+        } else {
+            // ⭐️ SỬA LẠI:
+            runRealApiLogicForUpdateAll(classId, "APPROVED");
+        }
+    }
+
+    public void rejectAllPending(int classId) {
+        isBulkLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForRejectAll(classId);
+        } else {
+            // ⭐️ SỬA LẠI:
+            runRealApiLogicForUpdateAll(classId, "REJECTED");
+        }
+    }
+
+    // ⭐️ THÊM MỚI: Logic Mock (Hàng loạt)
+    private void runMockLogicForApproveAll(int classId) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            isBulkLoading.postValue(false);
+            bulkSuccessEvent.postValue("Đã phê duyệt tất cả!");
+        }, 1500);
+    }
+    private void runMockLogicForRejectAll(int classId) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            isBulkLoading.postValue(false);
+            bulkSuccessEvent.postValue("Đã từ chối tất cả!");
+        }, 1500);
+    }
+
+    // ⭐️ THÊM MỚI: Logic API (Hàng loạt)
+    private void runRealApiLogicForUpdateAll(int classId, String status) {
+        // Gọi hàm mới trong ApiService
+        apiService.updateAllPendingStatus(classId, status).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                isBulkLoading.postValue(false);
+                if(response.isSuccessful() && response.body() != null) {
+                    bulkSuccessEvent.postValue(response.body().getMessage());
+                } else {
+                    bulkErrorEvent.postValue("Lỗi xử lý hàng loạt");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                isBulkLoading.postValue(false);
+                bulkErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
     // --- Getters ---
     public LiveData<List<StudentClass>> getPendingList() { return pendingListLiveData; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
     public LiveData<String> getError() { return error; }
-    public LiveData<Boolean> getIsUpdating() { return isUpdating; }
+    public LiveData<Boolean> getIsApprovalLoading() { return isApprovalLoading; }
     public LiveData<String> getApprovalSuccessEvent() { return approvalSuccessEvent; }
     public LiveData<String> getApprovalErrorEvent() { return approvalErrorEvent; }
+
+    public LiveData<Boolean> getIsBulkLoading() { return isBulkLoading; }
+    public LiveData<String> getBulkSuccessEvent() { return bulkSuccessEvent; }
+    public LiveData<String> getBulkErrorEvent() { return bulkErrorEvent; }
 }
