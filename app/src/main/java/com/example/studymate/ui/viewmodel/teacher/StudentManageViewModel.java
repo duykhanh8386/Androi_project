@@ -29,9 +29,9 @@ public class StudentManageViewModel extends ViewModel {
     }
 
     // --- 2. Xóa/Kick (Dùng lại logic Reject) ---
-    public void kickStudent(int studentClassId) {
+    public void kickStudent(int studentId, int classId) {
         // Gọi hàm "REJECTED" từ Repository
-        repository.rejectStudent(studentClassId);
+        repository.rejectStudent(studentId, classId);
     }
 
     // (Lắng nghe kết quả từ sự kiện Phê duyệt/Từ chối)
