@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/textViewStudentName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Nguyễn Văn An"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layoutIcons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewStudentName">
+
+            <ImageView
+                android:id="@+id/iconMessage"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_message"
+                android:contentDescription="Gửi tin nhắn"
+                app:tint="@android:color/holo_blue_dark"
+                android:padding="4dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/labelStudentID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mã SV:"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewStudentName" />
+
+        <TextView
+            android:id="@+id/textViewStudentID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="016A"
+            android:textSize="14sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/labelStudentID"
+            app:layout_constraintStart_toEndOf="@+id/labelStudentID" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

@@ -29,6 +29,29 @@
     </fragment>
 
     <fragment
+        android:id="@+id/classCreateFragment"
+        android:name="com.example.studymate.ui.studyclass.teacher.ClassCreateFragment"
+        android:label="Tạo lớp"
+        tools:layout="@layout/fragment_class_create">
+    </fragment>
+
+    <fragment
+        android:id="@+id/classUpdateFragment"
+        android:name="com.example.studymate.ui.studyclass.teacher.ClassUpdateFragment"
+        android:label="Cập nhật"
+        tools:layout="@layout/fragment_class_edit">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+        <argument
+            android:name="currentName"
+            app:argType="string" />
+        <argument
+            android:name="currentTime"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
         android:id="@+id/homeAdminFragment"
         android:name="com.example.studymate.ui.home.HomeAdminFragment"
         android:label="@string/home_admin"
@@ -51,6 +74,9 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/homeTeacherFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_teacher_home_to_classCreate"
+            app:destination="@id/classCreateFragment" />
     </fragment>
 
     <fragment
@@ -73,7 +99,7 @@
 
     <fragment
         android:id="@+id/joinClassFragment"
-        android:name="com.example.studymate.ui.studyclass.JoinClassFragment"
+        android:name="com.example.studymate.ui.studyclass.student.JoinClassFragment"
         tools:layout="@layout/bottom_sheet_join_class" />
 
     <fragment
@@ -88,7 +114,7 @@
 
         <action
             android:id="@+id/action_detail_to_feedback"
-            app:destination="@id/feedbackThreadFragment" />
+            app:destination="@id/listStudentFeedBack" />
         <action
             android:id="@+id/action_detail_to_notifications"
             app:destination="@id/teacherNotificationListFragment" />
@@ -101,6 +127,14 @@
         <action
             android:id="@+id/action_detail_to_approvalList"
             app:destination="@id/teacherApprovalFragment" />
+        <action
+            android:id="@+id/action_teacherClassDetailFragment_to_classUpdateFragment"
+            app:destination="@id/classUpdateFragment" />
+        <action
+            android:id="@+id/action_teacherClassDetailFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeTeacherFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -126,7 +160,11 @@
         <action
             android:id="@+id/action_detail_to_grades"
             app:destination="@id/studentGradeFragment" />
-
+        <action
+            android:id="@+id/action_studentClassDetailFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeStudentFragment" app:popUpToInclusive="true"
+            />
     </fragment>
 
     <fragment
@@ -159,6 +197,16 @@
         <argument
             android:name="classId"
             app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/listStudentFeedBack"
+        android:name="com.example.studymate.ui.feedback.ListStudentFeedBackFragment"
+        android:label="@string/qa_feedback"
+        tools:layout="@layout/fragment_list_student_feedback">
+        <action
+            android:id="@+id/action_detail_to_list_student_feedback"
+            app:destination="@id/feedbackThreadFragment" />
     </fragment>
 
     <fragment
@@ -254,5 +302,10 @@
     <fragment
         android:id="@+id/studentManageFragment"
         android:name="com.example.studymate.ui.classdetail.teacher.StudentManageFragment"
-        android:label="Quản lý sĩ số" />
+        android:label="@string/Student"
+        tools:layout="@layout/fragment_student_manage">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

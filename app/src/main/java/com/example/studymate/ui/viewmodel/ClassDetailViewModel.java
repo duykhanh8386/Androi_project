@@ -9,13 +9,21 @@ import com.example.studymate.data.repository.ClassRepository;
 public class ClassDetailViewModel extends ViewModel {
 
     private ClassRepository classRepository;
+
+    // LiveData "CHI TIÊT LỚP HỌC"
     private LiveData<ClassDetailResponse> classDetail;
     private LiveData<Boolean> isLoading;
     private LiveData<String> error;
 
+    // LiveData "RỜI LỚP"
     private LiveData<Boolean> isLeaveLoading;
     private LiveData<String> leaveSuccess;
     private LiveData<String> leaveError;
+
+    // LiveData "XÓA LỚP"
+    private LiveData<Boolean> isDeletingClass;
+    private LiveData<String> deleteSuccess;
+    private LiveData<String> deleteError;
 
     public ClassDetailViewModel() {
         classRepository = new ClassRepository();
@@ -26,6 +34,10 @@ public class ClassDetailViewModel extends ViewModel {
         isLeaveLoading = classRepository.getIsLeaveLoading();
         leaveSuccess = classRepository.getLeaveSuccessEvent();
         leaveError = classRepository.getLeaveErrorEvent();
+
+        isDeletingClass = classRepository.getIsDeletingClass();
+        deleteSuccess = classRepository.getDeleteSuccessEvent();
+        deleteError = classRepository.getDeleteErrorEvent();
     }
 
     // Hàm này được Fragment gọi
@@ -52,4 +64,12 @@ public class ClassDetailViewModel extends ViewModel {
     public LiveData<Boolean> getIsLeaveLoading() { return isLeaveLoading; }
     public LiveData<String> getLeaveSuccess() { return leaveSuccess; }
     public LiveData<String> getLeaveError() { return leaveError; }
+
+    public void performDeleteClass(int classId) {
+        classRepository.deleteClass(classId);
+    }
+
+    public LiveData<Boolean> getIsDeleting() { return isDeletingClass; }
+    public LiveData<String> getDeleteSuccess() { return deleteSuccess; }
+    public LiveData<String> getDeleteError() { return deleteError; }
 }

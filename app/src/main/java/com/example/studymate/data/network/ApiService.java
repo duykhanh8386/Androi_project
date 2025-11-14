@@ -7,7 +7,7 @@ import com.example.studymate.data.model.Notification;
 import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
-import com.example.studymate.data.model.request.ApprovalRequest;
+import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.request.CreateUserRequest;
 import com.example.studymate.data.model.request.FeedbackRequest;
 import com.example.studymate.data.model.request.JoinClassRequest;
@@ -52,8 +52,33 @@ public interface ApiService {
             @Query("status") String status // ⭐️ ĐỔI TỪ @Body thành @Query
     );
 
+    @PUT("api/teacher/classes/{classId}/students/{studentId}")
+    Call<MessageResponse> kickStudent(
+            @Path("classId") int classId,
+            @Path("studentId") int studentId,
+            @Query("status") String status
+    );
+
+    @PUT("api/teacher/classes/{id}/update-all")
+    Call<MessageResponse> updateAllPendingStatus(
+            @Path("id") int classId,
+            @Query("status") String status // (APPROVED hoặc REJECTED)
+    );
+
     @GET("api/teacher/classes")
     Call<List<StudyClass>> getTeacherClasses();
+
+    @POST("api/teacher/classes")
+    Call<StudyClass> createClass(@Body UpdateClassRequest createRequest);
+
+    @PUT("api/teacher/classes/{classId}")
+    Call<StudyClass> updateClass(
+            @Path("classId") int classId,
+            @Body UpdateClassRequest updateRequest
+    );
+
+    @DELETE("api/teacher/classes/{classId}")
+    Call<MessageResponse> deleteClass(@Path("classId") int classId);
 
     // ===== STUDENT =====
     @GET("api/student/classes")
@@ -88,13 +113,11 @@ public interface ApiService {
     @POST("api/admin/users")
     Call<User> createUser(@Body CreateUserRequest body);
 
-    @GET("api/admin/users/search")
+    @GET("api/admin/users")
     Call<List<User>> searchUsers(
         @Query("keyword") String keyword,
         @Query("role") String role,
-        @Query("status") String status,
-        @Query("page") int page,
-        @Query("size") int size
+        @Query("status") String status
     );
 
     @POST("api/student/classes/join")

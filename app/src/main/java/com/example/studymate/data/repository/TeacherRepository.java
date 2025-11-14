@@ -5,10 +5,13 @@ import android.os.Looper;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.studymate.data.model.Grade;
 import com.example.studymate.data.model.StudentClass;
+import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
-import com.example.studymate.data.model.request.ApprovalRequest;
+import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.response.MessageResponse;
+import com.example.studymate.data.model.response.StudentResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 import java.util.ArrayList;
@@ -30,11 +33,35 @@ public class TeacherRepository {
     // LiveData cho sự kiện Phê duyệt/Từ chối (để báo cho Fragment)
     private MutableLiveData<String> approvalSuccessEvent = new MutableLiveData<>();
     private MutableLiveData<String> approvalErrorEvent = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isUpdating = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isApprovalLoading = new MutableLiveData<>();
+
+    // LiveData cho sự kiện (HÀNG LOẠT)
+    private MutableLiveData<Boolean> isBulkLoading = new MutableLiveData<>();
+    private MutableLiveData<String> bulkSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> bulkErrorEvent = new MutableLiveData<>();
+
+    // LiveData cho sự kiện Tạo lớp
+    private MutableLiveData<StudyClass> createClassSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> createClassErrorEvent = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isCreatingClass = new MutableLiveData<>();
+
+    // LiveData cho sự kiện CẬP NHẬT LỚP
+    private MutableLiveData<StudyClass> updateClassSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> updateClassErrorEvent = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isUpdatingClass = new MutableLiveData<>();
+
+    // LiveData cho DANH SÁCH HỌC SINH (Quản lý)
+    private MutableLiveData<List<StudentResponse>> studentListLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isStudentListLoading = new MutableLiveData<>();
+    private MutableLiveData<String> studentListError = new MutableLiveData<>();
+
+
 
     public TeacherRepository() {
         this.apiService = RetrofitClient.getApiService();
     }
+
+
 
     // --- Lấy danh sách chờ ---
     public void fetchPendingList(int classId) {
@@ -77,21 +104,21 @@ public class TeacherRepository {
         });
     }
 
-    // --- Xử lý Phê duyệt/Từ chối ---
+    // --- Xử lý Phê duyệt/Từ chối đơn le ---
 
     // (Helper chung)
     private void processApproval(int studentClassId, String status) {
-        isUpdating.postValue(true);
+        isApprovalLoading.postValue(true);
         if (IS_MOCK_MODE) {
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                isUpdating.postValue(false);
+                isApprovalLoading.postValue(false);
                 approvalSuccessEvent.postValue(status + " thành công!");
-            }, 500); // Giả lập 0.5 giây
+            }, 500);
         } else {
             apiService.approveOrRejectStudent(studentClassId, status).enqueue(new Callback<MessageResponse>() {
                 @Override
                 public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                    isUpdating.postValue(false);
+                    isApprovalLoading.postValue(false);
                     if (response.isSuccessful() && response.body() != null) {
                         approvalSuccessEvent.postValue("Phê duyệt thành công");
                     } else {
@@ -100,7 +127,34 @@ public class TeacherRepository {
                 }
                 @Override
                 public void onFailure(Call<MessageResponse> call, Throwable t) {
-                    isUpdating.postValue(false);
+                    isApprovalLoading.postValue(false);
+                    approvalErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+                }
+            });
+        }
+    }
+
+    private void processApproval(int studentId, int classId , String status) {
+        isApprovalLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                isApprovalLoading.postValue(false);
+                approvalSuccessEvent.postValue(status + " thành công!");
+            }, 500);
+        } else {
+            apiService.kickStudent(classId, studentId, status).enqueue(new Callback<MessageResponse>() {
+                @Override
+                public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                    isApprovalLoading.postValue(false);
+                    if (response.isSuccessful() && response.body() != null) {
+                        approvalSuccessEvent.postValue(response.body().getMessage());
+                    } else {
+                        approvalErrorEvent.postValue("Lỗi: " + response.code());
+                    }
+                }
+                @Override
+                public void onFailure(Call<MessageResponse> call, Throwable t) {
+                    isApprovalLoading.postValue(false);
                     approvalErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
                 }
             });
@@ -116,11 +170,212 @@ public class TeacherRepository {
         processApproval(studentClassId, "REJECTED");
     }
 
+    public void rejectStudent(int studentId, int classId) {
+        processApproval(studentId, classId, "REJECTED");
+    }
+
+    // (Phê duyệt/Từ chối - HÀNG LOẠT)
+    public void approveAllPending(int classId) {
+        isBulkLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForApproveAll(classId);
+        } else {
+            // ⭐️ SỬA LẠI:
+            runRealApiLogicForUpdateAll(classId, "APPROVED");
+        }
+    }
+
+    public void rejectAllPending(int classId) {
+        isBulkLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForRejectAll(classId);
+        } else {
+            // ⭐️ SỬA LẠI:
+            runRealApiLogicForUpdateAll(classId, "REJECTED");
+        }
+    }
+
+    // ⭐️ THÊM MỚI: Logic Mock (Hàng loạt)
+    private void runMockLogicForApproveAll(int classId) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            isBulkLoading.postValue(false);
+            bulkSuccessEvent.postValue("Đã phê duyệt tất cả!");
+        }, 1500);
+    }
+    private void runMockLogicForRejectAll(int classId) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            isBulkLoading.postValue(false);
+            bulkSuccessEvent.postValue("Đã từ chối tất cả!");
+        }, 1500);
+    }
+
+    // ⭐️ THÊM MỚI: Logic API (Hàng loạt)
+    private void runRealApiLogicForUpdateAll(int classId, String status) {
+        // Gọi hàm mới trong ApiService
+        apiService.updateAllPendingStatus(classId, status).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                isBulkLoading.postValue(false);
+                if(response.isSuccessful() && response.body() != null) {
+                    bulkSuccessEvent.postValue(response.body().getMessage());
+                } else {
+                    bulkErrorEvent.postValue("Lỗi xử lý hàng loạt");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                isBulkLoading.postValue(false);
+                bulkErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
+    // ⭐️ THÊM HÀM MỚI: Tạo lớp
+    public void createClass(String className, String classTime) {
+        isCreatingClass.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForCreateClass(className, classTime);
+        } else {
+            runRealApiLogicForCreateClass(className, classTime);
+        }
+    }
+
+    private void runMockLogicForCreateClass(String className, String classTime) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            // Giả lập tạo thành công
+            StudyClass newClass = new StudyClass(99, className, classTime);
+            isCreatingClass.postValue(false);
+            createClassSuccessEvent.postValue(newClass);
+        }, 1500); // Trì hoãn 1.5 giây
+    }
+
+    private void runRealApiLogicForCreateClass(String className, String classTime) {
+        UpdateClassRequest request = new UpdateClassRequest(className, classTime);
+        apiService.createClass(request).enqueue(new Callback<StudyClass>() {
+            @Override
+            public void onResponse(Call<StudyClass> call, Response<StudyClass> response) {
+                isCreatingClass.postValue(false);
+                if (response.isSuccessful()) {
+                    createClassSuccessEvent.postValue(response.body());
+                } else {
+                    createClassErrorEvent.postValue("Lỗi: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<StudyClass> call, Throwable t) {
+                isCreatingClass.postValue(false);
+                createClassErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
+    public void updateClass(int classId, String className, String classTime) {
+        isUpdatingClass.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForUpdateClass(classId, className, classTime);
+        } else {
+            runRealApiLogicForUpdateClass(classId, className, classTime);
+        }
+    }
+
+    private void runMockLogicForUpdateClass(int classId, String className, String classTime) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            // Giả lập cập nhật thành công
+            StudyClass updatedClass = new StudyClass(classId, className, classTime);
+            isUpdatingClass.postValue(false);
+            updateClassSuccessEvent.postValue(updatedClass);
+        }, 1500); // Trì hoãn 1.5 giây
+    }
+
+    private void runRealApiLogicForUpdateClass(int classId, String className, String classTime) {
+        UpdateClassRequest request = new UpdateClassRequest(className, classTime);
+        apiService.updateClass(classId, request).enqueue(new Callback<StudyClass>() {
+            @Override
+            public void onResponse(Call<StudyClass> call, Response<StudyClass> response) {
+                isUpdatingClass.postValue(false);
+                if (response.isSuccessful()) {
+                    updateClassSuccessEvent.postValue(response.body());
+                } else {
+                    updateClassErrorEvent.postValue("Lỗi: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<StudyClass> call, Throwable t) {
+                isUpdatingClass.postValue(false);
+                updateClassErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
+    public void fetchStudentList(int classId) {
+        isStudentListLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForStudentList(classId);
+        } else {
+            runRealApiLogicForStudentList(classId);
+        }
+    }
+
+    private void runMockLogicForStudentList(int classId) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            ArrayList<StudentResponse> mockList = new ArrayList<>();
+
+            // Tạo 2 học sinh mẫu (với điểm)
+            User userA = new User(201, "Nguyễn Văn An", "20201111", "nva@test.com", "ROLE_STUDENT");
+            List<Grade> gradesA = List.of(new Grade(1, "TX", 9.0), new Grade(2, "GK", 8.5), new Grade(3, "CK", 8.8));
+            mockList.add(new StudentResponse(userA, gradesA));
+
+            User userB = new User(202, "20202222", "Trần Thị Bình", "ttb@test.com", "ROLE_STUDENT");
+            List<Grade> gradesB = List.of(new Grade(4, "TX", 7.0));
+            mockList.add(new StudentResponse(userB, gradesB));
+
+            isStudentListLoading.postValue(false);
+            studentListLiveData.postValue(mockList);
+        }, 1000);
+    }
+
+    private void runRealApiLogicForStudentList(int classId) {
+        // (Chúng ta gọi hàm getStudentsInClass mà StudentRepository cũng dùng)
+        apiService.getStudentsInClass(classId).enqueue(new Callback<List<StudentResponse>>() {
+            @Override
+            public void onResponse(Call<List<StudentResponse>> call, Response<List<StudentResponse>> response) {
+                isStudentListLoading.postValue(false);
+                if (response.isSuccessful()) {
+                    studentListLiveData.postValue(response.body());
+                } else {
+                    studentListError.postValue("Lỗi: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<List<StudentResponse>> call, Throwable t) {
+                isStudentListLoading.postValue(false);
+                studentListError.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
     // --- Getters ---
     public LiveData<List<StudentClass>> getPendingList() { return pendingListLiveData; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
     public LiveData<String> getError() { return error; }
-    public LiveData<Boolean> getIsUpdating() { return isUpdating; }
+    public LiveData<Boolean> getIsApprovalLoading() { return isApprovalLoading; }
     public LiveData<String> getApprovalSuccessEvent() { return approvalSuccessEvent; }
     public LiveData<String> getApprovalErrorEvent() { return approvalErrorEvent; }
+
+    public LiveData<Boolean> getIsBulkLoading() { return isBulkLoading; }
+    public LiveData<String> getBulkSuccessEvent() { return bulkSuccessEvent; }
+    public LiveData<String> getBulkErrorEvent() { return bulkErrorEvent; }
+
+    public LiveData<StudyClass> getCreateClassSuccessEvent() { return createClassSuccessEvent; }
+    public LiveData<String> getCreateClassErrorEvent() { return createClassErrorEvent; }
+    public LiveData<Boolean> getIsCreatingClass() { return isCreatingClass; }
+
+    public LiveData<StudyClass> getUpdateClassSuccessEvent() { return updateClassSuccessEvent; }
+    public LiveData<String> getUpdateClassErrorEvent() { return updateClassErrorEvent; }
+    public LiveData<Boolean> getIsUpdatingClass() { return isUpdatingClass; }
+
+    public LiveData<List<StudentResponse>> getStudentList() { return studentListLiveData; }
+    public LiveData<Boolean> getIsStudentListLoading() { return isStudentListLoading; }
+    public LiveData<String> getStudentListError() { return studentListError; }
 }

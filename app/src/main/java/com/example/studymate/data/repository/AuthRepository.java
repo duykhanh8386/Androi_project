@@ -13,6 +13,8 @@ import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 import com.example.studymate.data.network.SessionManager;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,6 +50,7 @@ public class AuthRepository {
     public void logout() {
 
         clearLocalUserData(); // Xóa token
+        RetrofitClient.clearCookies();
 
         // --- BƯỚC 2: GỌI API ĐỂ VÔ HIỆU HÓA TOKEN (NẾU CẦN) ---
         // (Trong chế độ MOCK, chúng ta chỉ cần giả lập thành công)
@@ -92,7 +95,11 @@ public class AuthRepository {
                     sessionManager.saveUserRole(response.body().getUser().getRoleName());
                     loginResponseData.postValue(response.body());
                 } else {
-                    loginErrorData.postValue("Lỗi đăng nhập: " + response.code());
+                    try {
+                        loginErrorData.postValue(response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -115,26 +122,29 @@ public class AuthRepository {
                 if (username.equals("student") && role.equals("ROLE_STUDENT")) {
 
                     // Tạo một User mẫu
-                    User mockUser = new User(1, "Học Sinh A", "student@test.com", "ROLE_STUDENT");
+                    User mockUser = new User(1, "Học Sinh A", "student", "student@test.com", "ROLE_STUDENT");
                     // Tạo một Response mẫu
                     LoginResponse mockResponse = new LoginResponse("mock_token_student_123", mockUser);
-
+                    sessionManager.saveUserId(1L);
+                    sessionManager.saveUserRole("ROLE_STUDENT");
                     loginResponseData.postValue(mockResponse);
 
                     // Kịch bản 2: Đăng nhập GIÁO VIÊN thành công
                 } else if (username.equals("teacher") && role.equals("ROLE_TEACHER")) {
 
-                    User mockUser = new User(10, "Giáo Viên B", "teacher@test.com", "ROLE_TEACHER");
+                    User mockUser = new User(10, "Giáo Viên B", "teacher" , "teacher@test.com", "ROLE_TEACHER");
                     LoginResponse mockResponse = new LoginResponse("mock_token_teacher_456", mockUser);
-
+                    sessionManager.saveUserId(10L);
+                    sessionManager.saveUserRole("ROLE_TEACHER");
                     loginResponseData.postValue(mockResponse);
 
                     // Kịch bản 3: Đăng nhập ADMIN thành công
                 } else if (username.equals("admin") && role.equals("ROLE_ADMIN")) {
 
-                    User mockUser = new User(100, "Quản Trị Viên", "admin@test.com", "ROLE_ADMIN");
+                    User mockUser = new User(100, "Quản Trị Viên", "admin", "admin@test.com", "ROLE_ADMIN");
                     LoginResponse mockResponse = new LoginResponse("mock_token_admin_789", mockUser);
-
+                    sessionManager.saveUserId(100L);
+                    sessionManager.saveUserRole("ROLE_ADMIN");
                     loginResponseData.postValue(mockResponse);
 
                     // Kịch bản 4: Đăng nhập thất bại (sai thông tin)

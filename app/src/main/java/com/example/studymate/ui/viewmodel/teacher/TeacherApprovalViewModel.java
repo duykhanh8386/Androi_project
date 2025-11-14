@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.studymate.data.model.StudentClass;
-import com.example.studymate.data.model.User;
 import com.example.studymate.data.repository.TeacherRepository;
 import java.util.List;
 
@@ -41,8 +40,23 @@ public class TeacherApprovalViewModel extends ViewModel {
         return repository.getApprovalErrorEvent();
     }
     public LiveData<Boolean> getIsUpdating() {
-        return repository.getIsUpdating();
+        return repository.getIsApprovalLoading();
     }
 
+    public void approveAll(int classId) {
+        repository.approveAllPending(classId);
+    }
+    public void rejectAll(int classId) {
+        repository.rejectAllPending(classId);
+    }
+    public LiveData<Boolean> getIsBulkLoading() {
+        return repository.getIsBulkLoading();
+    }
+    public LiveData<String> getBulkSuccessEvent() {
+        return repository.getBulkSuccessEvent();
+    }
+    public LiveData<String> getBulkErrorEvent() {
+        return repository.getBulkErrorEvent();
+    }
     // TODO: Thêm logic cho Approve All / Reject All
 }

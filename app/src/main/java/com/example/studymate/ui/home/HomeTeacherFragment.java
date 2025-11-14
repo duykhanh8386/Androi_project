@@ -26,17 +26,20 @@ import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.network.SessionManager;
 import com.example.studymate.ui.studyclass.adapter.ClassListAdapter;
 import com.example.studymate.ui.viewmodel.HomeTeacherViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
 public class HomeTeacherFragment extends Fragment {
 
-    private SessionManager sessionManager = new SessionManager();
+    private SessionManager sessionManager;
     private HomeTeacherViewModel viewModel;
-    private RecyclerView rvStudentClasses;
+    private RecyclerView rvTeacherClasses;
     private ClassListAdapter adapter;
 
     private ProgressBar progressBar; // Biến đã có
+
+    private FloatingActionButton fabCreateClass;
 
     // (onCreate, onCreateView không đổi)
     @Override
@@ -56,20 +59,27 @@ public class HomeTeacherFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        sessionManager = new SessionManager();
+
         // 1. Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(HomeTeacherViewModel.class);
 
         // 2. Ánh xạ View (đã có)
         progressBar = view.findViewById(R.id.progressBar);
-        rvStudentClasses = view.findViewById(R.id.rvStudentClasses);
+        rvTeacherClasses = view.findViewById(R.id.rvTeacherClasses);
+        fabCreateClass = view.findViewById(R.id.fabCreateClass);
 
         // 3. Thiết lập Adapter
         adapter = new ClassListAdapter(sessionManager);
-        rvStudentClasses.setAdapter(adapter);
+        rvTeacherClasses.setAdapter(adapter);
 
         // 4. Thiết lập LayoutManager
-        rvStudentClasses.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        rvTeacherClasses.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
+        fabCreateClass.setOnClickListener(v -> {
+            NavHostFragment.findNavController(HomeTeacherFragment.this)
+                    .navigate(R.id.action_teacher_home_to_classCreate);
+        });
 
         // 5. Gọi hàm quan sát
         setupObservers();
@@ -77,7 +87,6 @@ public class HomeTeacherFragment extends Fragment {
         // 6. Yêu cầu tải dữ liệu (đã có)
         viewModel.fetchTeacherClasses();
 
-        // (TODO: Xử lý btnJoinClass)
     }
 
     // (onCreateOptionsMenu, onOptionsItemSelected, showLogoutDialog không đổi)
@@ -129,10 +138,10 @@ public class HomeTeacherFragment extends Fragment {
             public void onChanged(Boolean isLoading) {
                 if (isLoading) {
                     progressBar.setVisibility(View.VISIBLE);
-                    rvStudentClasses.setVisibility(View.GONE);
+                    rvTeacherClasses.setVisibility(View.GONE);
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    rvStudentClasses.setVisibility(View.VISIBLE);
+                    rvTeacherClasses.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -144,7 +153,7 @@ public class HomeTeacherFragment extends Fragment {
                 if (isSuccess) {
                     Toast.makeText(getContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();
                     NavHostFragment.findNavController(HomeTeacherFragment.this)
-                            .navigate(R.id.action_homeStudentFragment_to_loginFragment);
+                            .navigate(R.id.action_homeTeacherFragment_to_loginFragment);
                 }
             }
         });

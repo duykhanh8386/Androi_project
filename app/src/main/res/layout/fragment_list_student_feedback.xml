@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Quản lý điểm"
+        android:text="@string/Student"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -39,6 +39,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewClassName"
-        tools:listitem="@layout/item_class_grade_row" />
+        tools:listitem="@layout/item_student_feedback" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
