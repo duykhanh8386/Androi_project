@@ -79,7 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="9.0"
+            android:text="-"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@+id/labelQuiz"
             app:layout_constraintStart_toEndOf="@+id/labelQuiz" />
@@ -98,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="8.5"
+            android:text="-"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@+id/labelMid"
             app:layout_constraintStart_toEndOf="@+id/labelMid" />
@@ -117,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="8.8"
+            android:text="-"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@+id/labelFinal"
             app:layout_constraintStart_toEndOf="@+id/labelFinal" />

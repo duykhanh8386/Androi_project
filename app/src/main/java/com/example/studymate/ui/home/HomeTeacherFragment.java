@@ -32,7 +32,7 @@ import java.util.List;
 
 public class HomeTeacherFragment extends Fragment {
 
-    private SessionManager sessionManager = new SessionManager();
+    private SessionManager sessionManager;
     private HomeTeacherViewModel viewModel;
     private RecyclerView rvTeacherClasses;
     private ClassListAdapter adapter;
@@ -58,6 +58,8 @@ public class HomeTeacherFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        sessionManager = new SessionManager();
 
         // 1. Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(HomeTeacherViewModel.class);
@@ -151,7 +153,7 @@ public class HomeTeacherFragment extends Fragment {
                 if (isSuccess) {
                     Toast.makeText(getContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();
                     NavHostFragment.findNavController(HomeTeacherFragment.this)
-                            .navigate(R.id.action_homeStudentFragment_to_loginFragment);
+                            .navigate(R.id.action_homeTeacherFragment_to_loginFragment);
                 }
             }
         });

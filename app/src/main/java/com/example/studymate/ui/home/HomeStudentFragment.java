@@ -34,7 +34,7 @@ import java.util.List;
 
 public class HomeStudentFragment extends Fragment {
 
-    private SessionManager sessionManager = new SessionManager();
+    private SessionManager sessionManager;
     private HomeStudentViewModel viewModel;
     private RecyclerView rvStudentClasses;
     private ClassListAdapter adapter;
@@ -58,6 +58,8 @@ public class HomeStudentFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        sessionManager = new SessionManager();
 
         // 1. Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(HomeStudentViewModel.class);

@@ -130,6 +130,11 @@
         <action
             android:id="@+id/action_teacherClassDetailFragment_to_classUpdateFragment"
             app:destination="@id/classUpdateFragment" />
+        <action
+            android:id="@+id/action_teacherClassDetailFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeTeacherFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -155,7 +160,11 @@
         <action
             android:id="@+id/action_detail_to_grades"
             app:destination="@id/studentGradeFragment" />
-
+        <action
+            android:id="@+id/action_studentClassDetailFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeStudentFragment" app:popUpToInclusive="true"
+            />
     </fragment>
 
     <fragment

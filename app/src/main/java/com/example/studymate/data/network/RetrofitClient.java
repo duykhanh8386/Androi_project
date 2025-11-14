@@ -4,32 +4,33 @@ package com.example.studymate.data.network;
 import com.example.studymate.MyApplication;
 
 import java.net.CookieHandler;
-import java.net.CookieManager;
-import okhttp3.JavaNetCookieJar;
+import java.net.CookieManager; // ⭐️ DÙNG CÁI NÀY
+import okhttp3.JavaNetCookieJar; // ⭐️ DÙNG CÁI NÀY
 
 // Import cho Timeouts
-import java.net.CookiePolicy;
+import java.net.CookiePolicy; // ⭐️ (Thêm)
 import java.util.concurrent.TimeUnit;
 
 // Import cho OkHttp và Logging
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor; // ⭐️ THÊM IMPORT NÀY
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+// ⭐️ (Import BuildConfig của bạn)
+import com.example.studymate.BuildConfig;
 
 
 public class RetrofitClient {
 
-    // 1. IP của máy tính (giữ nguyên)
     private static String BASE_URL = "http://10.0.2.2:8080/";
 
-    // 2. Biến Singleton
     private static Retrofit retrofit = null;
     private static ApiService apiService = null;
     private static OkHttpClient okHttpClient = null;
 
-    private static PersistentCookieStore cookieStore;
+    // ⭐️ BƯỚC 1: Thêm một biến static cho CookieManager
+    private static CookieManager cookieManager;
 
     /**
      * Hàm public duy nhất để các Repository gọi
@@ -43,7 +44,6 @@ public class RetrofitClient {
 
     /**
      * Khởi tạo Retrofit (chỉ chạy 1 lần)
-     * Nó sẽ gọi buildClient()
      */
     private static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
@@ -58,33 +58,56 @@ public class RetrofitClient {
 
     /**
      * Xây dựng OkHttpClient (chỉ chạy 1 lần)
-     * Đây là nơi cấu hình MỌI THỨ (Cookie, Log, Timeout)
      */
     private static OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
-            // 1. Cấu hình Cookie (giữ nguyên)
-            PersistentCookieStore cookieStore = new PersistentCookieStore(MyApplication.getAppContext());
 
-            // ⭐️ TẠO INTERCEPTOR LOGGING TRỰC TIẾP
+            // ⭐️ BƯỚC 2: Khởi tạo CookieManager (nếu chưa có)
+            if (cookieManager == null) {
+                cookieManager = new CookieManager();
+                // (Chính sách này chấp nhận TẤT CẢ cookie)
+                cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+            }
+
+            // Cấu hình Logging Interceptor
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            if (BuildConfig.DEBUG) {
+                loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            } else {
+                loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
+            }
 
-            // 2. Xây dựng Client Builder
+            // Xây dựng Client Builder
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .cookieJar(cookieStore)
+                    // ⭐️ BƯỚC 3: Sử dụng JavaNetCookieJar (thay vì PersistentCookieStore)
+                    .cookieJar(new JavaNetCookieJar(cookieManager))
                     .connectTimeout(15, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)
-                    .addInterceptor(loggingInterceptor); // ⭐️ Thêm log vào đây
+                    .addInterceptor(loggingInterceptor);
 
-            // 4. Build client
             okHttpClient = builder.build();
         }
         return okHttpClient;
     }
 
+    // ⭐️ BƯỚC 4: THÊM HÀM MỚI NÀY VÀO ⭐️
     /**
-     * (Hàm này giữ nguyên nếu bạn cần đổi IP)
+     * Xóa sạch cookie (dùng khi logout)
+     */
+    public static void clearCookies() {
+        if (cookieManager != null) {
+            // Xóa tất cả cookie trong bộ nhớ (RAM)
+            cookieManager.getCookieStore().removeAll();
+        }
+        // Reset toàn bộ client để đảm bảo không còn cache cũ
+        okHttpClient = null;
+        apiService = null;
+        retrofit = null;
+    }
+
+    /**
+     * (Hàm setBaseUrl không đổi)
      */
     public static void setBaseUrl(String baseUrl) {
         BASE_URL = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";

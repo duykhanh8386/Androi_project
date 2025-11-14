@@ -23,7 +23,7 @@ import retrofit2.Response;
 public class TeacherRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = true;
+    private final boolean IS_MOCK_MODE = false;
 
     // LiveData cho danh sách chờ
     private MutableLiveData<List<StudentClass>> pendingListLiveData = new MutableLiveData<>();
@@ -147,7 +147,7 @@ public class TeacherRepository {
                 public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                     isApprovalLoading.postValue(false);
                     if (response.isSuccessful() && response.body() != null) {
-                        approvalSuccessEvent.postValue("Phê duyệt thành công");
+                        approvalSuccessEvent.postValue(response.body().getMessage());
                     } else {
                         approvalErrorEvent.postValue("Lỗi: " + response.code());
                     }
