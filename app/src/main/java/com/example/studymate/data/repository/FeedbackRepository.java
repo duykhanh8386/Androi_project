@@ -66,8 +66,8 @@ public class FeedbackRepository {
             // (Dùng POJO Feedback.java [cite: 357] - (id, content, date, isRead, classId, senderId))
             StudyClass studyClass = new StudyClass();
             studyClass.setClassId(classId);
-            User student = new User(123, "Học sinh A", "a@gmail.com", RoleConstant.STUDENT);
-            User teacher = new User(456, "Học sinh A", "a@gmail.com", RoleConstant.STUDENT);
+            User student = new User(123, "Học sinh A", "2010234343", "a@gmail.com", RoleConstant.STUDENT);
+            User teacher = new User(456, "Học sinh A", "2010234343", "a@gmail.com", RoleConstant.TEACHER);
 
             // Giả sử ID học sinh là 123, ID giáo viên là 456
 //            mockList.add(new Feedback(1, "Thưa cô, em xin phép nghỉ ốm ạ.", new Date(), "false", studyClass, student));
@@ -106,7 +106,7 @@ public class FeedbackRepository {
             // (Giả sử 123 là ID học sinh - khớp với mock ID ở lượt trước)
             StudyClass studyClass = new StudyClass();
             studyClass.setClassId(classId);
-            User student = new User(123, "Học sinh A", "a@gmail.com", RoleConstant.STUDENT);
+            User student = new User(123, "Học sinh A", "student", "a@gmail.com", RoleConstant.STUDENT);
 //            Feedback newFeedback = new Feedback(
 //                    (int) (Math.random() * 1000), // ID ngẫu nhiên
 //                    content,

@@ -61,8 +61,8 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
         // Ánh xạ View
         progressBar = view.findViewById(R.id.progressBar);
         rvApproval = view.findViewById(R.id.recyclerViewApproval);
-        Button btnRejectAll = view.findViewById(R.id.btnRejectAll);
-        Button btnApproveAll = view.findViewById(R.id.btnApproveAll);
+        btnRejectAll = view.findViewById(R.id.btnRejectAll);
+        btnApproveAll = view.findViewById(R.id.btnApproveAll);
         bottomButtonLayout = view.findViewById(R.id.bottomButtonLayout);
 
         viewModel = new ViewModelProvider(this).get(TeacherApprovalViewModel.class);

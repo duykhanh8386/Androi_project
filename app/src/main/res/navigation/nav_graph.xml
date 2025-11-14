@@ -294,5 +294,9 @@
         android:id="@+id/studentManageFragment"
         android:name="com.example.studymate.ui.classdetail.teacher.StudentManageFragment"
         android:label="@string/Student"
-        tools:layout="@layout/fragment_student_manage"/>
+        tools:layout="@layout/fragment_student_manage">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

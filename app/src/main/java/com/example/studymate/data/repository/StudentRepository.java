@@ -119,7 +119,7 @@ public class StudentRepository {
             ArrayList<User> mockStudents = new ArrayList<>();
             // (Dùng constructor User(id, fullName, email, role) bạn đã có)
             Grade grade = new Grade(1, "TX", 8.0);
-            User user = new User(3, "Trần Thị B", "ttb@test.com", "STUDENT");
+            User user = new User(3, "Trần Thị B", "201201343", "ttb@test.com", "STUDENT");
             List<StudentResponse> studentResponses = List.of(new StudentResponse(user, List.of(grade)));
 
 //            mockStudents.add(new User(2, "Nguyễn Văn A", "nva@test.com", "STUDENT"));
