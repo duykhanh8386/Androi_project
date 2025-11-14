@@ -73,11 +73,11 @@ public class AccountListFragment extends Fragment {
         Chip chipActive = view.findViewById(R.id.chipActive);
         Chip chipInactive = view.findViewById(R.id.chipInactive);
 
-        chipAll.setOnClickListener(v -> { role = "ALL"; search(""); });
-        chipTeacher.setOnClickListener(v -> { role = "TEACHER"; search(""); });
-        chipStudent.setOnClickListener(v -> { role = "STUDENT"; search(""); });
-        chipActive.setOnClickListener(v -> { status = "ACTIVE"; search(""); });
-        chipInactive.setOnClickListener(v -> { status = "INACTIVE"; search(""); });
+        chipAll.setOnClickListener(v -> { role = "ALL"; status = "ACTIVE"; search(""); });
+        chipTeacher.setOnClickListener(v -> { role = "ROLE_TEACHER"; status = "ALL"; search(""); });
+        chipStudent.setOnClickListener(v -> { role = "ROLE_STUDENT"; status = "ALL"; search(""); });
+        chipActive.setOnClickListener(v -> { role = "ALL"; status = "ACTIVE"; search(""); });
+        chipInactive.setOnClickListener(v -> { role = "ALL"; status = "INACTIVE"; search(""); });
 
         search("");
     }
@@ -123,7 +123,7 @@ public class AccountListFragment extends Fragment {
     }
 
     private void search(String keyword) {
-        repo.search(keyword, role, status, page, size).observe(getViewLifecycleOwner(), new Observer<List<User>>() {
+        repo.search(keyword, role, status).observe(getViewLifecycleOwner(), new Observer<List<User>>() {
             @Override public void onChanged(List<User> users) {
                 if (users == null) {
                     Toast.makeText(getContext(), "Lỗi kết nối!", Toast.LENGTH_SHORT).show();

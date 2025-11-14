@@ -19,9 +19,9 @@ public class UserRepository {
 
     private final ApiService api = RetrofitClient.getApiService();
 
-    public LiveData<List<User>> search(String keyword, String role, String status, int page, int size) {
+    public LiveData<List<User>> search(String keyword, String role, String status) {
         MutableLiveData<List<User>> data = new MutableLiveData<>();
-        api.searchUsers(keyword, role, status, page, size).enqueue(new Callback<List<User>>() {
+        api.searchUsers(keyword, role, status).enqueue(new Callback<List<User>>() {
             @Override public void onResponse(Call<List<User>> call, Response<List<User>> res) {
                 if (res.isSuccessful()) data.postValue(res.body());
                 else data.postValue(null);

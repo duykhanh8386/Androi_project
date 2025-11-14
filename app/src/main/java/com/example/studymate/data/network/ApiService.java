@@ -117,9 +117,7 @@ public interface ApiService {
     Call<List<User>> searchUsers(
         @Query("keyword") String keyword,
         @Query("role") String role,
-        @Query("status") String status,
-        @Query("page") int page,
-        @Query("size") int size
+        @Query("status") String status
     );
 
     @POST("api/student/classes/join")
