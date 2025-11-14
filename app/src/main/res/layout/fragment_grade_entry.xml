@@ -22,12 +22,12 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Danh sách học sinh (Nhập điểm)"
-            android:textSize="20sp"
+            android:text=""
+            android:textSize="5sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
             android:layout_gravity="center_horizontal"
-            android:padding="16dp" />
+            android:padding="0dp" />
 
         <!-- 2. Hàng tiêu đề (Header) -->
         <LinearLayout
