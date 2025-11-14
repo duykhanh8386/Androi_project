@@ -8,6 +8,7 @@ import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.GradeRequest;
+import com.example.studymate.data.model.request.NotificationRequest;
 import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.request.CreateUserRequest;
 import com.example.studymate.data.model.request.FeedbackRequest;
@@ -92,6 +93,12 @@ public interface ApiService {
 
     @DELETE("api/teacher/grades/{gradeId}")
     Call<MessageResponse> deleteGrade(@Path("gradeId") int gradeId);
+
+    @POST("api/teacher/classes/{classId}/notifications")
+    Call<Notification> createNotification(
+            @Path("classId") int classId,
+            @Body NotificationRequest notificationRequest
+    );
 
     // ===== STUDENT =====
     @GET("api/student/classes")
