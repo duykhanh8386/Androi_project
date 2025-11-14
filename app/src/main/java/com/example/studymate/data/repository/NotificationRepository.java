@@ -20,7 +20,7 @@ import retrofit2.Response;
 public class NotificationRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = false; // Vẫn dùng Mock
+    private final boolean IS_MOCK_MODE = true; // Vẫn dùng Mock
 
     // LiveData cho danh sách thông báo
     private MutableLiveData<List<Notification>> notificationListLiveData = new MutableLiveData<>();

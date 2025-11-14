@@ -24,7 +24,7 @@ import retrofit2.Response;
 
 public class StudentRepository {
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = false; // ⭐️ Vẫn dùng Mock
+    private final boolean IS_MOCK_MODE = true; // ⭐️ Vẫn dùng Mock
 
 
     // LiveData cho sự kiện "Join Class"

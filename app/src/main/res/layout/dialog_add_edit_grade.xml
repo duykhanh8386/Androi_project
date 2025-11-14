@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Sửa lại layout để thêm 1 điểm (TX, GK, CK)
-  thay vì cố gắng sửa tất cả cùng lúc
--->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -27,7 +23,6 @@
         android:textSize="16sp"
         android:layout_marginBottom="16dp" />
 
-    <!-- 1. Spinner (Dropdown) để chọn loại điểm -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +33,7 @@
     <Spinner
         android:id="@+id/spinnerGradeType"
         android:layout_width="match_parent"
-        android:layout_height="48dp" /> <!-- (Cần 48dp cho dễ bấm) -->
+        android:layout_height="48dp" />
 
     <!-- 2. EditText cho điểm số -->
     <com.google.android.material.textfield.TextInputLayout
