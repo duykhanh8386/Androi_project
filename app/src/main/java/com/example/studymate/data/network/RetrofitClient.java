@@ -29,6 +29,8 @@ public class RetrofitClient {
     private static ApiService apiService = null;
     private static OkHttpClient okHttpClient = null;
 
+    private static PersistentCookieStore cookieStore;
+
     /**
      * Hàm public duy nhất để các Repository gọi
      */
