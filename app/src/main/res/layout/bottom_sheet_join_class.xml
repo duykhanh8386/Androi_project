@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="24dp"
-    tools:context=".ui.studyclass.JoinClassFragment">
+    tools:context=".ui.studyclass.student.JoinClassFragment">
 
     <ScrollView
         android:id="@+id/scrollViewContent"

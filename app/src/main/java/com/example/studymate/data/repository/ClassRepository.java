@@ -45,6 +45,10 @@ public class ClassRepository {
     private MutableLiveData<String> leaveSuccessEvent = new MutableLiveData<>();
     private MutableLiveData<String> leaveErrorEvent = new MutableLiveData<>();
 
+    // LiveData cho sự kiện "XÓA LỚP"
+    private MutableLiveData<Boolean> isDeletingClass = new MutableLiveData<>();
+    private MutableLiveData<String> deleteSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> deleteErrorEvent = new MutableLiveData<>();
 
     public ClassRepository() {
         this.apiService = RetrofitClient.getApiService();
@@ -68,6 +72,32 @@ public class ClassRepository {
             runMockLogicForClassListTeacher();
         } else {
             runRealApiLogicForClassListTeacher();
+        }
+    }
+
+    public void fetchClassDetails(int classId) {
+        isDetailLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForDetail(classId);
+        } else {
+            runRealApiLogicForDetail(classId);
+        }
+    }
+
+    public void leaveClass(int classId) {
+        isLeaveLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForLeaveClass(classId);
+        } else {
+            runRealApiLogicForLeaveClass(classId);
+        }
+    }
+    public void deleteClass(int classId) {
+        isDeletingClass.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForDeleteClass(classId);
+        } else {
+            runRealApiLogicForDeleteClass(classId);
         }
     }
 
@@ -106,23 +136,7 @@ public class ClassRepository {
         }, 1500); // Trì hoãn 1.5 giây
     }
 
-    public void fetchClassDetails(int classId) {
-        isDetailLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForDetail(classId);
-        } else {
-            runRealApiLogicForDetail(classId);
-        }
-    }
 
-    public void leaveClass(int classId) {
-        isLeaveLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForLeaveClass(classId);
-        } else {
-            runRealApiLogicForLeaveClass(classId);
-        }
-    }
 
     // Logic gọi API thật
     private void runRealApiLogic() {
@@ -226,6 +240,41 @@ public class ClassRepository {
         });
     }
 
+    // ⭐️ THÊM HÀM MỚI: (Mock logic)
+    private void runMockLogicForDeleteClass(int classId) {
+        // Giả lập độ trễ 1 giây
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            isDeletingClass.postValue(false);
+            // Trả về thông báo thành công (theo Use Case 2.3.4)
+            deleteSuccessEvent.postValue("Xóa lớp thành công!");
+        }, 1000);
+    }
+
+    // ⭐️ THÊM HÀM MỚI: (Real API logic)
+    private void runRealApiLogicForDeleteClass(int classId) {
+        apiService.deleteClass(classId).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                isDeletingClass.postValue(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    deleteSuccessEvent.postValue(response.body().getMessage());
+                } else {
+                    try {
+                        deleteErrorEvent.postValue(new com.google.gson.Gson().fromJson(response.errorBody().string(), MessageResponse.class).getMessage());
+                    } catch (IOException e) {
+                        deleteErrorEvent.postValue("Lỗi: " + response.code());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                isDeletingClass.postValue(false);
+                deleteErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
     // --- Getters ---
     public LiveData<List<StudyClass>> getStudentClassListLiveData() {
         return studentClassListLiveData;
@@ -269,5 +318,15 @@ public class ClassRepository {
     }
     public LiveData<String> getLeaveErrorEvent() {
         return leaveErrorEvent;
+    }
+
+    public LiveData<Boolean> getIsDeletingClass() {
+        return isDeletingClass;
+    }
+    public LiveData<String> getDeleteSuccessEvent() {
+        return deleteSuccessEvent;
+    }
+    public LiveData<String> getDeleteErrorEvent() {
+        return deleteErrorEvent;
     }
 }

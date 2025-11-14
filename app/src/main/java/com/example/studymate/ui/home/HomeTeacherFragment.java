@@ -26,6 +26,7 @@ import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.network.SessionManager;
 import com.example.studymate.ui.studyclass.adapter.ClassListAdapter;
 import com.example.studymate.ui.viewmodel.HomeTeacherViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class HomeTeacherFragment extends Fragment {
     private ClassListAdapter adapter;
 
     private ProgressBar progressBar; // Biến đã có
+
+    private FloatingActionButton fabCreateClass;
 
     // (onCreate, onCreateView không đổi)
     @Override
@@ -62,6 +65,7 @@ public class HomeTeacherFragment extends Fragment {
         // 2. Ánh xạ View (đã có)
         progressBar = view.findViewById(R.id.progressBar);
         rvTeacherClasses = view.findViewById(R.id.rvTeacherClasses);
+        fabCreateClass = view.findViewById(R.id.fabCreateClass);
 
         // 3. Thiết lập Adapter
         adapter = new ClassListAdapter(sessionManager);
@@ -70,6 +74,10 @@ public class HomeTeacherFragment extends Fragment {
         // 4. Thiết lập LayoutManager
         rvTeacherClasses.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
+        fabCreateClass.setOnClickListener(v -> {
+            NavHostFragment.findNavController(HomeTeacherFragment.this)
+                    .navigate(R.id.action_teacher_home_to_classCreate);
+        });
 
         // 5. Gọi hàm quan sát
         setupObservers();

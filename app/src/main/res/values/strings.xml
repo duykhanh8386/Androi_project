@@ -93,4 +93,7 @@
     <string name="enter_score">Nhập điểm</string>
     <string name="delete">Xóa</string>
     <string name="accept_list_pending">Danh sách chờ phê duyệt</string>
+    <string name="time">Thời gian</string>
+    <string name="create_class">Tạo lớp</string>
+    <string name="save_changes">Lưu thay đổi</string>
 </resources>

@@ -7,7 +7,7 @@ import com.example.studymate.data.model.Notification;
 import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
-import com.example.studymate.data.model.request.ApprovalRequest;
+import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.request.CreateUserRequest;
 import com.example.studymate.data.model.request.FeedbackRequest;
 import com.example.studymate.data.model.request.JoinClassRequest;
@@ -60,6 +60,18 @@ public interface ApiService {
 
     @GET("api/teacher/classes")
     Call<List<StudyClass>> getTeacherClasses();
+
+    @POST("api/teacher/classes")
+    Call<StudyClass> createClass(@Body UpdateClassRequest createRequest);
+
+    @PUT("api/teacher/classes/{classId}")
+    Call<StudyClass> updateClass(
+            @Path("classId") int classId,
+            @Body UpdateClassRequest updateRequest
+    );
+
+    @DELETE("api/teacher/classes/{classId}")
+    Call<MessageResponse> deleteClass(@Path("classId") int classId);
 
     // ===== STUDENT =====
     @GET("api/student/classes")

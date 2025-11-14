@@ -30,16 +30,25 @@
 
     <fragment
         android:id="@+id/classCreateFragment"
-        android:name="com.example.studymate.ui.studyclass.ClassCreateFragment"
+        android:name="com.example.studymate.ui.studyclass.teacher.ClassCreateFragment"
         android:label="Tạo lớp"
         tools:layout="@layout/fragment_class_create">
     </fragment>
 
     <fragment
         android:id="@+id/classUpdateFragment"
-        android:name="com.example.studymate.ui.studyclass.ClassUpdateFragment"
-        android:label="Tạo lớp"
+        android:name="com.example.studymate.ui.studyclass.teacher.ClassUpdateFragment"
+        android:label="Cập nhật"
         tools:layout="@layout/fragment_class_edit">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+        <argument
+            android:name="currentName"
+            app:argType="string" />
+        <argument
+            android:name="currentTime"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -90,7 +99,7 @@
 
     <fragment
         android:id="@+id/joinClassFragment"
-        android:name="com.example.studymate.ui.studyclass.JoinClassFragment"
+        android:name="com.example.studymate.ui.studyclass.student.JoinClassFragment"
         tools:layout="@layout/bottom_sheet_join_class" />
 
     <fragment
