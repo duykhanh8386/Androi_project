@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sửa lại layout để thêm 1 điểm (TX, GK, CK)
+  thay vì cố gắng sửa tất cả cùng lúc
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -7,58 +11,50 @@
     android:padding="24dp">
 
     <TextView
-        android:id="@+id/textViewDialogTitle"
+        android:id="@+id/tvDialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Thêm/Sửa điểm"
+        android:text="Nhập điểm mới"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp" />
 
     <TextView
-        android:id="@+id/textViewSubjectLabel"
+        android:id="@+id/tvStudentNameLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Môn học"/>
+        android:text="Học sinh: Nguyễn Văn A"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp" />
 
-    <AutoCompleteTextView
-        android:id="@+id/autoCompleteSubject"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Chọn hoặc nhập tên môn học"/>
-
+    <!-- 1. Spinner (Dropdown) để chọn loại điểm -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Điểm Quiz"
-        android:layout_marginTop="16dp"/>
-    <EditText
-        android:id="@+id/editTextQuiz"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Điểm giữa kỳ"
+        android:text="Loại điểm"
+        android:labelFor="@id/spinnerGradeType"
         android:layout_marginTop="8dp"/>
-    <EditText
-        android:id="@+id/editTextMid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Điểm cuối kỳ"
-        android:layout_marginTop="8dp"/>
-    <EditText
-        android:id="@+id/editTextFinal"
+    <Spinner
+        android:id="@+id/spinnerGradeType"
+        android:layout_width="match_parent"
+        android:layout_height="48dp" /> <!-- (Cần 48dp cho dễ bấm) -->
+
+    <!-- 2. EditText cho điểm số -->
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"/>
+        android:hint="Điểm (ví dụ: 8.5)"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtScore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -68,14 +64,15 @@
         android:gravity="end">
 
         <Button
-            android:id="@+id/buttonDialogCancel"
+            android:id="@+id/btnDialogCancel"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hủy"
             android:layout_marginEnd="8dp"/>
 
         <Button
-            android:id="@+id/buttonDialogSave"
+            android:id="@+id/btnDialogSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lưu"/>

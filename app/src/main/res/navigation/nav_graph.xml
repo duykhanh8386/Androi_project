@@ -288,7 +288,9 @@
         android:name="com.example.studymate.ui.grade.teacher.GradeEntryFragment"
         android:label="Quản lý điểm"
         tools:layout="@layout/fragment_grade_entry">
-
+        <argument
+            android:name="classId"
+            app:argType="integer" />
         <action
             android:id="@+id/action_gradeEntryFragment_to_gradeEditDialog"
             app:destination="@id/gradeDialogAddEdit" />
