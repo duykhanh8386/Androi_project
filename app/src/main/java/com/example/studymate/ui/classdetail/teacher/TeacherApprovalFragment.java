@@ -61,8 +61,8 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
         // Ánh xạ View
         progressBar = view.findViewById(R.id.progressBar);
         rvApproval = view.findViewById(R.id.recyclerViewApproval);
-        Button btnRejectAll = view.findViewById(R.id.btnRejectAll);
-        Button btnApproveAll = view.findViewById(R.id.btnApproveAll);
+        btnRejectAll = view.findViewById(R.id.btnRejectAll);
+        btnApproveAll = view.findViewById(R.id.btnApproveAll);
         bottomButtonLayout = view.findViewById(R.id.bottomButtonLayout);
 
         viewModel = new ViewModelProvider(this).get(TeacherApprovalViewModel.class);
@@ -93,8 +93,8 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
         });
 
         // TODO: Xử lý click cho 2 nút Approve All / Reject All
-        btnApproveAll.setOnClickListener(v -> Toast.makeText(getContext(), "Chưa implement", Toast.LENGTH_SHORT).show());
-        btnRejectAll.setOnClickListener(v -> Toast.makeText(getContext(), "Chưa implement", Toast.LENGTH_SHORT).show());
+//        btnApproveAll.setOnClickListener(v -> Toast.makeText(getContext(), "Chưa implement", Toast.LENGTH_SHORT).show());
+//        btnRejectAll.setOnClickListener(v -> Toast.makeText(getContext(), "Chưa implement", Toast.LENGTH_SHORT).show());
     }
 
     private void setupObservers() {
@@ -107,8 +107,8 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
         // Quan sát Dữ liệu
         viewModel.getPendingList().observe(getViewLifecycleOwner(), pendingList -> {
             if(pendingList.isEmpty()) {
-                NavHostFragment.findNavController(this).popBackStack();
-                return;
+                btnApproveAll.setEnabled(false);
+                btnRejectAll.setEnabled(false);
             }
             adapter.submitList(pendingList);
         });
