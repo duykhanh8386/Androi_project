@@ -28,15 +28,17 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.response.ClassDetailResponse;
+import com.example.studymate.ui.home.HomeStudentFragment;
 import com.example.studymate.ui.viewmodel.ClassDetailViewModel;
 import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
+import com.example.studymate.ui.viewmodel.HomeTeacherViewModel;
 
 public class ClassDetailFragment extends Fragment {
 
     public static final String KEY_REFRESH_DETAILS = "refresh_details_key";
     private ClassDetailViewModel viewModel;
 
-    private HomeStudentViewModel homeStudentViewModel;
+    private HomeTeacherViewModel homeTeacherViewModel;
     private TextView tvClassNameDetail, tvClassId, tvTeacherNameDetail, tvStudentCount, tvClassTime;
     private ProgressBar progressBar;
 
@@ -93,6 +95,7 @@ public class ClassDetailFragment extends Fragment {
 
         // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(ClassDetailViewModel.class);
+        homeTeacherViewModel = new ViewModelProvider(this).get(HomeTeacherViewModel.class);
         navController = NavHostFragment.findNavController(this);
 
         // Thiết lập observers
@@ -191,6 +194,18 @@ public class ClassDetailFragment extends Fragment {
 
         viewModel.getDeleteError().observe(getViewLifecycleOwner(), errorMessage -> {
             Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        });
+
+        // Quan sát sự kiện Đăng xuất
+        homeTeacherViewModel.getLogoutSuccessEvent().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isSuccess) {
+                if (isSuccess) {
+                    Toast.makeText(getContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();
+                    NavHostFragment.findNavController(ClassDetailFragment.this)
+                            .navigate(R.id.action_teacherClassDetailFragment_to_loginFragment);
+                }
+            }
         });
     }
 
@@ -309,7 +324,7 @@ public class ClassDetailFragment extends Fragment {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        homeStudentViewModel.performLogout();
+                        homeTeacherViewModel.performLogout();
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)

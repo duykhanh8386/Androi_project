@@ -28,6 +28,7 @@ import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.response.ClassDetailResponse;
 import com.example.studymate.ui.viewmodel.ClassDetailViewModel;
 import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
+import com.example.studymate.ui.viewmodel.HomeTeacherViewModel;
 
 public class ClassDetailFragment extends Fragment {
 
@@ -84,7 +85,7 @@ public class ClassDetailFragment extends Fragment {
 
         // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(ClassDetailViewModel.class);
-
+        homeStudentViewModel = new ViewModelProvider(this).get(HomeStudentViewModel.class);
         // Thiết lập observers
         setupObservers();
 
@@ -159,6 +160,18 @@ public class ClassDetailFragment extends Fragment {
         // ⭐️ THÊM MỚI: Quan sát RỜI LỚP THẤT BẠI
         viewModel.getLeaveError().observe(getViewLifecycleOwner(), errorMessage -> {
             Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        });
+
+        // Quan sát sự kiện Đăng xuất
+        homeStudentViewModel.getLogoutSuccessEvent().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isSuccess) {
+                if (isSuccess) {
+                    Toast.makeText(getContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();
+                    NavHostFragment.findNavController(com.example.studymate.ui.classdetail.student.ClassDetailFragment.this)
+                            .navigate(R.id.action_studentClassDetailFragment_to_loginFragment);
+                }
+            }
         });
     }
 

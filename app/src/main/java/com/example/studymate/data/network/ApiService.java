@@ -113,7 +113,7 @@ public interface ApiService {
     @POST("api/admin/users")
     Call<User> createUser(@Body CreateUserRequest body);
 
-    @GET("api/admin/users/search")
+    @GET("api/admin/users")
     Call<List<User>> searchUsers(
         @Query("keyword") String keyword,
         @Query("role") String role,

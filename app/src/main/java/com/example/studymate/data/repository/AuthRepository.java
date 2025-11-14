@@ -13,6 +13,8 @@ import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 import com.example.studymate.data.network.SessionManager;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,6 +50,7 @@ public class AuthRepository {
     public void logout() {
 
         clearLocalUserData(); // Xóa token
+        RetrofitClient.clearCookies();
 
         // --- BƯỚC 2: GỌI API ĐỂ VÔ HIỆU HÓA TOKEN (NẾU CẦN) ---
         // (Trong chế độ MOCK, chúng ta chỉ cần giả lập thành công)
@@ -92,7 +95,11 @@ public class AuthRepository {
                     sessionManager.saveUserRole(response.body().getUser().getRoleName());
                     loginResponseData.postValue(response.body());
                 } else {
-                    loginErrorData.postValue("Lỗi đăng nhập: " + response.code());
+                    try {
+                        loginErrorData.postValue(response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 

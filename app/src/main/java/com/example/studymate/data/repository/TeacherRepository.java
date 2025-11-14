@@ -147,7 +147,7 @@ public class TeacherRepository {
                 public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                     isApprovalLoading.postValue(false);
                     if (response.isSuccessful() && response.body() != null) {
-                        approvalSuccessEvent.postValue("Phê duyệt thành công");
+                        approvalSuccessEvent.postValue(response.body().getMessage());
                     } else {
                         approvalErrorEvent.postValue("Lỗi: " + response.code());
                     }
