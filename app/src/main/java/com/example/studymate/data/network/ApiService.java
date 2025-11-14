@@ -7,6 +7,7 @@ import com.example.studymate.data.model.Notification;
 import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
+import com.example.studymate.data.model.request.NotificationRequest;
 import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.request.CreateUserRequest;
 import com.example.studymate.data.model.request.FeedbackRequest;
@@ -75,6 +76,18 @@ public interface ApiService {
     Call<StudyClass> updateClass(
             @Path("classId") int classId,
             @Body UpdateClassRequest updateRequest
+    );
+
+    // ⭐️ ===== BỔ SUNG ENDPOINT CỦA GIÁO VIÊN ===== ⭐️
+
+    /**
+     * Giáo viên gửi thông báo mới cho một lớp học.
+     * Endpoint: POST /api/teacher/classes/{classId}/notifications
+     */
+    @POST("/api/teacher/classes/{classId}/notifications")
+    Call<Notification> createNotification(
+            @Path("classId") int classId,
+            @Body NotificationRequest notificationRequest
     );
 
     @DELETE("api/teacher/classes/{classId}")

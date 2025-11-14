@@ -32,4 +32,11 @@ public class NotificationListViewModel extends ViewModel {
         // ⭐️ SỬA LẠI:
         return notificationRepository.getIsNotificationListLoading();
     }
+
+    // ⭐️ HÀM BỊ THIẾU ĐÂY:
+    // Thêm hàm này vào
+    public LiveData<String> getError() {
+        // Hàm này sẽ trả về LiveData lỗi từ Repository
+        return notificationRepository.getNotificationListError();
+    }
 }

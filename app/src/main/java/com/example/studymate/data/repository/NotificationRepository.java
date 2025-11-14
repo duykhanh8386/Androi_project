@@ -7,9 +7,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.studymate.data.model.Notification;
+import com.example.studymate.data.model.request.NotificationRequest;
+import com.example.studymate.data.model.response.MessageResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,21 +25,28 @@ public class NotificationRepository {
     private ApiService apiService;
     private final boolean IS_MOCK_MODE = true; // Vẫn dùng Mock
 
-    // LiveData cho danh sách thông báo
+    // --- LiveData cho DANH SÁCH (List) ---
     private MutableLiveData<List<Notification>> notificationListLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isNotificationListLoading = new MutableLiveData<>();
     private MutableLiveData<String> notificationListError = new MutableLiveData<>();
 
-    // LiveData cho CHI TIẾT
+    // --- LiveData cho CHI TIẾT (Detail) ---
     private MutableLiveData<Notification> notificationDetailLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isDetailLoading = new MutableLiveData<>();
     private MutableLiveData<String> detailError = new MutableLiveData<>();
+
+    // --- LiveData cho TẠO MỚI (Create) ---
+    private MutableLiveData<Boolean> isCreateLoading = new MutableLiveData<>();
+    private MutableLiveData<MessageResponse> createSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> createErrorEvent = new MutableLiveData<>();
+
 
     public NotificationRepository() {
         this.apiService = RetrofitClient.getApiService();
     }
 
-    // ⭐️ HÀM MỚI:
+    // ========== 1. LẤY DANH SÁCH (BỊ THIẾU) ==========
+
     public void fetchNotificationList(int classId) {
         isNotificationListLoading.postValue(true);
         if (IS_MOCK_MODE) {
@@ -46,16 +56,6 @@ public class NotificationRepository {
         }
     }
 
-    public void fetchNotificationDetail(int notificationId) {
-        isDetailLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForDetail(notificationId);
-        } else {
-            runRealApiLogicForDetail(notificationId);
-        }
-    }
-
-    // ⭐️ HÀM MỚI: (Mock logic)
     private void runMockLogicForNotificationList(int classId) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             ArrayList<Notification> mockList = new ArrayList<>();
@@ -67,7 +67,6 @@ public class NotificationRepository {
         }, 1000); // Trì hoãn 1 giây
     }
 
-    // ⭐️ HÀM MỚI: (Real API logic)
     private void runRealApiLogicForNotificationList(int classId) {
         apiService.getNotifications(classId).enqueue(new Callback<List<Notification>>() {
             @Override
@@ -87,22 +86,30 @@ public class NotificationRepository {
         });
     }
 
+    // ========== 2. LẤY CHI TIẾT (BỊ THIẾU) ==========
+
+    public void fetchNotificationDetail(int notificationId) {
+        isDetailLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForDetail(notificationId);
+        } else {
+            runRealApiLogicForDetail(notificationId);
+        }
+    }
+
     private void runMockLogicForDetail(int notificationId) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // Giả lập tìm thấy thông báo
             Notification mockDetail = new Notification(
                     notificationId,
                     "Tiêu đề chi tiết (Mock)",
                     "Đây là nội dung chi tiết (mock) cho thông báo ID " + notificationId,
                     "26/04/2025"
             );
-
             isDetailLoading.postValue(false);
             notificationDetailLiveData.postValue(mockDetail);
         }, 1000); // Trì hoãn 1 giây
     }
 
-    // ⭐️ THÊM HÀM MỚI: (Real API logic)
     private void runRealApiLogicForDetail(int notificationId) {
         apiService.getNotificationDetail(notificationId).enqueue(new Callback<Notification>() {
             @Override
@@ -122,7 +129,53 @@ public class NotificationRepository {
         });
     }
 
-    // ⭐️ THÊM GETTERS MỚI:
+    // ========== 3. TẠO MỚI (ĐÃ CÓ) ==========
+
+    public void createNotification(int classId, NotificationRequest request) {
+        isCreateLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForCreate(classId, request);
+        } else {
+            runRealApiLogicForCreate(classId, request);
+        }
+    }
+
+    private void runRealApiLogicForCreate(int classId, NotificationRequest request) {
+        apiService.createNotification(classId, request).enqueue(new Callback<Notification>() {
+            @Override
+            public void onResponse(Call<Notification> call, Response<Notification> response) {
+                isCreateLoading.postValue(false);
+                if (response.isSuccessful()) {
+                    createSuccessEvent.postValue(new MessageResponse("Gửi thông báo thành công!"));
+                } else {
+                    try {
+                        String errorMsg = response.errorBody() != null ? response.errorBody().string() : "Lỗi không xác định";
+                        createErrorEvent.postValue("Lỗi " + response.code() + ": " + errorMsg);
+                    } catch (IOException e) {
+                        createErrorEvent.postValue("Lỗi " + response.code());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Notification> call, Throwable t) {
+                isCreateLoading.postValue(false);
+                createErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
+    private void runMockLogicForCreate(int classId, NotificationRequest request) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            isCreateLoading.postValue(false);
+            createSuccessEvent.postValue(new MessageResponse("Gửi thành công (Mock)"));
+        }, 800); // Trễ 0.8 giây
+    }
+
+
+    // --- GETTERS (Đã gộp) ---
+
+    // Getters cho DANH SÁCH (List)
     public LiveData<List<Notification>> getNotificationList() {
         return notificationListLiveData;
     }
@@ -133,6 +186,7 @@ public class NotificationRepository {
         return notificationListError;
     }
 
+    // Getters cho CHI TIẾT (Detail)
     public LiveData<Notification> getNotificationDetail() {
         return notificationDetailLiveData;
     }
@@ -141,5 +195,16 @@ public class NotificationRepository {
     }
     public LiveData<String> getDetailError() {
         return detailError;
+    }
+
+    // Getters cho TẠO MỚI (Create)
+    public LiveData<Boolean> getIsCreateLoading() {
+        return isCreateLoading;
+    }
+    public LiveData<MessageResponse> getCreateSuccessEvent() {
+        return createSuccessEvent;
+    }
+    public LiveData<String> getCreateErrorEvent() {
+        return createErrorEvent;
     }
 }
