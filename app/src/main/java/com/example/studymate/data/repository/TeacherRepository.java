@@ -5,10 +5,13 @@ import android.os.Looper;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.studymate.data.model.Grade;
 import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
+import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.response.MessageResponse;
+import com.example.studymate.data.model.response.StudentResponse;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 import java.util.ArrayList;
@@ -47,9 +50,18 @@ public class TeacherRepository {
     private MutableLiveData<String> updateClassErrorEvent = new MutableLiveData<>();
     private MutableLiveData<Boolean> isUpdatingClass = new MutableLiveData<>();
 
+    // LiveData cho DANH SÁCH HỌC SINH (Quản lý)
+    private MutableLiveData<List<StudentResponse>> studentListLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isStudentListLoading = new MutableLiveData<>();
+    private MutableLiveData<String> studentListError = new MutableLiveData<>();
+
+
+
     public TeacherRepository() {
         this.apiService = RetrofitClient.getApiService();
     }
+
+
 
     // --- Lấy danh sách chờ ---
     public void fetchPendingList(int classId) {
@@ -265,6 +277,53 @@ public class TeacherRepository {
         });
     }
 
+    public void fetchStudentList(int classId) {
+        isStudentListLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForStudentList(classId);
+        } else {
+            runRealApiLogicForStudentList(classId);
+        }
+    }
+
+    private void runMockLogicForStudentList(int classId) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            ArrayList<StudentResponse> mockList = new ArrayList<>();
+
+            // Tạo 2 học sinh mẫu (với điểm)
+            User userA = new User(201, "Nguyễn Văn An", "20201111", "nva@test.com", "ROLE_STUDENT");
+            List<Grade> gradesA = List.of(new Grade(1, "TX", 9.0), new Grade(2, "GK", 8.5), new Grade(3, "CK", 8.8));
+            mockList.add(new StudentResponse(userA, gradesA));
+
+            User userB = new User(202, "20202222", "Trần Thị Bình", "ttb@test.com", "ROLE_STUDENT");
+            List<Grade> gradesB = List.of(new Grade(4, "TX", 7.0));
+            mockList.add(new StudentResponse(userB, gradesB));
+
+            isStudentListLoading.postValue(false);
+            studentListLiveData.postValue(mockList);
+        }, 1000);
+    }
+
+    private void runRealApiLogicForStudentList(int classId) {
+        // (Chúng ta gọi hàm getStudentsInClass mà StudentRepository cũng dùng)
+        apiService.getStudentsInClass(classId).enqueue(new Callback<List<StudentResponse>>() {
+            @Override
+            public void onResponse(Call<List<StudentResponse>> call, Response<List<StudentResponse>> response) {
+                isStudentListLoading.postValue(false);
+                if (response.isSuccessful()) {
+                    studentListLiveData.postValue(response.body());
+                } else {
+                    studentListError.postValue("Lỗi: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<List<StudentResponse>> call, Throwable t) {
+                isStudentListLoading.postValue(false);
+                studentListError.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
     // --- Getters ---
     public LiveData<List<StudentClass>> getPendingList() { return pendingListLiveData; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
@@ -284,4 +343,8 @@ public class TeacherRepository {
     public LiveData<StudyClass> getUpdateClassSuccessEvent() { return updateClassSuccessEvent; }
     public LiveData<String> getUpdateClassErrorEvent() { return updateClassErrorEvent; }
     public LiveData<Boolean> getIsUpdatingClass() { return isUpdatingClass; }
+
+    public LiveData<List<StudentResponse>> getStudentList() { return studentListLiveData; }
+    public LiveData<Boolean> getIsStudentListLoading() { return isStudentListLoading; }
+    public LiveData<String> getStudentListError() { return studentListError; }
 }

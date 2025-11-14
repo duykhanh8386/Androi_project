@@ -3,6 +3,7 @@ package com.example.studymate.ui.classdetail.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,16 @@ import com.example.studymate.data.model.response.StudentResponse;
 import java.util.List;
 
 public class StudentManageAdapter extends ListAdapter<StudentResponse, StudentManageAdapter.StudentViewHolder> {
+
+    public interface OnStudentKickListener {
+        void onKickClick(StudentResponse student);
+    }
+
+    private OnStudentKickListener kickListener;
+
+    public void setKickListener(OnStudentKickListener listener) {
+        this.kickListener = listener;
+    }
 
     public StudentManageAdapter() {
         super(DIFF_CALLBACK);
@@ -58,7 +69,7 @@ public class StudentManageAdapter extends ListAdapter<StudentResponse, StudentMa
         private final TextView tvStudentScoreTX;
         private final TextView tvStudentScoreGK;
         private final TextView tvStudentScoreCK;
-
+        private final ImageView iconTrash;
 
 
         public StudentViewHolder(@NonNull View itemView) {
@@ -68,6 +79,14 @@ public class StudentManageAdapter extends ListAdapter<StudentResponse, StudentMa
             tvStudentScoreGK = itemView.findViewById(R.id.tvStudentScoreGK);
             tvStudentScoreCK = itemView.findViewById(R.id.tvStudentScoreCK);
             tvStudentID = itemView.findViewById(R.id.tvStudentID);
+            iconTrash =itemView.findViewById(R.id.iconTrash);
+
+            iconTrash.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (kickListener != null && position != RecyclerView.NO_POSITION) {
+                    kickListener.onKickClick(getItem(position));
+                }
+            });
         }
 
         public void bind(StudentResponse studentResponse) {
@@ -77,7 +96,7 @@ public class StudentManageAdapter extends ListAdapter<StudentResponse, StudentMa
             String scoreTX = "";
             String scoreGK = "";
             String scoreCK = "";
-            if (!grades.isEmpty()) {
+            if (grades != null && !grades.isEmpty()) {
                 for (Grade grade : grades) {
                     if (grade.getGradeType().equals("TX")) {
                         scoreTX += String.valueOf(grade.getScore()) + " ";

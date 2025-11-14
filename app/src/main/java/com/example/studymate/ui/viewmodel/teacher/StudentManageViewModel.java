@@ -1,0 +1,47 @@
+package com.example.studymate.ui.viewmodel.teacher;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+import com.example.studymate.data.model.response.StudentResponse;
+import com.example.studymate.data.repository.TeacherRepository;
+import java.util.List;
+
+public class StudentManageViewModel extends ViewModel {
+
+    private TeacherRepository repository;
+
+    public StudentManageViewModel() {
+        this.repository = new TeacherRepository();
+    }
+
+    // --- 1. Lấy danh sách ---
+    public void loadStudentList(int classId) {
+        repository.fetchStudentList(classId);
+    }
+    public LiveData<List<StudentResponse>> getStudentList() {
+        return repository.getStudentList();
+    }
+    public LiveData<Boolean> getIsLoading() {
+        return repository.getIsStudentListLoading();
+    }
+    public LiveData<String> getError() {
+        return repository.getStudentListError();
+    }
+
+    // --- 2. Xóa/Kick (Dùng lại logic Reject) ---
+    public void kickStudent(int studentClassId) {
+        // Gọi hàm "REJECTED" từ Repository
+        repository.rejectStudent(studentClassId);
+    }
+
+    // (Lắng nghe kết quả từ sự kiện Phê duyệt/Từ chối)
+    public LiveData<String> getKickSuccess() {
+        return repository.getApprovalSuccessEvent();
+    }
+    public LiveData<String> getKickError() {
+        return repository.getApprovalErrorEvent();
+    }
+    public LiveData<Boolean> getIsKicking() {
+        return repository.getIsApprovalLoading();
+    }
+}

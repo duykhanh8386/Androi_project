@@ -32,9 +32,10 @@ public class User {
     @SerializedName("email") // Giả sử API/mock data có trường này
     private String email;
 
-    public User(int userId, String fullName, String email, String roleName) {
+    public User(int userId, String fullName, String username, String email, String roleName) {
         this.userId = userId;
         this.fullName = fullName;
+        this.username = username;
         this.email = email; // Thêm vào
         this.roleName = roleName;
     }
