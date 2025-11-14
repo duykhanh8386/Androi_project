@@ -134,6 +134,33 @@ public class TeacherRepository {
         }
     }
 
+    private void processApproval(int studentId, int classId , String status) {
+        isApprovalLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                isApprovalLoading.postValue(false);
+                approvalSuccessEvent.postValue(status + " thành công!");
+            }, 500);
+        } else {
+            apiService.kickStudent(classId, studentId, status).enqueue(new Callback<MessageResponse>() {
+                @Override
+                public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                    isApprovalLoading.postValue(false);
+                    if (response.isSuccessful() && response.body() != null) {
+                        approvalSuccessEvent.postValue("Phê duyệt thành công");
+                    } else {
+                        approvalErrorEvent.postValue("Lỗi: " + response.code());
+                    }
+                }
+                @Override
+                public void onFailure(Call<MessageResponse> call, Throwable t) {
+                    isApprovalLoading.postValue(false);
+                    approvalErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+                }
+            });
+        }
+    }
+
     // (Hàm public)
     public void approveStudent(int studentClassId) {
         processApproval(studentClassId, "APPROVED");
@@ -141,6 +168,10 @@ public class TeacherRepository {
 
     public void rejectStudent(int studentClassId) {
         processApproval(studentClassId, "REJECTED");
+    }
+
+    public void rejectStudent(int studentId, int classId) {
+        processApproval(studentId, classId, "REJECTED");
     }
 
     // (Phê duyệt/Từ chối - HÀNG LOẠT)

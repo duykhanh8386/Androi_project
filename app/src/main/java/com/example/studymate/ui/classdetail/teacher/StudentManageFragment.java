@@ -120,9 +120,7 @@ public class StudentManageFragment extends Fragment implements StudentManageAdap
                     // (LƯU Ý: student.getUser().getUserId() PHẢI LÀ student_class_id)
                     // (Nếu không, bạn cần tìm student_class_id từ StudentResponse)
 
-                    // TODO: Đảm bảo rằng getUserId() trả về student_class_id
-                    // Nếu getUserId() trả về user_id, bạn cần thay đổi logic API
-                    viewModel.kickStudent(student.getUser().getUserId());
+                    viewModel.kickStudent(student.getUser().getUserId(), classId);
                 })
                 .setNegativeButton("Hủy", null)
                 .show();

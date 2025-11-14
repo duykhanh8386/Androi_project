@@ -52,6 +52,13 @@ public interface ApiService {
             @Query("status") String status // ⭐️ ĐỔI TỪ @Body thành @Query
     );
 
+    @PUT("api/teacher/classes/{classId}/students/{studentId}")
+    Call<MessageResponse> kickStudent(
+            @Path("classId") int classId,
+            @Path("studentId") int studentId,
+            @Query("status") String status
+    );
+
     @PUT("api/teacher/classes/{id}/update-all")
     Call<MessageResponse> updateAllPendingStatus(
             @Path("id") int classId,
