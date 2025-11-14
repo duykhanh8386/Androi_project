@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -16,11 +17,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
+import com.example.studymate.constants.RoleConstant;
+import com.example.studymate.data.network.SessionManager;
 import com.example.studymate.ui.notify.adapter.NotificationListAdapter;
 import com.example.studymate.ui.viewmodel.NotificationListViewModel;
 
 public class NotificationListFragment extends Fragment {
 
+    private SessionManager sessionManager;
+
+    private Button btnCreateNotification;
     private NotificationListViewModel viewModel;
     private RecyclerView rvNotifications;
     private NotificationListAdapter adapter;
@@ -31,6 +37,7 @@ public class NotificationListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sessionManager = new SessionManager();
 
         // LẤY ID LỚP HỌC (từ Bước 3 và Bước 9)
         if (getArguments() != null) {
@@ -44,7 +51,12 @@ public class NotificationListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Dùng layout đã sửa ở Bước 1
+
+        String roleName = sessionManager.getUserRole();
+        if (RoleConstant.TEACHER.equals(roleName)) {
+            return inflater.inflate(R.layout.fragment_notification_list_teacher, container, false);
+        }
+
         return inflater.inflate(R.layout.fragment_notification_list_student, container, false);
     }
 
@@ -71,6 +83,18 @@ public class NotificationListFragment extends Fragment {
         if (classId > 0) {
             viewModel.loadNotificationList(classId);
         }
+
+        if (RoleConstant.TEACHER.equals(sessionManager.getUserRole())) {
+            btnCreateNotification = view.findViewById(R.id.buttonCreateNotification);
+            btnCreateNotification.setOnClickListener(v -> {
+                Bundle bundle = new Bundle();
+                bundle.putInt("classId", classId);
+
+                // TODO: Điều hướng đến tạo thông báo
+                NavHostFragment.findNavController(this)
+                        .navigate(R.id.action_list_to_createNotify, bundle);
+            });
+        };
     }
 
     private void setupObservers() {

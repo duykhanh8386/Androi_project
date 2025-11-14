@@ -68,7 +68,7 @@ public class NotificationListAdapter extends ListAdapter<Notification, Notificat
 
                     // 2. Điều hướng (dùng ID action từ nav_graph)
                     Navigation.findNavController(itemView)
-                            .navigate(R.id.action_list_to_notifyDetail, bundle);
+                            .navigate(R.id.action_list_to_detailNotify, bundle);
                 }
             });
         }
