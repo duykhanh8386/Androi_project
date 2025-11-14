@@ -9,6 +9,7 @@ import com.example.studymate.data.model.Grade;
 import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
+import com.example.studymate.data.model.request.GradeRequest;
 import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.response.MessageResponse;
 import com.example.studymate.data.model.response.StudentResponse;
@@ -23,7 +24,7 @@ import retrofit2.Response;
 public class TeacherRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = false;
+    private final boolean IS_MOCK_MODE = true;
 
     // LiveData cho danh sách chờ
     private MutableLiveData<List<StudentClass>> pendingListLiveData = new MutableLiveData<>();
@@ -55,7 +56,20 @@ public class TeacherRepository {
     private MutableLiveData<Boolean> isStudentListLoading = new MutableLiveData<>();
     private MutableLiveData<String> studentListError = new MutableLiveData<>();
 
+    // LiveData cho sự kiện THÊM ĐIỂM
+    private MutableLiveData<Grade> addGradeSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> addGradeErrorEvent = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isAddingGrade = new MutableLiveData<>();
 
+    // LiveData cho sự kiện SỬA ĐIỂM
+    private MutableLiveData<Grade> updateGradeSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> updateGradeErrorEvent = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isUpdatingGrade = new MutableLiveData<>();
+
+    // LiveData cho XÓA ĐIỂM
+    private MutableLiveData<MessageResponse> deleteGradeSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> deleteGradeErrorEvent = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isDeletingGrade = new MutableLiveData<>();
 
     public TeacherRepository() {
         this.apiService = RetrofitClient.getApiService();
@@ -355,6 +369,119 @@ public class TeacherRepository {
         });
     }
 
+    // ⭐️ THÊM HÀM MỚI: Thêm điểm
+    public void addGrade(Long studentId, Integer classId, String gradeType, Double score) {
+        isAddingGrade.postValue(true);
+        GradeRequest request = new GradeRequest(studentId, classId, gradeType, score);
+
+        if (IS_MOCK_MODE) {
+            runMockLogicForAddGrade(request);
+        } else {
+            runRealApiLogicForAddGrade(request);
+        }
+    }
+
+    private void runMockLogicForAddGrade(GradeRequest request) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            // Giả lập tạo thành công
+            Grade newGrade = new Grade(99, request.getGradeType(), request.getScore());
+            isAddingGrade.postValue(false);
+            addGradeSuccessEvent.postValue(newGrade);
+        }, 1000); // Trì hoãn 1 giây
+    }
+
+    private void runRealApiLogicForAddGrade(GradeRequest request) {
+        apiService.addGrade(request).enqueue(new Callback<Grade>() {
+            @Override
+            public void onResponse(Call<Grade> call, Response<Grade> response) {
+                isAddingGrade.postValue(false);
+                if (response.isSuccessful()) {
+                    addGradeSuccessEvent.postValue(response.body());
+                } else {
+                    addGradeErrorEvent.postValue("Lỗi: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<Grade> call, Throwable t) {
+                isAddingGrade.postValue(false);
+                addGradeErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
+    public void updateGrade(int gradeId, Long studentId, Integer classId, String gradeType, Double score) {
+        isUpdatingGrade.postValue(true);
+        GradeRequest request = new GradeRequest(studentId, classId, gradeType, score);
+
+        if (IS_MOCK_MODE) {
+            runMockLogicForUpdateGrade(gradeId, request);
+        } else {
+            runRealApiLogicForUpdateGrade(gradeId, request);
+        }
+    }
+
+    private void runMockLogicForUpdateGrade(int gradeId, GradeRequest request) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Grade updatedGrade = new Grade(gradeId, request.getGradeType(), request.getScore());
+            isUpdatingGrade.postValue(false);
+            updateGradeSuccessEvent.postValue(updatedGrade);
+        }, 1000);
+    }
+
+    private void runRealApiLogicForUpdateGrade(int gradeId, GradeRequest request) {
+        apiService.updateGrade(gradeId, request).enqueue(new Callback<Grade>() {
+            @Override
+            public void onResponse(Call<Grade> call, Response<Grade> response) {
+                isUpdatingGrade.postValue(false);
+                if (response.isSuccessful()) {
+                    updateGradeSuccessEvent.postValue(response.body());
+                } else {
+                    updateGradeErrorEvent.postValue("Lỗi: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<Grade> call, Throwable t) {
+                isUpdatingGrade.postValue(false);
+                updateGradeErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
+    public void deleteGrade(int gradeId) {
+        isDeletingGrade.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForDeleteGrade(gradeId);
+        } else {
+            runRealApiLogicForDeleteGrade(gradeId);
+        }
+    }
+
+    private void runMockLogicForDeleteGrade(int gradeId) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            isDeletingGrade.postValue(false);
+            deleteGradeSuccessEvent.postValue(new MessageResponse("Xóa thành công (mock)"));
+        }, 1000);
+    }
+
+    private void runRealApiLogicForDeleteGrade(int gradeId) {
+        apiService.deleteGrade(gradeId).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                isDeletingGrade.postValue(false);
+                if (response.isSuccessful()) {
+                    deleteGradeSuccessEvent.postValue(response.body());
+                } else {
+                    deleteGradeErrorEvent.postValue("Lỗi: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                isDeletingGrade.postValue(false);
+                deleteGradeErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
     // --- Getters ---
     public LiveData<List<StudentClass>> getPendingList() { return pendingListLiveData; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
@@ -378,4 +505,16 @@ public class TeacherRepository {
     public LiveData<List<StudentResponse>> getStudentList() { return studentListLiveData; }
     public LiveData<Boolean> getIsStudentListLoading() { return isStudentListLoading; }
     public LiveData<String> getStudentListError() { return studentListError; }
+
+    public LiveData<Grade> getAddGradeSuccessEvent() { return addGradeSuccessEvent; }
+    public LiveData<String> getAddGradeErrorEvent() { return addGradeErrorEvent; }
+    public LiveData<Boolean> getIsAddingGrade() { return isAddingGrade; }
+
+    public LiveData<Grade> getUpdateGradeSuccessEvent() { return updateGradeSuccessEvent; }
+    public LiveData<String> getUpdateGradeErrorEvent() { return updateGradeErrorEvent; }
+    public LiveData<Boolean> getIsUpdatingGrade() { return isUpdatingGrade; }
+
+    public LiveData<MessageResponse> getDeleteGradeSuccessEvent() { return deleteGradeSuccessEvent; }
+    public LiveData<String> getDeleteGradeErrorEvent() { return deleteGradeErrorEvent; }
+    public LiveData<Boolean> getIsDeletingGrade() { return isDeletingGrade; }
 }

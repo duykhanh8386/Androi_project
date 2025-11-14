@@ -10,7 +10,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,15 +22,17 @@ import com.example.studymate.R;
 import com.example.studymate.data.model.response.StudentResponse;
 import com.example.studymate.ui.grade.adapter.GradeEntryAdapter;
 import com.example.studymate.ui.viewmodel.teacher.StudentManageViewModel;
+import com.google.gson.Gson;
 
 // ⭐️ Implement interface của Adapter
 public class GradeEntryFragment extends Fragment implements GradeEntryAdapter.OnItemClickListener {
 
-    private StudentManageViewModel viewModel; // ⭐️ Tái sử dụng
+    public static final String KEY_REFRESH_GRADES = "refresh_grades_key";
+    private StudentManageViewModel viewModel;
     private RecyclerView rvGradeEntry;
     private GradeEntryAdapter adapter;
     private ProgressBar progressBar;
-
+    private NavController navController;
     private int classId;
 
     @Override
@@ -60,6 +65,7 @@ public class GradeEntryFragment extends Fragment implements GradeEntryAdapter.On
 
         // 2. Khởi tạo ViewModel (TÁI SỬ DỤNG)
         viewModel = new ViewModelProvider(this).get(StudentManageViewModel.class);
+        navController = NavHostFragment.findNavController(this);
 
         // 3. Setup Adapter (File mới từ Bước 4)
         adapter = new GradeEntryAdapter();
@@ -68,6 +74,8 @@ public class GradeEntryFragment extends Fragment implements GradeEntryAdapter.On
         rvGradeEntry.setAdapter(adapter);
 
         setupObservers();
+
+        listenForRefreshSignal();
 
         // 4. Tải dữ liệu
         if (classId > 0) {
@@ -97,17 +105,40 @@ public class GradeEntryFragment extends Fragment implements GradeEntryAdapter.On
         });
     }
 
+    private void listenForRefreshSignal() {
+        SavedStateHandle savedStateHandle = navController.getCurrentBackStackEntry()
+                .getSavedStateHandle();
+
+        savedStateHandle.getLiveData(KEY_REFRESH_GRADES, false)
+                .observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                    @Override
+                    public void onChanged(Boolean shouldRefresh) {
+                        if (shouldRefresh) {
+                            // Tải lại danh sách
+                            viewModel.loadStudentList(classId);
+                            // Xóa tín hiệu
+                            savedStateHandle.remove(KEY_REFRESH_GRADES);
+                        }
+                    }
+                });
+    }
+
     // ⭐️ 5. Hàm được gọi khi bấm vào một học sinh
     @Override
     public void onItemClick(StudentResponse student) {
-        // Đây là nơi chúng ta sẽ điều hướng đến Dialog Nhập điểm
+        // (Bấm vào 1 học sinh)
 
-        Toast.makeText(getContext(), "Bấm vào: " + student.getUser().getFullName(), Toast.LENGTH_SHORT).show();
+        // 1. Chuyển List<Grade> thành JSON (String) để gửi
+        String gradesJson = new Gson().toJson(student.getGrades());
 
-        // TODO: (Bước tiếp theo) Tạo Bundle và gửi dữ liệu (student)
-        // sang dialog "gradeDialogAddEdit"
+        // 2. Tạo Bundle
+        Bundle bundle = new Bundle();
+        bundle.putInt("classId", classId);
+        bundle.putLong("studentId", student.getUser().getUserId());
+        bundle.putString("studentName", student.getUser().getFullName());
+        bundle.putString("gradesJson", gradesJson); // ⭐️ Gửi danh sách điểm
 
-        // NavHostFragment.findNavController(this)
-        //         .navigate(R.id.action_gradeEntryFragment_to_gradeEditDialog, bundle);
+        // 3. Điều hướng (dùng action MỚI từ nav_graph)
+        navController.navigate(R.id.action_gradeEntryFragment_to_gradeDetailListFragment, bundle);
     }
 }

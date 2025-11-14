@@ -7,6 +7,7 @@ import com.example.studymate.data.model.Notification;
 import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
+import com.example.studymate.data.model.request.GradeRequest;
 import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.request.CreateUserRequest;
 import com.example.studymate.data.model.request.FeedbackRequest;
@@ -49,7 +50,7 @@ public interface ApiService {
     @PUT("api/teacher/classes/students/{studentClassId}")
     Call<MessageResponse> approveOrRejectStudent(
             @Path("studentClassId") int studentClassId,
-            @Query("status") String status // ⭐️ ĐỔI TỪ @Body thành @Query
+            @Query("status") String status
     );
 
     @PUT("api/teacher/classes/{classId}/students/{studentId}")
@@ -79,6 +80,18 @@ public interface ApiService {
 
     @DELETE("api/teacher/classes/{classId}")
     Call<MessageResponse> deleteClass(@Path("classId") int classId);
+
+    @POST("api/teacher/grades")
+    Call<Grade> addGrade(@Body GradeRequest gradeRequest);
+
+    @PUT("api/teacher/grades/{gradeId}")
+    Call<Grade> updateGrade(
+            @Path("gradeId") int gradeId,
+            @Body GradeRequest gradeRequest
+    );
+
+    @DELETE("api/teacher/grades/{gradeId}")
+    Call<MessageResponse> deleteGrade(@Path("gradeId") int gradeId);
 
     // ===== STUDENT =====
     @GET("api/student/classes")
