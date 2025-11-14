@@ -1,46 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.search.SearchBar
-        android:id="@+id/searchBar"
-        android:hint="Tìm theo tên, email, username"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilSearch"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtKeyword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tìm theo tên, email, username"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textCursorDrawable="@null"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="8dp"
+        app:singleSelection="true"
+        app:checkedChip="@id/chipAll">
+
         <com.google.android.material.chip.Chip
             android:id="@+id/chipAll"
+            style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tất cả"
+            android:checkable="true"
             android:checked="true"/>
+
         <com.google.android.material.chip.Chip
             android:id="@+id/chipTeacher"
+            style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Giáo viên"/>
+            android:text="Giáo viên"
+            android:checkable="true"/>
+
         <com.google.android.material.chip.Chip
             android:id="@+id/chipStudent"
+            style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Học sinh"/>
+            android:text="Học sinh"
+            android:checkable="true"/>
+
         <com.google.android.material.chip.Chip
             android:id="@+id/chipActive"
+            style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ACTIVE"/>
+            android:text="ACTIVE"
+            android:checkable="true"/>
+
         <com.google.android.material.chip.Chip
             android:id="@+id/chipInactive"
+            style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="INACTIVE"/>
+            android:text="INACTIVE"
+            android:checkable="true"/>
     </com.google.android.material.chip.ChipGroup>
 
     <androidx.recyclerview.widget.RecyclerView
