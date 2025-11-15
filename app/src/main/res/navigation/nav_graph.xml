@@ -56,6 +56,11 @@
         android:label="@string/home_admin"
         tools:layout="@layout/fragment_home_admin">
         <action
+            android:id="@+id/action_homeAdminFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeAdminFragment"
+            app:popUpToInclusive="true" />
+        <action
             android:id="@+id/action_admin_to_accounts"
             app:destination="@id/accountListFragment" />
         <action
@@ -305,6 +310,13 @@
         <argument
             android:name="notificationId"
             app:argType="integer" />
+        <!-- Bên trong <fragment android:id="@+id/accountListFragment" ...> -->
+        <action
+            android:id="@+id/action_accountListFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeAdminFragment"
+            app:popUpToInclusive="true" />
+
         <action
             android:id="@+id/action_acclist_to_create"
             app:destination="@id/accountCreateFragment" />
@@ -313,7 +325,15 @@
         android:id="@+id/accountCreateFragment"
         android:name="com.example.studymate.ui.account.AccountCreateFragment"
         android:label="Tạo tài khoản"
-        tools:layout="@layout/fragment_account_create" />
+        tools:layout="@layout/fragment_account_create" >
+        <!-- Bên trong <fragment android:id="@+id/accountCreateFragment" ...> -->
+        <action
+            android:id="@+id/action_accountCreateFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeAdminFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
     <fragment
         android:id="@+id/gradeEntryFragment"
         android:name="com.example.studymate.ui.grade.teacher.GradeEntryFragment"

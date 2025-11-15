@@ -1,6 +1,5 @@
 package com.example.studymate.data.network;
 
-
 import com.example.studymate.data.model.Feedback;
 import com.example.studymate.data.model.Grade;
 import com.example.studymate.data.model.Notification;
@@ -20,9 +19,7 @@ import com.example.studymate.data.model.response.LoginResponse;
 import com.example.studymate.data.model.response.MessageResponse;
 import com.example.studymate.data.model.response.StudentResponse;
 
-
 import java.util.List;
-
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -34,7 +31,6 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-
 public interface ApiService {
     // ===== AUTH =====
     @POST("api/auth/signin")
@@ -44,7 +40,6 @@ public interface ApiService {
     Call<Void> logout();
 
     // ===== TEACHER =====
-
     @GET("api/teacher/classes/{id}/pending")
     Call<List<StudentClass>> getPendingStudents(@Path("id") int classId);
 
@@ -64,7 +59,7 @@ public interface ApiService {
     @PUT("api/teacher/classes/{id}/update-all")
     Call<MessageResponse> updateAllPendingStatus(
             @Path("id") int classId,
-            @Query("status") String status // (APPROVED hoặc REJECTED)
+            @Query("status") String status
     );
 
     @GET("api/teacher/classes")
@@ -147,11 +142,13 @@ public interface ApiService {
     @POST("api/admin/users")
     Call<User> createUser(@Body CreateUserRequest body);
 
+    // Tìm kiếm user theo keyword (tìm trong fullName, username, email)
+    // keyword sẽ tìm trong TẤT CẢ các trường: fullName, username, email
     @GET("api/admin/users")
     Call<List<User>> searchUsers(
-        @Query("keyword") String keyword,
-        @Query("role") String role,
-        @Query("status") String status
+            @Query("keyword") String keyword,
+            @Query("role") String role,
+            @Query("status") String status
     );
 
     @POST("api/student/classes/join")

@@ -1,11 +1,9 @@
-// app/src/main/java/com/example/studymate/ui/account/AccountListFragment.java
 package com.example.studymate.ui.account;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.navigation.Navigation;
@@ -38,10 +35,11 @@ public class AccountListFragment extends Fragment {
     private UserRepository repo;
     private AccountAdapter adapter;
     private String role = "ALL";
-    private String status = "ALL";
+    private String status = "ACTIVE";
     private int page = 0, size = 20;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable pending;
+    private String currentKeyword = "";
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,12 +58,45 @@ public class AccountListFragment extends Fragment {
 
         MaterialButton btnCreate = view.findViewById(R.id.btnCreate);
         btnCreate.setOnClickListener(v -> Navigation.findNavController(v)
-            .navigate(R.id.action_acclist_to_create));
+                .navigate(R.id.action_acclist_to_create));
 
-        // Ô tìm kiếm: chấp mọi layout
-        View searchBox = view.findViewById(R.id.searchBar);
-        wireSearchInput(searchBox);
+        // Ô tìm kiếm với hỗ trợ tiếng Việt
+        EditText edtKeyword = view.findViewById(R.id.edtKeyword);
+        if (edtKeyword != null) {
+            edtKeyword.addTextChangedListener(new TextWatcher() {
+                private boolean isComposing = false;
 
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // Kiểm tra xem có đang compose text không (đang gõ dấu tiếng Việt)
+                    if (s instanceof android.text.Spanned) {
+                        android.text.Spanned spanned = (android.text.Spanned) s;
+                        Object[] spans = spanned.getSpans(0, s.length(), Object.class);
+                        for (Object span : spans) {
+                            if (span.getClass().getName().contains("ComposingText")) {
+                                isComposing = true;
+                                return;
+                            }
+                        }
+                    }
+                    isComposing = false;
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    // Chỉ search khi KHÔNG đang compose (không đang gõ dấu)
+                    if (!isComposing) {
+                        currentKeyword = s == null ? "" : s.toString();
+                        debounceSearch(currentKeyword);
+                    }
+                }
+            });
+        }
+
+        // ChipGroup với single selection
         ChipGroup chips = view.findViewById(R.id.chips);
         Chip chipAll = view.findViewById(R.id.chipAll);
         Chip chipTeacher = view.findViewById(R.id.chipTeacher);
@@ -73,47 +104,35 @@ public class AccountListFragment extends Fragment {
         Chip chipActive = view.findViewById(R.id.chipActive);
         Chip chipInactive = view.findViewById(R.id.chipInactive);
 
-        chipAll.setOnClickListener(v -> { role = "ALL"; status = "ACTIVE"; search(""); });
-        chipTeacher.setOnClickListener(v -> { role = "ROLE_TEACHER"; status = "ALL"; search(""); });
-        chipStudent.setOnClickListener(v -> { role = "ROLE_STUDENT"; status = "ALL"; search(""); });
-        chipActive.setOnClickListener(v -> { role = "ALL"; status = "ACTIVE"; search(""); });
-        chipInactive.setOnClickListener(v -> { role = "ALL"; status = "INACTIVE"; search(""); });
+        chips.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) {
+                // Không cho bỏ chọn tất cả, tự động chọn lại "Tất cả"
+                chipAll.setChecked(true);
+                return;
+            }
+
+            int checkedId = checkedIds.get(0);
+            if (checkedId == R.id.chipAll) {
+                role = "ALL";
+                status = "ALL";
+            } else if (checkedId == R.id.chipTeacher) {
+                role = "ROLE_TEACHER";
+                status = "ALL";
+            } else if (checkedId == R.id.chipStudent) {
+                role = "ROLE_STUDENT";
+                status = "ALL";
+            } else if (checkedId == R.id.chipActive) {
+                role = "ALL";
+                status = "ACTIVE";
+            } else if (checkedId == R.id.chipInactive) {
+                role = "ALL";
+                status = "INACTIVE";
+            }
+
+            search(currentKeyword);
+        });
 
         search("");
-    }
-
-    private void wireSearchInput(View searchBox) {
-        if (searchBox == null) return;
-
-        if (searchBox instanceof SearchView) {
-            SearchView sv = (SearchView) searchBox;
-            sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override public boolean onQueryTextSubmit(String q) { debounceSearch(q == null ? "" : q); return true; }
-                @Override public boolean onQueryTextChange(String t) { debounceSearch(t == null ? "" : t); return true; }
-            });
-            return;
-        }
-
-        EditText edit = findFirstEditText(searchBox);
-        if (edit != null) {
-            edit.addTextChangedListener(new TextWatcher() {
-                @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
-                @Override public void onTextChanged(CharSequence s, int st, int b, int c) { debounceSearch(s == null ? "" : s.toString()); }
-                @Override public void afterTextChanged(Editable s) {}
-            });
-        }
-    }
-
-    private EditText findFirstEditText(View root) {
-        if (root instanceof EditText) return (EditText) root;
-        if (root instanceof ViewGroup) {
-            ViewGroup vg = (ViewGroup) root;
-            for (int i = 0; i < vg.getChildCount(); i++) {
-                EditText e = findFirstEditText(vg.getChildAt(i));
-                if (e != null) return e;
-            }
-        }
-        return null;
     }
 
     private void debounceSearch(String keyword) {
@@ -140,11 +159,11 @@ public class AccountListFragment extends Fragment {
     private void confirmDisable(User user) {
         if (!user.getEnable()) return;
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("Vô hiệu hóa tài khoản")
-            .setMessage("Bạn có chắc muốn vô hiệu hóa tài khoản này?")
-            .setPositiveButton("Đồng ý", (d, w) -> doDisable(user))
-            .setNegativeButton("Hủy", null)
-            .show();
+                .setTitle("Vô hiệu hóa tài khoản")
+                .setMessage("Bạn có chắc muốn vô hiệu hóa tài khoản này?")
+                .setPositiveButton("Đồng ý", (d, w) -> doDisable(user))
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 
     private void doDisable(User user) {
@@ -153,7 +172,7 @@ public class AccountListFragment extends Fragment {
                 Toast.makeText(getContext(), "Lỗi kết nối!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "Tài khoản đã bị vô hiệu hóa!", Toast.LENGTH_SHORT).show();
-                search("");
+                search(currentKeyword);
             }
         });
     }
@@ -174,8 +193,8 @@ public class AccountListFragment extends Fragment {
             User u = items.get(p);
             h.txtName.setText(u.getFullName());
             h.txtSub.setText(u.getUserName() + " • " +
-                (u.getRoleName() == null ? "" : u.getRoleName()) + " • " +
-                (u.getEnable() ? "Hoạt động" : "Vô hiệu hóa"));
+                    (u.getRoleName() == null ? "" : u.getRoleName()) + " • " +
+                    (u.getEnable() ? "Hoạt động" : "Vô hiệu hóa"));
             h.btnDisable.setVisibility(u.getEnable() ? View.VISIBLE : View.GONE);
             h.btnDisable.setOnClickListener(v -> listener.onDisable(u));
         }
