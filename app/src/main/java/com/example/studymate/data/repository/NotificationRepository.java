@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.studymate.data.model.Notification;
+import com.example.studymate.data.model.request.NotificationRequest;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 
@@ -32,6 +33,11 @@ public class NotificationRepository {
     private MutableLiveData<Boolean> isDetailLoading = new MutableLiveData<>();
     private MutableLiveData<String> detailError = new MutableLiveData<>();
 
+    // LiveData cho sự kiện TẠO MỚI
+    private MutableLiveData<Notification> createSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> createErrorEvent = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isCreating = new MutableLiveData<>();
+
     public NotificationRepository() {
         this.apiService = RetrofitClient.getApiService();
     }
@@ -52,6 +58,17 @@ public class NotificationRepository {
             runMockLogicForDetail(notificationId);
         } else {
             runRealApiLogicForDetail(notificationId);
+        }
+    }
+
+    public void createNotification(int classId, String title, String content) {
+        isCreating.postValue(true);
+        NotificationRequest request = new NotificationRequest(title, content);
+
+        if (IS_MOCK_MODE) {
+            runMockLogicForCreate(request);
+        } else {
+            runRealApiLogicForCreate(classId, request);
         }
     }
 
@@ -122,6 +139,33 @@ public class NotificationRepository {
         });
     }
 
+    private void runMockLogicForCreate(NotificationRequest request) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Notification newNotif = new Notification(99, request.getTitle(), request.getContent(), "2025-11-15T11:00:00");
+            isCreating.postValue(false);
+            createSuccessEvent.postValue(newNotif);
+        }, 1500);
+    }
+
+    private void runRealApiLogicForCreate(int classId, NotificationRequest request) {
+        apiService.createNotification(classId, request).enqueue(new Callback<Notification>() {
+            @Override
+            public void onResponse(Call<Notification> call, Response<Notification> response) {
+                isCreating.postValue(false);
+                if (response.isSuccessful()) {
+                    createSuccessEvent.postValue(response.body());
+                } else {
+                    createErrorEvent.postValue("Lỗi: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<Notification> call, Throwable t) {
+                isCreating.postValue(false);
+                createErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
     // ⭐️ THÊM GETTERS MỚI:
     public LiveData<List<Notification>> getNotificationList() {
         return notificationListLiveData;
@@ -142,4 +186,8 @@ public class NotificationRepository {
     public LiveData<String> getDetailError() {
         return detailError;
     }
+
+    public LiveData<Notification> getCreateSuccessEvent() { return createSuccessEvent; }
+    public LiveData<String> getCreateErrorEvent() { return createErrorEvent; }
+    public LiveData<Boolean> getIsCreating() { return isCreating; }
 }

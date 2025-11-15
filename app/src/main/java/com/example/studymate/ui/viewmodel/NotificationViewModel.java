@@ -7,18 +7,18 @@ import com.example.studymate.data.model.Notification;
 import com.example.studymate.data.repository.NotificationRepository;
 import java.util.List;
 
-public class NotificationListViewModel extends ViewModel {
+public class NotificationViewModel extends ViewModel {
 
     // ⭐️ SỬA BIẾN NÀY:
     private NotificationRepository notificationRepository;
 
-    public NotificationListViewModel() {
+    public NotificationViewModel() {
         // ⭐️ SỬA LẠI:
         this.notificationRepository = new NotificationRepository();
     }
 
     // Fragment sẽ gọi hàm này
-    public void loadNotificationList(int classId) {
+    public void loadNotifications(int classId) {
         // ⭐️ SỬA LẠI:
         notificationRepository.fetchNotificationList(classId);
     }
@@ -31,5 +31,22 @@ public class NotificationListViewModel extends ViewModel {
     public LiveData<Boolean> getIsLoading() {
         // ⭐️ SỬA LẠI:
         return notificationRepository.getIsNotificationListLoading();
+    }
+    public LiveData<String> getError() {
+        // ⭐️ SỬA LẠI:
+        return notificationRepository.getNotificationListError();
+    }
+
+    public void performCreateNotification(int classId, String title, String content) {
+        notificationRepository.createNotification(classId, title, content);
+    }
+    public LiveData<Notification> getCreateSuccessEvent() {
+        return notificationRepository.getCreateSuccessEvent();
+    }
+    public LiveData<Boolean> getIsCreating() {
+        return notificationRepository.getIsCreating();
+    }
+    public LiveData<String> getCreateErrorEvent() {
+        return notificationRepository.getCreateErrorEvent();
     }
 }

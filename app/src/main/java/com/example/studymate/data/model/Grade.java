@@ -14,10 +14,8 @@ public class Grade {
     private String gradeType;
 
     // ⭐️ SỬA LẠI:
-    // JSON trả về 8.00 (một con số), không phải "8.00" (một chuỗi)
-    // Dùng Double (hoặc BigDecimal) để khớp
     @SerializedName("score")
-    private Double score; // Sửa từ String -> Double
+    private Double score;
 
     @SerializedName("modifiedAt")
     private String modifiedAt;

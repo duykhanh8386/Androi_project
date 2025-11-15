@@ -199,7 +199,7 @@ public class ClassRepository {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             // Giả lập tìm thấy lớp học dựa trên ID
             ClassDetailResponse mockClass = new ClassDetailResponse(3, "Lớp 10A1", "L10A1",
-                    "Thứ 2 - 7h30", "Teacher User", 35);
+                    "Thứ 2 - 7h30", 3L,"Teacher User", 35);
             isDetailLoading.postValue(false);
             classDetailLiveData.postValue(mockClass);
         }, 1000);
