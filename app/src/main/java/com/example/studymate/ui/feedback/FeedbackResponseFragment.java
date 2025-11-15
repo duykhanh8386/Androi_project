@@ -5,12 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView; // ⭐️ THÊM
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
@@ -22,20 +24,26 @@ public class FeedbackResponseFragment extends Fragment {
     private FeedbackResponseViewModel viewModel;
     private TextInputEditText edtReply;
     private Button btnSend;
-    // (Bạn có thể thêm ProgressBar vào XML và ánh xạ ở đây nếu muốn)
+    private TextView tvReplyingTo; // ⭐️ THÊM
+    private NavController navController;
 
     private int classId;
+    private Long receiverId; // ⭐️ THÊM
+    private String receiverName; // ⭐️ THÊM
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 1. Lấy classId (được gửi từ FeedbackThreadFragment)
-        // (Điều này yêu cầu Bước 1 & 7 phải làm đúng)
+        // ⭐️ BƯỚC 1: LẤY TẤT CẢ DỮ LIỆU
         if (getArguments() != null) {
             classId = getArguments().getInt("classId");
-        } else {
-            Toast.makeText(getContext(), "Lỗi: Không tìm thấy ID lớp học", Toast.LENGTH_SHORT).show();
+            receiverId = getArguments().getLong("receiverId");
+            receiverName = getArguments().getString("receiverName");
+        }
+
+        if (classId == 0 || receiverId == 0L) {
+            Toast.makeText(getContext(), "Lỗi: Không tìm thấy ID", Toast.LENGTH_SHORT).show();
             NavHostFragment.findNavController(this).popBackStack();
         }
     }
@@ -43,7 +51,6 @@ public class FeedbackResponseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // "Thổi phồng" layout XML bạn đã cung cấp
         return inflater.inflate(R.layout.fragment_feedback_response, container, false);
     }
 
@@ -52,16 +59,23 @@ public class FeedbackResponseFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(FeedbackResponseViewModel.class);
+        navController = NavHostFragment.findNavController(this);
 
-        // Ánh xạ View (từ file XML của bạn)
+        // Ánh xạ View
         edtReply = view.findViewById(R.id.edtReply);
         btnSend = view.findViewById(R.id.btnSend);
+        tvReplyingTo = view.findViewById(R.id.tvReplyingTo); // (Giả sử bạn có ID này)
+
+        // (Hiển thị tên người nhận nếu có)
+        if (tvReplyingTo != null && receiverName != null) {
+            tvReplyingTo.setText("Trả lời cho: " + receiverName);
+        }
 
         setupClickListeners();
         setupObservers();
     }
 
-    // 2. Xử lý nút "Gửi"
+    // ⭐️ BƯỚC 2: SỬA LẠI HÀM CLICK
     private void setupClickListeners() {
         btnSend.setOnClickListener(v -> {
             String content = edtReply.getText().toString().trim();
@@ -70,33 +84,34 @@ public class FeedbackResponseFragment extends Fragment {
                 return;
             }
             if (classId > 0) {
-                // Gọi ViewModel
-                viewModel.sendFeedback(classId, content);
+                // ⭐️ GỌI HÀM ĐÚNG (với receiverId)
+                viewModel.sendFeedback(classId, content, receiverId);
             }
         });
     }
 
-    // 3. Quan sát kết quả từ ViewModel
+    // 3. Quan sát kết quả từ ViewModel (Code này của bạn đã đúng)
     private void setupObservers() {
 
         // Quan sát trạng thái "Đang gửi"
         viewModel.getIsSending().observe(getViewLifecycleOwner(), isSending -> {
-            // Vô hiệu hóa nút và EditText khi đang gửi
             btnSend.setEnabled(!isSending);
             edtReply.setEnabled(!isSending);
             if(isSending) btnSend.setText("Đang gửi...");
             else btnSend.setText("Gửi");
         });
 
-        // Quan sát sự kiện "Gửi thành công"
+        // ⭐️ SỬA LẠI: Quan sát sự kiện "Gửi thành công"
         viewModel.getSendSuccess().observe(getViewLifecycleOwner(), newFeedback -> {
             Toast.makeText(getContext(), "Gửi thành công", Toast.LENGTH_SHORT).show();
 
-            // TODO: (Nâng cao) Gửi tin nhắn mới (newFeedback) này về Fragment danh sách (dùng SavedStateHandle)
-            // để danh sách cập nhật ngay lập tức mà không cần gọi lại API.
+            // ⭐️ BƯỚC 4: GỬI TÍN HIỆU "REFRESH" VỀ MÀN HÌNH TRƯỚC (B)
+            navController.getPreviousBackStackEntry()
+                    .getSavedStateHandle()
+                    .set(FeedbackThreadFragment.KEY_REFRESH_THREAD, true);
 
-            // Quay lại màn hình danh sách
-            NavHostFragment.findNavController(this).popBackStack();
+            // ⭐️ BƯỚC 5: QUAY LẠI MÀN HÌNH CHAT
+            navController.popBackStack();
         });
 
         // Quan sát sự kiện "Gửi lỗi"

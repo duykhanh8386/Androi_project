@@ -203,6 +203,9 @@
         android:name="com.example.studymate.ui.feedback.ListStudentFeedBackFragment"
         android:label="@string/qa_feedback"
         tools:layout="@layout/fragment_list_student_feedback">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
         <action
             android:id="@+id/action_detail_to_list_student_feedback"
             app:destination="@id/feedbackThreadFragment" />
@@ -216,6 +219,12 @@
         <argument
             android:name="classId"
             app:argType="integer" />
+        <argument
+            android:name="receiverId"
+            app:argType="long" />
+        <argument
+            android:name="receiverName"
+            app:argType="string" />
         <action
             android:id="@+id/action_detail_to_feedback"
             app:destination="@id/fragment_feedback_detail" />
@@ -228,6 +237,12 @@
         <argument
             android:name="classId"
             app:argType="integer" />
+        <argument
+            android:name="receiverId"
+            app:argType="long" />
+        <argument
+            android:name="receiverName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/teacherNotificationListFragment"

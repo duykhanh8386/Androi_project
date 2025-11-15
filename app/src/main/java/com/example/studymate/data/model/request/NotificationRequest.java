@@ -4,10 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class NotificationRequest {
 
-    @SerializedName("title")
+    @SerializedName("notificationTitle")
     private String title;
 
-    @SerializedName("content")
+    @SerializedName("notificationContent")
     private String content;
 
     public NotificationRequest(String title, String content) {

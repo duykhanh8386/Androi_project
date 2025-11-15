@@ -76,7 +76,7 @@ public class NotificationListFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
 
         // Setup Adapter
-        adapter = new NotificationListAdapter();
+        adapter = new NotificationListAdapter(sessionManager);
         rvNotifications.setLayoutManager(new LinearLayoutManager(getContext()));
         rvNotifications.setAdapter(adapter);
 

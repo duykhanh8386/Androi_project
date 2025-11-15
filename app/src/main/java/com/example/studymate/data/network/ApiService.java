@@ -100,6 +100,11 @@ public interface ApiService {
             @Body NotificationRequest notificationRequest
     );
 
+    @GET("api/teacher/classes/{classId}/feedback")
+    Call<List<Feedback>> getTeacherFeedbackList(@Path("classId") int classId);
+
+
+
     // ===== STUDENT =====
     @GET("api/student/classes")
     Call<List<StudyClass>> getStudentClasses();
@@ -128,6 +133,16 @@ public interface ApiService {
 
     @POST("api/student/feedback/send")
     Call<Feedback> sendFeedback(@Body FeedbackRequest feedbackRequest);
+
+    @GET("api/user/classes/{id}/feedback")
+    Call<List<Feedback>> getFeedbackThread(
+            @Path("id") int classId,
+
+            // Thêm Query Param này.
+            // (Khi Student gọi, studentId = null)
+            // (Khi Teacher gọi, studentId = ID của học sinh)
+            @Query("studentId") Long studentId
+    );
 
     // ===== ADMIN: USER MANAGEMENT =====
     @POST("api/admin/users")

@@ -12,12 +12,17 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
+import com.example.studymate.constants.RoleConstant;
 import com.example.studymate.data.model.Notification;
+import com.example.studymate.data.network.SessionManager;
 
 public class NotificationListAdapter extends ListAdapter<Notification, NotificationListAdapter.NotificationViewHolder> {
 
-    public NotificationListAdapter() {
+    private SessionManager sessionManager;
+
+    public NotificationListAdapter(SessionManager sessionManager) {
         super(DIFF_CALLBACK);
+        this.sessionManager = sessionManager;
     }
 
     private static final DiffUtil.ItemCallback<Notification> DIFF_CALLBACK =
@@ -67,8 +72,13 @@ public class NotificationListAdapter extends ListAdapter<Notification, Notificat
                     bundle.putInt("notificationId", clickedNotification.getNotificationId());
 
                     // 2. Điều hướng (dùng ID action từ nav_graph)
-                    Navigation.findNavController(itemView)
-                            .navigate(R.id.action_list_to_detailNotify, bundle);
+                    if (RoleConstant.TEACHER.equals(sessionManager.getUserRole())){
+                        Navigation.findNavController(itemView)
+                                .navigate(R.id.action_list_to_detailNotify, bundle);
+                    }else {
+                        Navigation.findNavController(itemView)
+                                .navigate(R.id.action_list_to_notifyDetail, bundle);
+                    }
                 }
             });
         }
