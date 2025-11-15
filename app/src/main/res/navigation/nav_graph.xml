@@ -58,6 +58,11 @@
         <action
             android:id="@+id/action_admin_to_accounts"
             app:destination="@id/accountListFragment" />
+        <action
+            android:id="@+id/action_homeAdminFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeAdminFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment

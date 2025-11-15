@@ -218,7 +218,7 @@ public class ClassDetailFragment extends Fragment {
             // ⭐️ THÊM 2 DÒNG NÀY ĐỂ SỬA LỖI
             // (Gửi ID và Tên của Giáo viên làm Người nhận)
             //SỬA CHỖ NÀY
-            bundle.putLong("receiverId", currentClassDetails.getClassId());
+            bundle.putLong("receiverId", currentClassDetails.getTeacherId());
             bundle.putString("receiverName", currentClassDetails.getTeacherName());
 
             navController.navigate(R.id.action_detail_to_feedback, bundle);

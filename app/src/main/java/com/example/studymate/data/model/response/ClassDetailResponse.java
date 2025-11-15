@@ -7,17 +7,19 @@ public class ClassDetailResponse {
     private String className;
     private String classJoinCode;
     private String classTime;
+    private Long teacherId;
     private String teacherName;
     private int studentCount;
 
     public ClassDetailResponse() {
     }
 
-    public ClassDetailResponse(int classId, String className, String classJoinCode, String classTime, String teacherName, int studentCount) {
+    public ClassDetailResponse(int classId, String className, String classJoinCode, String classTime, Long teacherId, String teacherName, int studentCount) {
         this.classId = classId;
         this.className = className;
         this.classJoinCode = classJoinCode;
         this.classTime = classTime;
+        this.teacherId = teacherId;
         this.teacherName = teacherName;
         this.studentCount = studentCount;
     }
@@ -52,6 +54,14 @@ public class ClassDetailResponse {
 
     public void setClassTime(String classTime) {
         this.classTime = classTime;
+    }
+
+    public Long getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Long teacherId) {
+        this.teacherId = teacherId;
     }
 
     public String getTeacherName() {

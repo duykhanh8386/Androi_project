@@ -26,7 +26,7 @@ import retrofit2.Response;
 public class FeedbackRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = true; // (Giữ mock)
+    private final boolean IS_MOCK_MODE = false; // (Giữ mock)
 
     // (LiveData cho Màn hình B - Chat)
     private MutableLiveData<List<Feedback>> feedbackThread = new MutableLiveData<>();

@@ -100,9 +100,8 @@ public interface ApiService {
             @Body NotificationRequest notificationRequest
     );
 
-    @GET("api/teacher/classes/{classId}/feedback")
+    @GET("api/user/feedback/partners/{classId}")
     Call<List<Feedback>> getTeacherFeedbackList(@Path("classId") int classId);
-
 
 
     // ===== STUDENT =====
@@ -131,7 +130,7 @@ public interface ApiService {
     @GET("api/student/feedback/{id}/conversations")
     Call<List<Feedback>> getFeedbackThread(@Path("id") int classId);
 
-    @POST("api/student/feedback/send")
+    @POST("api/user/feedback/send")
     Call<Feedback> sendFeedback(@Body FeedbackRequest feedbackRequest);
 
     @GET("api/user/classes/{id}/feedback")
