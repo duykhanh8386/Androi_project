@@ -3,6 +3,7 @@ package com.example.studymate.data.repository;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -14,8 +15,8 @@ import com.example.studymate.data.model.request.FeedbackRequest;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 
+import java.io.IOException; // ⭐️ THÊM
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -25,142 +26,213 @@ import retrofit2.Response;
 public class FeedbackRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = true;
+    private final boolean IS_MOCK_MODE = true; // (Giữ mock)
 
-    // LiveData cho danh sách feedback
-    private MutableLiveData<List<Feedback>> feedbackListLiveData = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
-    private MutableLiveData<String> error = new MutableLiveData<>();
+    // (LiveData cho Màn hình B - Chat)
+    private MutableLiveData<List<Feedback>> feedbackThread = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoadingThread = new MutableLiveData<>();
+    private MutableLiveData<String> threadError = new MutableLiveData<>();
 
-    // LiveData cho sự kiện GỬI
-    private MutableLiveData<Feedback> sendSuccessLiveData = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isSending = new MutableLiveData<>();
-    private MutableLiveData<String> sendError = new MutableLiveData<>();
+    private MutableLiveData<Boolean> sendSuccessLoading = new MutableLiveData<>();
+    private MutableLiveData<Feedback> sendSuccessEvent = new MutableLiveData<>();
+    private MutableLiveData<String> sendErrorEvent = new MutableLiveData<>();
+
+    // (LiveData cho Màn hình A - Danh sách)
+    private MutableLiveData<List<Feedback>> feedbackList = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoadingList = new MutableLiveData<>();
+    private MutableLiveData<String> listError = new MutableLiveData<>();
+
+
     public FeedbackRepository() {
         this.apiService = RetrofitClient.getApiService();
     }
 
-    // ⭐️ HÀM MỚI:
-    public void fetchFeedbackThread(int classId) {
-        isLoading.postValue(true);
+    // --- Màn hình A: Lấy danh sách ---
+    public void fetchTeacherFeedbackList(int classId) {
+        isLoadingList.postValue(true);
         if (IS_MOCK_MODE) {
-            runMockLogicForFeedback(classId);
+            runMockLogicForList(classId);
         } else {
-            runRealApiLogicForFeedback(classId);
+            runRealApiLogicForList(classId);
         }
     }
 
-    public void sendFeedback(int classId, String content) {
-        isSending.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForSend(classId, content);
-        } else {
-            runRealApiLogicForSend(classId, content);
-        }
-    }
-
-    // ⭐️ HÀM MỚI: (Mock logic)
-    private void runMockLogicForFeedback(int classId) {
+    private void runMockLogicForList(int classId) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             ArrayList<Feedback> mockList = new ArrayList<>();
-            // (Dùng POJO Feedback.java [cite: 357] - (id, content, date, isRead, classId, senderId))
-            StudyClass studyClass = new StudyClass();
-            studyClass.setClassId(classId);
-            User student = new User(123, "Học sinh A", "2010234343", "a@gmail.com", RoleConstant.STUDENT);
-            User teacher = new User(456, "Học sinh A", "2010234343", "a@gmail.com", RoleConstant.TEACHER);
 
-            // Giả sử ID học sinh là 123, ID giáo viên là 456
-//            mockList.add(new Feedback(1, "Thưa cô, em xin phép nghỉ ốm ạ.", new Date(), "false", studyClass, student));
-//            mockList.add(new Feedback(2, "Ok em, nhớ nộp bài bù nhé.", new Date(), "false", studyClass, teacher));
-//            mockList.add(new Feedback(3, "Dạ vâng ạ.", new Date(), "false", studyClass, student));
+            // (Dùng default constructor và setters cho an toàn)
+            Feedback f1 = new Feedback();
+            f1.setFeedbackId(10);
+            f1.setFeedbackContent("Em chào cô, bài này làm sao ạ?");
+            f1.setCreatedAt("2025-11-15T10:00:00");
+            f1.setSenderId(201L);
+            f1.setSenderName("Nguyễn Văn An");
+            f1.setSenderUsername("20201111"); // (Mã SV)
+            f1.setReceiverId(10L); // (ID Giáo viên)
+            f1.setConversationId("conv_1");
+            f1.setRead(false); // (Chưa đọc)
+            mockList.add(f1);
 
-            isLoading.postValue(false);
-            feedbackListLiveData.postValue(mockList);
-        }, 1000); // Trì hoãn 1 giây
+            Feedback f2 = new Feedback();
+            f2.setFeedbackId(12);
+            f2.setFeedbackContent("Ok cô, em cảm ơn.");
+            f2.setCreatedAt("2025-11-14T08:00:00");
+            f2.setSenderId(202L);
+            f2.setSenderName("Trần Thị Bình");
+            f2.setSenderUsername("20202222"); // (Mã SV)
+            f2.setReceiverId(10L); // (ID Giáo viên)
+            f2.setConversationId("conv_2");
+            f2.setRead(true); // (Đã đọc)
+            mockList.add(f2);
+
+            isLoadingList.postValue(false);
+            feedbackList.postValue(mockList);
+        }, 1000);
     }
 
-    // ⭐️ HÀM MỚI: (Real API logic)
-    private void runRealApiLogicForFeedback(int classId) {
-        apiService.getFeedbackThread(classId).enqueue(new Callback<List<Feedback>>() {
+    private void runRealApiLogicForList(int classId) {
+        apiService.getTeacherFeedbackList(classId).enqueue(new Callback<List<Feedback>>() {
             @Override
             public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
-                isLoading.postValue(false);
+                isLoadingList.postValue(false);
                 if (response.isSuccessful()) {
-                    feedbackListLiveData.postValue(response.body());
+                    feedbackList.postValue(response.body());
                 } else {
-                    error.postValue("Lỗi: " + response.code());
+                    listError.postValue("Lỗi: " + response.code());
                 }
             }
             @Override
             public void onFailure(Call<List<Feedback>> call, Throwable t) {
-                isLoading.postValue(false);
-                error.postValue("Lỗi mạng: " + t.getMessage());
+                isLoadingList.postValue(false);
+                listError.postValue("Lỗi mạng: " + t.getMessage());
             }
         });
     }
 
-    // ⭐️ THÊM HÀM MỚI: (Mock logic)
-    private void runMockLogicForSend(int classId, String content) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // Giả lập 1 tin nhắn trả về
-            // (Giả sử 123 là ID học sinh - khớp với mock ID ở lượt trước)
-            StudyClass studyClass = new StudyClass();
-            studyClass.setClassId(classId);
-            User student = new User(123, "Học sinh A", "student", "a@gmail.com", RoleConstant.STUDENT);
-//            Feedback newFeedback = new Feedback(
-//                    (int) (Math.random() * 1000), // ID ngẫu nhiên
-//                    content,
-//                    new Date(),
-//                    "false",
-//                    studyClass,
-//                    student // Gửi từ "Bạn" (khớp mock ID)
-//            );
-            Feedback newFeedback = new Feedback();
+    // --- Màn hình B: Lấy chi tiết cuộc trò chuyện ---
+    public void getFeedbackThread(int classId, @Nullable Long studentId) {
+        isLoadingThread.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForThread(classId, studentId);
+        } else {
+            runRealApiLogicForThread(classId, studentId);
+        }
+    }
 
-            isSending.postValue(false);
-            sendSuccessLiveData.postValue(newFeedback);
+    private void runMockLogicForThread(int classId, @Nullable Long studentId) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            ArrayList<Feedback> mockThread = new ArrayList<>();
+            Long sId = (studentId != null ? studentId : 201L);
+
+            // (Tin nhắn 1 - CỦA HỌC SINH)
+            Feedback f1 = new Feedback();
+            f1.setFeedbackId(10);
+            f1.setFeedbackContent("Em chào cô, bài này làm sao ạ?");
+            f1.setCreatedAt("2025-11-15T10:00:00");
+            f1.setSenderId(sId); // ⭐️ Gửi từ Học sinh
+            f1.setSenderName("Nguyễn Văn An");
+            f1.setReceiverId(10L); // (Gửi cho GV)
+            mockThread.add(f1);
+
+            // ⭐️ LỖI CỦA BẠN LÀ Ở ĐÂY (Bạn đã copy-paste tin nhắn 1)
+            // (Tin nhắn 2 - CỦA GIÁO VIÊN)
+            Feedback f2 = new Feedback();
+            f2.setFeedbackId(11);
+            f2.setFeedbackContent("Em xem lại slide bài giảng nhé.");
+            f2.setCreatedAt("2025-11-15T10:05:00");
+            f2.setSenderId(10L); // ⭐️ Gửi từ Giáo viên
+            f2.setSenderName("Giáo Viên B");
+            f2.setReceiverId(sId); // (Gửi cho Học sinh)
+            mockThread.add(f2);
+
+            isLoadingThread.postValue(false);
+            feedbackThread.postValue(mockThread);
+        }, 1000);
+    }
+
+    private void runRealApiLogicForThread(int classId, @Nullable Long studentId) {
+        apiService.getFeedbackThread(classId, studentId).enqueue(new Callback<List<Feedback>>() {
+            @Override
+            public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
+                isLoadingThread.postValue(false);
+                if (response.isSuccessful()) {
+                    feedbackThread.postValue(response.body());
+                } else {
+                    threadError.postValue("Lỗi: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Feedback>> call, Throwable t) {
+                isLoadingThread.postValue(false);
+                threadError.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
+    }
+
+    // --- Màn hình B: Gửi tin nhắn ---
+
+    // ⭐️ SỬA LẠI: Nhận FeedbackRequest
+    public void sendFeedback(FeedbackRequest request) {
+        sendSuccessLoading.postValue(true);
+        if (IS_MOCK_MODE) {
+            runMockLogicForSend(request);
+        } else {
+            runRealApiLogicForSend(request);
+        }
+    }
+
+    private void runMockLogicForSend(FeedbackRequest request) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Feedback newFeedback = new Feedback();
+            newFeedback.setFeedbackId((int) (Math.random() * 1000));
+            newFeedback.setFeedbackContent(request.getFeedbackContent());
+            newFeedback.setCreatedAt("2025-11-15T11:00:00");
+            newFeedback.setSenderId(10L); // (Giả sử 10L là ID Giáo viên)
+            newFeedback.setReceiverId(request.getReceiverId()); // (Gửi cho Học sinh)
+
+            sendSuccessLoading.postValue(false);
+            sendSuccessEvent.postValue(newFeedback);
         }, 1000); // Trì hoãn 1 giây
     }
 
-    // ⭐️ THÊM HÀM MỚI: (Real API logic)
-    private void runRealApiLogicForSend(int classId, String content) {
-        FeedbackRequest request = new FeedbackRequest(classId, content);
+    // ⭐️ SỬA LẠI: Nhận FeedbackRequest
+    private void runRealApiLogicForSend(FeedbackRequest request) {
         apiService.sendFeedback(request).enqueue(new Callback<Feedback>() {
             @Override
             public void onResponse(Call<Feedback> call, Response<Feedback> response) {
-                isSending.postValue(false);
+                sendSuccessLoading.postValue(false);
                 if (response.isSuccessful()) {
-                    sendSuccessLiveData.postValue(response.body());
+                    sendSuccessEvent.postValue(response.body());
                 } else {
-                    sendError.postValue("Lỗi: Không thể gửi (code: " + response.code() + ")");
+                    try {
+                        sendErrorEvent.postValue(new com.google.gson.Gson().fromJson(response.errorBody().string(), Feedback.class).getFeedbackContent());
+                    } catch (IOException e) {
+                        sendErrorEvent.postValue("Lỗi: " + response.code());
+                    }
                 }
             }
             @Override
             public void onFailure(Call<Feedback> call, Throwable t) {
-                isSending.postValue(false);
-                sendError.postValue("Lỗi mạng: " + t.getMessage());
+                sendSuccessLoading.postValue(false);
+                sendErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
             }
         });
     }
 
-    // ⭐️ THÊM GETTERS MỚI:
-    public LiveData<List<Feedback>> getFeedbackList() {
-        return feedbackListLiveData;
-    }
-    public LiveData<Boolean> getIsLoading() {
-        return isLoading;
-    }
-    public LiveData<String> getError() {
-        return error;
-    }
+    // --- Getters ---
 
-    public LiveData<Feedback> getSendSuccessLiveData() {
-        return sendSuccessLiveData;
-    }
-    public LiveData<Boolean> getIsSending() {
-        return isSending;
-    }
-    public LiveData<String> getSendError() {
-        return sendError;
-    }
+    // (Getters cho Màn hình A)
+    public LiveData<List<Feedback>> getFeedbackList() { return feedbackList; }
+    public LiveData<Boolean> getIsLoadingList() { return isLoadingList; }
+    public LiveData<String> getListError() { return listError; }
+
+    // (Getters cho Màn hình B)
+    public LiveData<List<Feedback>> getFeedbackThread() { return feedbackThread; }
+    public LiveData<Boolean> getIsLoadingThread() { return isLoadingThread; }
+    public LiveData<String> getThreadError() { return threadError; }
+
+    public LiveData<Boolean> getSendLoading() { return sendSuccessLoading; }
+    public LiveData<Feedback> getSendSuccessEvent() { return sendSuccessEvent; }
+    public LiveData<String> getSendErrorEvent() { return sendErrorEvent; }
 }

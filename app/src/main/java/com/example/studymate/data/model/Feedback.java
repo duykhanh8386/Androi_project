@@ -21,6 +21,9 @@ public class Feedback {
     @SerializedName("senderName")
     private String senderName;
 
+    @SerializedName("senderUsername")
+    private String senderUsername;
+
     @SerializedName("receiverId")
     private Long receiverId;
 
@@ -36,12 +39,13 @@ public class Feedback {
     public Feedback() {
     }
 
-    public Feedback(int feedbackId, String feedbackContent, String createdAt, Long senderId, String senderName, Long receiverId, String receiverName, String conversationId, boolean isRead) {
+    public Feedback(int feedbackId, String feedbackContent, String createdAt, Long senderId, String senderName, String senderUsername, Long receiverId, String receiverName, String conversationId, boolean isRead) {
         this.feedbackId = feedbackId;
         this.feedbackContent = feedbackContent;
         this.createdAt = createdAt;
         this.senderId = senderId;
         this.senderName = senderName;
+        this.senderUsername = senderUsername;
         this.receiverId = receiverId;
         this.receiverName = receiverName;
         this.conversationId = conversationId;
@@ -118,5 +122,13 @@ public class Feedback {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public String getSenderUsername() {
+        return senderUsername;
+    }
+
+    public void setSenderUsername(String senderUsername) {
+        this.senderUsername = senderUsername;
     }
 }

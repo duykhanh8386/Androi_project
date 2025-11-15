@@ -1,10 +1,12 @@
 package com.example.studymate.ui.feedback.adapter;
 
-
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView; // ⭐️ THÊM
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
@@ -12,116 +14,98 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.Feedback;
-import com.example.studymate.data.network.SessionManager;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
-public class FeedbackListAdapter extends ListAdapter<Feedback, FeedbackListAdapter.BaseViewHolder> {
+public class FeedbackListAdapter extends ListAdapter<Feedback, FeedbackListAdapter.FeedbackViewHolder> {
 
-    // ⭐️ Giả sử ID của học sinh đang đăng nhập (sẽ lấy từ SessionManager)
-    // Dùng 123 để khớp với logic mock
-    private SessionManager sessionManager = new SessionManager();
-    private final Long currentUserId = sessionManager.getUserId();
+    // 1. Interface để xử lý click (Không đổi)
+    public interface OnFeedbackClickListener {
+        void onConversationClick(Feedback feedback);
+    }
+    private OnFeedbackClickListener clickListener;
 
-    private static final int VIEW_TYPE_SENT = 1;
-    private static final int VIEW_TYPE_RECEIVED = 2;
+    public void setOnFeedbackClickListener(OnFeedbackClickListener listener) {
+        this.clickListener = listener;
+    }
+    // -------------------
 
     public FeedbackListAdapter() {
         super(DIFF_CALLBACK);
     }
 
-    // ⭐️ Xác định layout nào sẽ dùng (gửi hay nhận)
-    @Override
-    public int getItemViewType(int position) {
-        Feedback feedback = getItem(position);
-        if (feedback.getSenderId() == currentUserId) {
-            return VIEW_TYPE_SENT;
-        } else {
-            return VIEW_TYPE_RECEIVED;
-        }
-    }
-
-    @NonNull
-    @Override
-    public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view;
-        if (viewType == VIEW_TYPE_SENT) {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_feedback_sent, parent, false);
-            return new SentViewHolder(view);
-        } else {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_feedback_received, parent, false);
-            return new ReceivedViewHolder(view);
-        }
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
-        Feedback current = getItem(position);
-        holder.bind(current);
-    }
-
-    // ⭐️ Lớp ViewHolder CƠ SỞ
-    abstract class BaseViewHolder extends RecyclerView.ViewHolder {
-        public BaseViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-        abstract void bind(Feedback feedback);
-    }
-
-    // ⭐️ ViewHolder cho tin nhắn GỬI (của bạn)
-    class SentViewHolder extends BaseViewHolder {
-        private final TextView tvSenderInfo;
-        private final TextView tvFeedbackContent;
-
-        public SentViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvSenderInfo = itemView.findViewById(R.id.tvSenderInfo);
-            tvFeedbackContent = itemView.findViewById(R.id.tvFeedbackContent);
-        }
-
-        void bind(Feedback feedback) {
-            tvSenderInfo.setText("Bạn (" + feedback.getCreatedAt() + ")");
-            tvFeedbackContent.setText(feedback.getFeedbackContent());
-        }
-    }
-
-    // ⭐️ ViewHolder cho tin nhắn NHẬN (của GV)
-    class ReceivedViewHolder extends BaseViewHolder {
-        private final TextView tvSenderInfo;
-        private final TextView tvFeedbackContent;
-
-        public ReceivedViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvSenderInfo = itemView.findViewById(R.id.tvSenderInfo);
-            tvFeedbackContent = itemView.findViewById(R.id.tvFeedbackContent);
-        }
-
-        void bind(Feedback feedback) {
-            tvSenderInfo.setText("Giáo viên (" + feedback.getCreatedAt() + ")");
-            tvFeedbackContent.setText(feedback.getFeedbackContent());
-        }
-    }
-
-    // --- (DiffUtil và hàm Helper) ---
-
+    // 2. DiffUtil (Không đổi, vẫn so sánh Feedback)
     private static final DiffUtil.ItemCallback<Feedback> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<Feedback>() {
                 @Override
                 public boolean areItemsTheSame(@NonNull Feedback oldItem, @NonNull Feedback newItem) {
-                    return oldItem.getFeedbackId() == newItem.getFeedbackId();
+                    // (Giả sử ConversationId là duy nhất cho mỗi cuộc trò chuyện)
+                    return oldItem.getConversationId().equals(newItem.getConversationId());
                 }
+
                 @Override
                 public boolean areContentsTheSame(@NonNull Feedback oldItem, @NonNull Feedback newItem) {
-                    return oldItem.getFeedbackContent().equals(newItem.getFeedbackContent());
+                    // (Kiểm tra tên và trạng thái đọc)
+                    return oldItem.isRead() == newItem.isRead() &&
+                            oldItem.getSenderName().equals(newItem.getSenderName());
                 }
             };
 
-    private String formatDate(java.util.Date date) {
-        if (date == null) return "mới đây";
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd/MM", Locale.getDefault());
-        return sdf.format(date);
+    @NonNull
+    @Override
+    public FeedbackViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // 3. Dùng layout R.layout.item_student_feedback (layout CardView của bạn)
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_student_feedback, parent, false);
+        return new FeedbackViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull FeedbackViewHolder holder, int position) {
+        holder.bind(getItem(position));
+    }
+
+    // ⭐️ 4. SỬA LẠI HOÀN TOÀN VIEWHOLDER (ĐỂ KHỚP VỚI CARDVIEW CỦA BẠN) ⭐️
+    class FeedbackViewHolder extends RecyclerView.ViewHolder {
+
+        // 4a. Ánh xạ các ID từ XML của bạn
+        private final TextView tvStudentName, tvStudentID;
+        private final ImageView iconMessage;
+
+        public FeedbackViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            // 4b. Dùng đúng ID từ XML của bạn
+            tvStudentName = itemView.findViewById(R.id.textViewStudentName);
+            tvStudentID = itemView.findViewById(R.id.textViewStudentID);
+            iconMessage = itemView.findViewById(R.id.iconMessage);
+
+            // 4c. Xử lý click (trên cả item và icon)
+            View.OnClickListener itemClickListener = v -> {
+                int position = getAdapterPosition();
+                if (clickListener != null && position != RecyclerView.NO_POSITION) {
+                    clickListener.onConversationClick(getItem(position));
+                }
+            };
+
+            itemView.setOnClickListener(itemClickListener);
+            iconMessage.setOnClickListener(itemClickListener);
+        }
+
+        // 4d. Sửa lại hàm bind
+        public void bind(Feedback feedback) {
+            // (Lấy Tên từ API)
+            tvStudentName.setText(feedback.getSenderName());
+
+            // (Lấy Mã SV từ trường senderUsername MỚI)
+            // (Đảm bảo bạn đã thêm 'senderUsername' vào Feedback.java)
+            tvStudentID.setText(feedback.getSenderUsername());
+
+            // (Nếu chưa đọc thì in đậm Tên)
+            if (!feedback.isRead()) {
+                tvStudentName.setTypeface(null, Typeface.BOLD);
+            } else {
+                tvStudentName.setTypeface(null, Typeface.NORMAL);
+            }
+        }
     }
 }

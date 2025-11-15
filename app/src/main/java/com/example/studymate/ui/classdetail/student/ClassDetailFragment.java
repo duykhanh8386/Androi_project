@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
@@ -38,10 +39,14 @@ public class ClassDetailFragment extends Fragment {
     private TextView tvClassNameDetail, tvClassId, tvTeacherNameDetail, tvStudentCount, tvClassTime;
     private ProgressBar progressBar;
 
+    private NavController navController;
+
     private Button btnStudents, btnScore, btnNotify, btnFeedback, btnLeaveClass, btnGoBack;
     private ScrollView scrollContent;
     private LinearLayout bottomButtons;
     private int classId;
+
+    private ClassDetailResponse currentClassDetails;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,8 +85,8 @@ public class ClassDetailFragment extends Fragment {
         btnFeedback = view.findViewById(R.id.btnFeedback);
         btnLeaveClass = view.findViewById(R.id.btnLeaveClass);
         btnGoBack = view.findViewById(R.id.btnGoBack);
-
         bottomButtons = view.findViewById(R.id.bottomButtons);
+        navController = NavHostFragment.findNavController(this);
 
         // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(ClassDetailViewModel.class);
@@ -118,6 +123,9 @@ public class ClassDetailFragment extends Fragment {
             @Override
             public void onChanged(ClassDetailResponse studyClass) {
                 if (studyClass != null) {
+
+                    currentClassDetails = studyClass;
+
                     tvClassNameDetail.setText(studyClass.getClassName());
                     tvTeacherNameDetail.setText(studyClass.getTeacherName());
                     tvClassId.setText(studyClass.getClassJoinCode());
@@ -198,11 +206,22 @@ public class ClassDetailFragment extends Fragment {
 
         // Nút Hỏi đáp (Feedback)
         btnFeedback.setOnClickListener(v -> {
-            // (Dùng ID action từ nav_graph của bạn)
+            // (Kiểm tra xem dữ liệu lớp đã tải xong chưa)
+            if (currentClassDetails == null) {
+                Toast.makeText(getContext(), "Đang tải dữ liệu, vui lòng thử lại...", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             Bundle bundle = new Bundle();
             bundle.putInt("classId", classId);
-            NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_detail_to_feedback, bundle);
+
+            // ⭐️ THÊM 2 DÒNG NÀY ĐỂ SỬA LỖI
+            // (Gửi ID và Tên của Giáo viên làm Người nhận)
+            //SỬA CHỖ NÀY
+            bundle.putLong("receiverId", currentClassDetails.getClassId());
+            bundle.putString("receiverName", currentClassDetails.getTeacherName());
+
+            navController.navigate(R.id.action_detail_to_feedback, bundle);
         });
 
         // Nút Xem Điểm
