@@ -44,7 +44,7 @@ public class UserRepository {
 
     public LiveData<Boolean> updateStatus(int userId, String status) {
         MutableLiveData<Boolean> data = new MutableLiveData<>();
-        api.updateUserStatus(userId, new UpdateStatusRequest(status)).enqueue(new Callback<Void>() {
+        api.updateUserStatus(userId, status).enqueue(new Callback<Void>() {
             @Override public void onResponse(Call<Void> call, Response<Void> res) {
                 data.postValue(res.isSuccessful());
             }
