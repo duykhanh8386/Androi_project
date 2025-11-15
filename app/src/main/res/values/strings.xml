@@ -67,9 +67,9 @@
     <string name="btn_go_back">Quay lại</string>
     <string name="btn_out_class">Rời lớp</string>
     <string name="final_grade">Điểm tổng kết</string>
-    <string name="grade_ck">Điểm cuối kỳ</string>
-    <string name="grade_gk">Điểm giữa kỳ</string>
-    <string name="grade_tx">Điểm TX</string>
+    <string name="grade_ck">CK</string>
+    <string name="grade_gk">GK</string>
+    <string name="grade_tx">TX</string>
     <string name="class_name">Tên lớp:</string>
     <string name="class_info">Thông tin</string>
     <string name="add_class">Thêm lớp</string>

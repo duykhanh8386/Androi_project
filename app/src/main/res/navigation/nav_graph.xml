@@ -32,8 +32,7 @@
         android:id="@+id/classCreateFragment"
         android:name="com.example.studymate.ui.studyclass.teacher.ClassCreateFragment"
         android:label="Tạo lớp"
-        tools:layout="@layout/fragment_class_create">
-    </fragment>
+        tools:layout="@layout/fragment_class_create"></fragment>
 
     <fragment
         android:id="@+id/classUpdateFragment"
@@ -59,6 +58,11 @@
         <action
             android:id="@+id/action_admin_to_accounts"
             app:destination="@id/accountListFragment" />
+        <action
+            android:id="@+id/action_homeAdminFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeAdminFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -163,8 +167,8 @@
         <action
             android:id="@+id/action_studentClassDetailFragment_to_loginFragment"
             app:destination="@id/loginFragment"
-            app:popUpTo="@id/homeStudentFragment" app:popUpToInclusive="true"
-            />
+            app:popUpTo="@id/homeStudentFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -204,6 +208,9 @@
         android:name="com.example.studymate.ui.feedback.ListStudentFeedBackFragment"
         android:label="@string/qa_feedback"
         tools:layout="@layout/fragment_list_student_feedback">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
         <action
             android:id="@+id/action_detail_to_list_student_feedback"
             app:destination="@id/feedbackThreadFragment" />
@@ -217,6 +224,12 @@
         <argument
             android:name="classId"
             app:argType="integer" />
+        <argument
+            android:name="receiverId"
+            app:argType="long" />
+        <argument
+            android:name="receiverName"
+            app:argType="string" />
         <action
             android:id="@+id/action_detail_to_feedback"
             app:destination="@id/fragment_feedback_detail" />
@@ -229,12 +242,23 @@
         <argument
             android:name="classId"
             app:argType="integer" />
+        <argument
+            android:name="receiverId"
+            app:argType="long" />
+        <argument
+            android:name="receiverName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/teacherNotificationListFragment"
         android:name="com.example.studymate.ui.notify.NotificationListFragment"
         android:label="@string/announcement"
         tools:layout="@layout/fragment_notification_list_teacher">
+
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+
         <action
             android:id="@+id/action_list_to_createNotify"
             app:destination="@id/notificationCreateFragment" />
@@ -242,6 +266,7 @@
             android:id="@+id/action_list_to_detailNotify"
             app:destination="@id/notificationDetailFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/studentNotificationListFragment"
         android:name="com.example.studymate.ui.notify.NotificationListFragment"
@@ -260,7 +285,13 @@
         android:id="@+id/notificationCreateFragment"
         android:name="com.example.studymate.ui.notify.NotificationCreateFragment"
         android:label="Tạo thông báo"
-        tools:layout="@layout/fragment_notification_create" />
+        tools:layout="@layout/fragment_notification_create">
+
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+
+    </fragment>
     <fragment
         android:id="@+id/notificationDetailFragment"
         android:name="com.example.studymate.ui.notify.NotificationDetailFragment"
@@ -288,17 +319,65 @@
         android:name="com.example.studymate.ui.grade.teacher.GradeEntryFragment"
         android:label="Quản lý điểm"
         tools:layout="@layout/fragment_grade_entry">
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_gradeEntryFragment_to_gradeDetailListFragment"
+            app:destination="@id/gradeDetailListFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/gradeDetailListFragment"
+        android:name="com.example.studymate.ui.grade.teacher.GradeDetailListFragment"
+        android:label="Chi tiết điểm"
+        tools:layout="@layout/fragment_grade_detail_list">
+
+        <!-- Nó nhận thông tin của học sinh -->
+        <argument
+            android:name="classId"
+            app:argType="integer" />
+        <argument
+            android:name="studentId"
+            app:argType="long" />
+        <argument
+            android:name="studentName"
+            app:argType="string" />
+        <!-- Nó nhận danh sách điểm (dưới dạng an toàn) -->
+        <argument
+            android:name="gradesJson"
+            app:argType="string" />
 
         <action
-            android:id="@+id/action_gradeEntryFragment_to_gradeEditDialog"
+            android:id="@+id/action_gradeDetailListFragment_to_gradeEditDialog"
             app:destination="@id/gradeDialogAddEdit" />
 
     </fragment>
-    <fragment
+
+    <dialog
         android:id="@+id/gradeDialogAddEdit"
         android:name="com.example.studymate.ui.grade.teacher.GradeEditDialogFragment"
         android:label="@string/score"
-        tools:layout="@layout/dialog_add_edit_grade" />
+        tools:layout="@layout/dialog_add_edit_grade">
+        <argument
+            android:name="isEditMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="gradeId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="currentType"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="null" />
+        <argument
+            android:name="currentScore"
+            app:argType="float"
+            android:defaultValue="0.0" />
+    </dialog>
     <fragment
         android:id="@+id/studentManageFragment"
         android:name="com.example.studymate.ui.classdetail.teacher.StudentManageFragment"

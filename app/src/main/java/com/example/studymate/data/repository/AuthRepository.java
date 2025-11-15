@@ -77,7 +77,7 @@ public class AuthRepository {
     }
 
     private void clearLocalUserData() {
-        sessionManager.clearAuthToken();
+        sessionManager.clearUserData();
         System.out.println("Đã xóa dữ liệu token/user local.");
     }
 

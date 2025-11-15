@@ -3,7 +3,6 @@ package com.example.studymate.data.network;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.example.studymate.MyApplication;
-import com.example.studymate.data.model.User;
 
 public class SessionManager {
 
@@ -59,7 +58,7 @@ public class SessionManager {
     /**
      * Xóa token khi đăng xuất
      */
-    public void clearAuthToken() {
+    public void clearUserData() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove(KEY_AUTH_TOKEN);
         editor.remove(USER_ID);

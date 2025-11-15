@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/tvGradeType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="TX:"/>
+
+    <TextView
+        android:id="@+id/tvGradeScore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="16sp"
+        android:layout_marginStart="8dp"
+        tools:text="8.5"/>
+
+    <ImageButton
+        android:id="@+id/btnEditGrade"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_edit"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Sửa điểm"
+        app:tint="?attr/colorPrimary"/>
+
+    <!-- Nút Xóa (Delete) -->
+    <ImageButton
+        android:id="@+id/btnDeleteGrade"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_trash"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Xóa điểm"
+        app:tint="@android:color/holo_red_dark"/>
+
+</LinearLayout>

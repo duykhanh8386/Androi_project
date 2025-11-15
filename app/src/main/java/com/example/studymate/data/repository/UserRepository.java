@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/studymate/data/repository/UserRepository.java
 package com.example.studymate.data.repository;
 
 import androidx.lifecycle.LiveData;

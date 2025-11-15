@@ -7,6 +7,8 @@ import com.example.studymate.data.model.Notification;
 import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.User;
+import com.example.studymate.data.model.request.GradeRequest;
+import com.example.studymate.data.model.request.NotificationRequest;
 import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.request.CreateUserRequest;
 import com.example.studymate.data.model.request.FeedbackRequest;
@@ -49,7 +51,7 @@ public interface ApiService {
     @PUT("api/teacher/classes/students/{studentClassId}")
     Call<MessageResponse> approveOrRejectStudent(
             @Path("studentClassId") int studentClassId,
-            @Query("status") String status // ⭐️ ĐỔI TỪ @Body thành @Query
+            @Query("status") String status
     );
 
     @PUT("api/teacher/classes/{classId}/students/{studentId}")
@@ -80,6 +82,28 @@ public interface ApiService {
     @DELETE("api/teacher/classes/{classId}")
     Call<MessageResponse> deleteClass(@Path("classId") int classId);
 
+    @POST("api/teacher/grades")
+    Call<Grade> addGrade(@Body GradeRequest gradeRequest);
+
+    @PUT("api/teacher/grades/{gradeId}")
+    Call<Grade> updateGrade(
+            @Path("gradeId") int gradeId,
+            @Body GradeRequest gradeRequest
+    );
+
+    @DELETE("api/teacher/grades/{gradeId}")
+    Call<MessageResponse> deleteGrade(@Path("gradeId") int gradeId);
+
+    @POST("api/teacher/classes/{classId}/notifications")
+    Call<Notification> createNotification(
+            @Path("classId") int classId,
+            @Body NotificationRequest notificationRequest
+    );
+
+    @GET("api/user/feedback/partners/{classId}")
+    Call<List<Feedback>> getTeacherFeedbackList(@Path("classId") int classId);
+
+
     // ===== STUDENT =====
     @GET("api/student/classes")
     Call<List<StudyClass>> getStudentClasses();
@@ -106,8 +130,18 @@ public interface ApiService {
     @GET("api/student/feedback/{id}/conversations")
     Call<List<Feedback>> getFeedbackThread(@Path("id") int classId);
 
-    @POST("api/student/feedback/send")
+    @POST("api/user/feedback/send")
     Call<Feedback> sendFeedback(@Body FeedbackRequest feedbackRequest);
+
+    @GET("api/user/classes/{id}/feedback")
+    Call<List<Feedback>> getFeedbackThread(
+            @Path("id") int classId,
+
+            // Thêm Query Param này.
+            // (Khi Student gọi, studentId = null)
+            // (Khi Teacher gọi, studentId = ID của học sinh)
+            @Query("studentId") Long studentId
+    );
 
     // ===== ADMIN: USER MANAGEMENT =====
     @POST("api/admin/users")
