@@ -157,6 +157,6 @@ public interface ApiService {
     @POST("api/student/classes/join")
     Call<MessageResponse> joinClass(@Body JoinClassRequest joinRequest);
 
-    @PATCH("api/admin/users/{id}/status")
-    Call<Void> updateUserStatus(@Path("id") int userId, @Body UpdateStatusRequest body);
+    @PUT("api/admin/users/{id}/status")
+    Call<Void> updateUserStatus(@Path("id") int userId, @Query("status") String status);
 }
