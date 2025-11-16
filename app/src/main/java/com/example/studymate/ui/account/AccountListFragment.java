@@ -35,7 +35,7 @@ public class AccountListFragment extends Fragment {
     private UserRepository repo;
     private AccountAdapter adapter;
     private String role = "ALL";
-    private String status = "ACTIVE";
+    private String status = "ALL";
     private int page = 0, size = 20;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable pending;
@@ -53,7 +53,17 @@ public class AccountListFragment extends Fragment {
 
         RecyclerView rv = view.findViewById(R.id.rvAccounts);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new AccountAdapter(this::confirmDisable);
+        // ĐỔI CHỖ NÀY
+        adapter = new AccountAdapter(user -> {
+            if (user.getEnable()) {
+                // đang hoạt động -> cho vô hiệu hóa
+                confirmDisable(user);
+            } else {
+                // đang vô hiệu hóa -> cho kích hoạt
+                confirmEnable(user);
+            }
+        });
+
         rv.setAdapter(adapter);
 
         MaterialButton btnCreate = view.findViewById(R.id.btnCreate);
@@ -177,9 +187,33 @@ public class AccountListFragment extends Fragment {
         });
     }
 
+    // ====== THÊM MỚI: KÍCH HOẠT ======
+    private void confirmEnable(User user) {
+        if (user.getEnable()) return;
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Kích hoạt tài khoản")
+                .setMessage("Bạn có chắc muốn kích hoạt lại tài khoản này?")
+                .setPositiveButton("Đồng ý", (d, w) -> doEnable(user))
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    private void doEnable(User user) {
+        repo.updateStatus(user.getUserId(), "ACTIVE").observe(getViewLifecycleOwner(), ok -> {
+            if (ok == null || !ok) {
+                Toast.makeText(getContext(), "Lỗi kết nối!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Tài khoản đã được kích hoạt!", Toast.LENGTH_SHORT).show();
+                search(currentKeyword);
+            }
+        });
+    }
+
+
     // Adapter
     private static class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.VH> {
-        interface Listener { void onDisable(User u); }
+
+        interface Listener { void onAction(User u); }
         private final Listener listener;
         private final List<User> items = new ArrayList<>();
         AccountAdapter(Listener l) { this.listener = l; }
@@ -189,14 +223,20 @@ public class AccountListFragment extends Fragment {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_account, parent, false);
             return new VH(v);
         }
-        @Override public void onBindViewHolder(@NonNull VH h, int p) {
+        @Override
+        public void onBindViewHolder(@NonNull VH h, int p) {
             User u = items.get(p);
             h.txtName.setText(u.getFullName());
             h.txtSub.setText(u.getUserName() + " • " +
                     (u.getRoleName() == null ? "" : u.getRoleName()) + " • " +
                     (u.getEnable() ? "Hoạt động" : "Vô hiệu hóa"));
-            h.btnDisable.setVisibility(u.getEnable() ? View.VISIBLE : View.GONE);
-            h.btnDisable.setOnClickListener(v -> listener.onDisable(u));
+
+            // NẾU HOẠT ĐỘNG -> NÚT "Vô hiệu hóa"
+            // NẾU VÔ HIỆU HÓA -> NÚT "Kích hoạt"
+            h.btnDisable.setVisibility(View.VISIBLE);
+            h.btnDisable.setText(u.getEnable() ? "Vô hiệu hóa" : "Kích hoạt");
+
+            h.btnDisable.setOnClickListener(v -> listener.onAction(u));
         }
         @Override public int getItemCount() { return items.size(); }
 
