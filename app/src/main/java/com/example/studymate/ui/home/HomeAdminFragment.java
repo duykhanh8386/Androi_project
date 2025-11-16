@@ -23,6 +23,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 
 import com.example.studymate.R;
+import com.example.studymate.data.repository.AuthRepository;
 import com.example.studymate.ui.viewmodel.HomeAdminViewModel;
 import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
 
@@ -31,11 +32,7 @@ public class HomeAdminFragment extends Fragment {
 
     private HomeAdminViewModel viewModel;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
+
 
     @Nullable
     @Override
@@ -72,10 +69,18 @@ public class HomeAdminFragment extends Fragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.logout)
                 .setMessage(R.string.logout_confirm)
-                .setPositiveButton(R.string.ok, (d, w) -> authRepository.logout())
+                .setPositiveButton(R.string.ok, (d, w) -> {
+                    authRepository.logout(); // xoá token, gọi API...
+
+                    Toast.makeText(getContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();
+
+                    NavHostFragment.findNavController(HomeAdminFragment.this)
+                            .navigate(R.id.action_homeAdminFragment_to_loginFragment);
+                })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -100,34 +105,7 @@ public class HomeAdminFragment extends Fragment {
         });
     }
 
-    // (onCreateOptionsMenu, onOptionsItemSelected, showLogoutDialog không đổi)
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear();
-        inflater.inflate(R.menu.menu_main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_logout) {
-            showLogoutDialog();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
-    private void showLogoutDialog() {
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.logout)
-                .setMessage(R.string.logout_confirm)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        viewModel.performLogout();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
-    }
+
 }

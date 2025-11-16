@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/studymate/ui/account/AccountCreateFragment.java
 package com.example.studymate.ui.account;
 
 import android.os.Bundle;
@@ -24,11 +23,15 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class AccountCreateFragment extends Fragment {
 
-    private TextInputEditText edtFullname, edtEmail, edtUsername, edtPhone, edtPassword;
-    private SwitchMaterial swActive; private MaterialButtonToggleGroup tglRole;
+    private TextInputEditText edtFullname, edtUsername, edtPassword;
+    private SwitchMaterial swActive;
+    private MaterialButtonToggleGroup tglRole;
 
-    @Nullable @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_account_create, container, false);
     }
 
@@ -36,47 +39,70 @@ public class AccountCreateFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         edtFullname = view.findViewById(R.id.edtFullname);
-        edtEmail    = view.findViewById(R.id.edtEmail);
         edtUsername = view.findViewById(R.id.edtUsername);
-        edtPhone    = view.findViewById(R.id.edtPhone);
         edtPassword = view.findViewById(R.id.edtPassword);
         swActive    = view.findViewById(R.id.switchActive);
         tglRole     = view.findViewById(R.id.tglRole);
         MaterialButton btnCreate  = view.findViewById(R.id.btnCreate);
 
-        if (tglRole.getCheckedButtonId() == View.NO_ID) tglRole.check(R.id.btnRoleStudent);
+        if (tglRole.getCheckedButtonId() == View.NO_ID) {
+            tglRole.check(R.id.btnRoleStudent);
+        }
+
         btnCreate.setOnClickListener(this::doCreate);
     }
 
     private void doCreate(View v) {
-        if (edtFullname==null || edtUsername==null || edtPassword==null || swActive==null || tglRole==null) {
-            Toast.makeText(getContext(), "Thiếu view trong layout. Kiểm tra id!", Toast.LENGTH_LONG).show();
+        if (edtFullname == null || edtUsername == null || edtPassword == null
+                || swActive == null || tglRole == null) {
+            Toast.makeText(getContext(),
+                    "Thiếu view trong layout. Kiểm tra id!",
+                    Toast.LENGTH_LONG).show();
             return;
         }
-        String fullname = text(edtFullname), email = text(edtEmail), username = text(edtUsername),
-            phone = text(edtPhone), password = text(edtPassword);
-        if (TextUtils.isEmpty(fullname) || TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-            Toast.makeText(getContext(), "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+
+        String fullname = text(edtFullname);
+        String username = text(edtUsername);
+        String password = text(edtPassword);
+
+        if (TextUtils.isEmpty(fullname)
+                || TextUtils.isEmpty(username)
+                || TextUtils.isEmpty(password)) {
+            Toast.makeText(getContext(),
+                    "Vui lòng nhập đầy đủ thông tin!",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
-        String role = (R.id.btnRoleTeacher == tglRole.getCheckedButtonId()) ? "TEACHER" : "STUDENT";
-        String status = swActive.isChecked() ? "ACTIVE" : "INACTIVE";
+
+        // roleName đúng format với DB
+        String roleName = (R.id.btnRoleTeacher == tglRole.getCheckedButtonId())
+                ? "ROLE_TEACHER"
+                : "ROLE_STUDENT";
+
+        boolean enable = swActive.isChecked();
 
         CreateUserRequest req = new CreateUserRequest();
-        req.fullname = fullname; req.email = email; req.username = username;
-        req.phone = phone; req.password = password; req.role = role; req.status = status;
+        req.fullName = fullname;
+        req.username = username;
+        req.password = password;
+        req.roleName = roleName;
+        req.enable   = enable;
 
         new UserRepository().create(req).observe(getViewLifecycleOwner(), (User u) -> {
             if (u == null) {
                 Toast.makeText(getContext(),
-                    "Tên đăng nhập đã tồn tại hoặc lỗi kết nối (401/409).",
-                    Toast.LENGTH_LONG).show();
+                        "Tạo tài khoản thất bại (400/401/409). Kiểm tra lại dữ liệu!",
+                        Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getContext(), "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),
+                        "Tạo tài khoản thành công!",
+                        Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(v).navigateUp();
             }
         });
     }
 
-    private String text(TextInputEditText e){ return e==null?"" : String.valueOf(e.getText()).trim(); }
+    private String text(TextInputEditText e) {
+        return e == null ? "" : String.valueOf(e.getText()).trim();
+    }
 }
