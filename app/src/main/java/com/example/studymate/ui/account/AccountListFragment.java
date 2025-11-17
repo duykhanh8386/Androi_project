@@ -56,10 +56,8 @@ public class AccountListFragment extends Fragment {
         // ĐỔI CHỖ NÀY
         adapter = new AccountAdapter(user -> {
             if (user.getEnable()) {
-                // đang hoạt động -> cho vô hiệu hóa
                 confirmDisable(user);
             } else {
-                // đang vô hiệu hóa -> cho kích hoạt
                 confirmEnable(user);
             }
         });
@@ -70,7 +68,6 @@ public class AccountListFragment extends Fragment {
         btnCreate.setOnClickListener(v -> Navigation.findNavController(v)
                 .navigate(R.id.action_acclist_to_create));
 
-        // Ô tìm kiếm với hỗ trợ tiếng Việt
         EditText edtKeyword = view.findViewById(R.id.edtKeyword);
         if (edtKeyword != null) {
             edtKeyword.addTextChangedListener(new TextWatcher() {
@@ -97,7 +94,6 @@ public class AccountListFragment extends Fragment {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    // Chỉ search khi KHÔNG đang compose (không đang gõ dấu)
                     if (!isComposing) {
                         currentKeyword = s == null ? "" : s.toString();
                         debounceSearch(currentKeyword);
@@ -116,7 +112,6 @@ public class AccountListFragment extends Fragment {
 
         chips.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) {
-                // Không cho bỏ chọn tất cả, tự động chọn lại "Tất cả"
                 chipAll.setChecked(true);
                 return;
             }
@@ -231,8 +226,6 @@ public class AccountListFragment extends Fragment {
                     (u.getRoleName() == null ? "" : u.getRoleName()) + " • " +
                     (u.getEnable() ? "Hoạt động" : "Vô hiệu hóa"));
 
-            // NẾU HOẠT ĐỘNG -> NÚT "Vô hiệu hóa"
-            // NẾU VÔ HIỆU HÓA -> NÚT "Kích hoạt"
             h.btnDisable.setVisibility(View.VISIBLE);
             h.btnDisable.setText(u.getEnable() ? "Vô hiệu hóa" : "Kích hoạt");
 

@@ -14,7 +14,6 @@ public class StudentManageViewModel extends ViewModel {
         this.repository = new TeacherRepository();
     }
 
-    // --- 1. Lấy danh sách ---
     public void loadStudentList(int classId) {
         repository.fetchStudentList(classId);
     }
@@ -28,13 +27,10 @@ public class StudentManageViewModel extends ViewModel {
         return repository.getStudentListError();
     }
 
-    // --- 2. Xóa/Kick (Dùng lại logic Reject) ---
     public void kickStudent(int studentId, int classId) {
-        // Gọi hàm "REJECTED" từ Repository
         repository.rejectStudent(studentId, classId);
     }
 
-    // (Lắng nghe kết quả từ sự kiện Phê duyệt/Từ chối)
     public LiveData<String> getKickSuccess() {
         return repository.getApprovalSuccessEvent();
     }

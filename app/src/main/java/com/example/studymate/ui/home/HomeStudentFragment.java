@@ -24,10 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudyClass;
-// ⭐️ Sử dụng package adapter mới của bạn
 import com.example.studymate.data.network.SessionManager;
 import com.example.studymate.ui.studyclass.adapter.ClassListAdapter;
-// ⭐️ Sử dụng package viewmodel mới của bạn
 import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
 
 import java.util.List;
@@ -39,9 +37,8 @@ public class HomeStudentFragment extends Fragment {
     private RecyclerView rvStudentClasses;
     private ClassListAdapter adapter;
 
-    private ProgressBar progressBar; // Biến đã có
+    private ProgressBar progressBar;
 
-    // (onCreate, onCreateView không đổi)
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,47 +51,31 @@ public class HomeStudentFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_class_list_student, container, false);
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         sessionManager = new SessionManager();
-
-        // 1. Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(HomeStudentViewModel.class);
-
-        // 2. Ánh xạ View (đã có)
         progressBar = view.findViewById(R.id.progressBar);
         rvStudentClasses = view.findViewById(R.id.rvStudentClasses);
 
-        // 3. Thiết lập Adapter
         adapter = new ClassListAdapter(sessionManager);
         rvStudentClasses.setAdapter(adapter);
 
-        // 4. Thiết lập LayoutManager
         rvStudentClasses.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         Button btnJoin = view.findViewById(R.id.btnJoinClass);
         btnJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Dùng NavController để đi đến action đã định nghĩa
                 NavHostFragment.findNavController(HomeStudentFragment.this)
                         .navigate(R.id.action_home_to_joinClass);
             }
         });
-
-        // 5. Gọi hàm quan sát
         setupObservers();
-
-        // 6. Yêu cầu tải dữ liệu (đã có)
         viewModel.fetchStudentClasses();
-
-        // (TODO: Xử lý btnJoinClass)
     }
 
-    // (onCreateOptionsMenu, onOptionsItemSelected, showLogoutDialog không đổi)
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
@@ -125,19 +106,14 @@ public class HomeStudentFragment extends Fragment {
                 .show();
     }
 
-
-    // ⭐️ BƯỚC 5: HÀM QUAN SÁT (Observers) - ĐÃ ĐƯỢC CẬP NHẬT
     private void setupObservers() {
-        // Quan sát danh sách lớp học
         viewModel.getClassList().observe(getViewLifecycleOwner(), new Observer<List<StudyClass>>() {
             @Override
             public void onChanged(List<StudyClass> studyClasses) {
-                // Khi dữ liệu (mẫu) thay đổi, cập nhật Adapter
                 adapter.submitList(studyClasses);
             }
         });
 
-        // ⭐️ THÊM VÀO: Quan sát trạng thái Loading
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isLoading) {
@@ -151,7 +127,6 @@ public class HomeStudentFragment extends Fragment {
             }
         });
 
-        // Quan sát sự kiện Đăng xuất
         viewModel.getLogoutSuccessEvent().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isSuccess) {

@@ -2,9 +2,6 @@ package com.example.studymate.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.math.BigDecimal;
-// ⭐️ XÓA: import java.util.Date;
-
 public class Grade {
 
     @SerializedName("gradeId")
@@ -13,7 +10,6 @@ public class Grade {
     @SerializedName("gradeType")
     private String gradeType;
 
-    // ⭐️ SỬA LẠI:
     @SerializedName("score")
     private Double score;
 
@@ -26,15 +22,13 @@ public class Grade {
     @SerializedName("classId")
     private Long classId;
 
-    // (Constructor cho Mock (sửa lại))
-    public Grade(int gradeId, String gradeType, Double score) { // Sửa kiểu
+    public Grade(int gradeId, String gradeType, Double score) {
         this.gradeId = gradeId;
         this.score = score;
         this.gradeType = gradeType;
     }
 
-    // Constructor đầy đủ (sửa lại)
-    public Grade(int gradeId, String gradeType, Double score, String modifiedAt, Long studentId, Long classId) { // Sửa kiểu
+    public Grade(int gradeId, String gradeType, Double score, String modifiedAt, Long studentId, Long classId) {
         this.gradeId = gradeId;
         this.gradeType = gradeType;
         this.score = score;
@@ -46,8 +40,6 @@ public class Grade {
     public Grade() {
     }
 
-    // --- Getters và Setters ---
-
     public int getGradeId() {
         return gradeId;
     }
@@ -56,7 +48,6 @@ public class Grade {
         this.gradeId = gradeId;
     }
 
-    // ⭐️ SỬA GETTER/SETTER CHO score
     public Double getScore() {
         return score;
     }

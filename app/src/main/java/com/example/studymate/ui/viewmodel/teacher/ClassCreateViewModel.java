@@ -13,12 +13,10 @@ public class ClassCreateViewModel extends ViewModel {
         this.repository = new TeacherRepository();
     }
 
-    // Fragment sẽ gọi hàm này
     public void performCreateClass(String className, String classTime) {
         repository.createClass(className, classTime);
     }
 
-    // Getters để Fragment quan sát
     public LiveData<StudyClass> getCreateSuccess() {
         return repository.getCreateClassSuccessEvent();
     }

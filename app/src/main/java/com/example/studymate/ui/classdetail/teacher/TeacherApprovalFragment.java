@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudentClass;
-import com.example.studymate.data.model.User;
 import com.example.studymate.ui.classdetail.adapter.TeacherApprovalAdapter;
 import com.example.studymate.ui.viewmodel.teacher.TeacherApprovalViewModel;
 
@@ -39,7 +38,6 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 1. Lấy classId (từ Bước 2 và 9)
         if (getArguments() != null) {
             classId = getArguments().getInt("classId");
         } else {
@@ -58,7 +56,6 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Ánh xạ View
         progressBar = view.findViewById(R.id.progressBar);
         rvApproval = view.findViewById(R.id.recyclerViewApproval);
         btnRejectAll = view.findViewById(R.id.btnRejectAll);
@@ -67,15 +64,13 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
 
         viewModel = new ViewModelProvider(this).get(TeacherApprovalViewModel.class);
 
-        // Setup Adapter
         adapter = new TeacherApprovalAdapter();
-        adapter.setOnApprovalClickListener(this); // 2. Set listener là Fragment này
+        adapter.setOnApprovalClickListener(this);
         rvApproval.setLayoutManager(new LinearLayoutManager(getContext()));
         rvApproval.setAdapter(adapter);
 
         setupObservers();
 
-        // Tải dữ liệu
         if (classId > 0) {
             viewModel.loadPendingList(classId);
         }
@@ -91,20 +86,14 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
                     "Bạn có chắc muốn từ chối tất cả học sinh đang chờ?",
                     () -> viewModel.rejectAll(classId));
         });
-
-        // TODO: Xử lý click cho 2 nút Approve All / Reject All
-//        btnApproveAll.setOnClickListener(v -> Toast.makeText(getContext(), "Chưa implement", Toast.LENGTH_SHORT).show());
-//        btnRejectAll.setOnClickListener(v -> Toast.makeText(getContext(), "Chưa implement", Toast.LENGTH_SHORT).show());
     }
 
     private void setupObservers() {
-        // Quan sát Loading
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             rvApproval.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         });
 
-        // Quan sát Dữ liệu
         viewModel.getPendingList().observe(getViewLifecycleOwner(), pendingList -> {
             if(pendingList.isEmpty()) {
                 btnApproveAll.setEnabled(false);
@@ -113,10 +102,8 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
             adapter.submitList(pendingList);
         });
 
-        // Quan sát sự kiện Phê duyệt/Từ chối rieng le
         viewModel.getApprovalSuccess().observe(getViewLifecycleOwner(), message -> {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-            // Tải lại danh sách sau khi thành công
             viewModel.loadPendingList(classId);
         });
 
@@ -124,18 +111,15 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
             Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         });
 
-        // ⭐️ THÊM MỚI: Quan sát sự kiện HÀNG LOẠT
         viewModel.getIsBulkLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             rvApproval.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-            // Vô hiệu hóa nút khi đang tải
             btnApproveAll.setEnabled(!isLoading);
             btnRejectAll.setEnabled(!isLoading);
         });
 
         viewModel.getBulkSuccessEvent().observe(getViewLifecycleOwner(), message -> {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-            // Tải lại danh sách (sẽ thấy danh sách rỗng và tự động popBackStack)
             viewModel.loadPendingList(classId);
         });
 
@@ -144,14 +128,11 @@ public class TeacherApprovalFragment extends Fragment implements TeacherApproval
         });
     }
 
-    // 3. Hàm được gọi từ Adapter khi bấm nút "Check"
     @Override
     public void onApproveClick(StudentClass user) {
-        // (user.getUserId() ở đây là studentClassId)
         viewModel.approveStudent(user.getStudentClassId());
     }
 
-    // 4. Hàm được gọi từ Adapter khi bấm nút "Close"
     @Override
     public void onRejectClick(StudentClass user) {
         viewModel.rejectStudent(user.getStudentClassId());

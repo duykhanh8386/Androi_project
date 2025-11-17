@@ -60,18 +60,13 @@ public class NotificationListAdapter extends ListAdapter<Notification, Notificat
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvNotificationTitle);
             tvDate = itemView.findViewById(R.id.tvNotificationDate);
-
-            // TODO: Xử lý click để đi đến chi tiết thông báo
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     Notification clickedNotification = getItem(position);
-
-                    // 1. Tạo Bundle
                     Bundle bundle = new Bundle();
                     bundle.putInt("notificationId", clickedNotification.getNotificationId());
 
-                    // 2. Điều hướng (dùng ID action từ nav_graph)
                     if (RoleConstant.TEACHER.equals(sessionManager.getUserRole())){
                         Navigation.findNavController(itemView)
                                 .navigate(R.id.action_list_to_detailNotify, bundle);
@@ -85,7 +80,7 @@ public class NotificationListAdapter extends ListAdapter<Notification, Notificat
 
         public void bind(Notification notification) {
             tvTitle.setText(notification.getNotificationTitle());
-            tvDate.setText("Ngày đăng: " + notification.getCreatedAt()); // Giả sử createdAt là String
+            tvDate.setText("Ngày đăng: " + notification.getCreatedAt());
         }
     }
 }

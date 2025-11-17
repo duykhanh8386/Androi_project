@@ -11,11 +11,9 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.studymate.R;
 import com.example.studymate.data.model.StudentClass;
-import com.example.studymate.data.model.User;
 
 public class TeacherApprovalAdapter extends ListAdapter<StudentClass, TeacherApprovalAdapter.ApprovalViewHolder> {
 
-    // 1. Định nghĩa Interface
     public interface OnApprovalClickListener {
         void onApproveClick(StudentClass user);
         void onRejectClick(StudentClass user);
@@ -23,7 +21,6 @@ public class TeacherApprovalAdapter extends ListAdapter<StudentClass, TeacherApp
 
     private OnApprovalClickListener listener;
 
-    // 2. Hàm public để Fragment set listener
     public void setOnApprovalClickListener(OnApprovalClickListener listener) {
         this.listener = listener;
     }
@@ -59,7 +56,6 @@ public class TeacherApprovalAdapter extends ListAdapter<StudentClass, TeacherApp
             btnApprove = itemView.findViewById(R.id.btnApproveItem);
             btnReject = itemView.findViewById(R.id.btnRejectItem);
 
-            // 3. Xử lý click trong
             btnApprove.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (listener != null && position != RecyclerView.NO_POSITION) {
@@ -76,18 +72,16 @@ public class TeacherApprovalAdapter extends ListAdapter<StudentClass, TeacherApp
         }
 
         public void bind(StudentClass user) {
-            // (Giả sử getUserId() trả về student_class_id, và getEmail() trả về student_id thật)
-            tvStudentId.setText(user.getUsername()); // Hiển thị ID/email thật
+            tvStudentId.setText(user.getUsername());
             tvStudentName.setText(user.getFullName());
         }
     }
 
-    // --- DiffUtil ---
     private static final DiffUtil.ItemCallback<StudentClass> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<StudentClass>() {
                 @Override
                 public boolean areItemsTheSame(@NonNull StudentClass oldItem, @NonNull StudentClass newItem) {
-                    return oldItem.getStudentClassId() == newItem.getStudentClassId(); // So sánh student_class_id
+                    return oldItem.getStudentClassId() == newItem.getStudentClassId();
                 }
                 @Override
                 public boolean areContentsTheSame(@NonNull StudentClass oldItem, @NonNull StudentClass newItem) {

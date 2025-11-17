@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.studymate.data.model.Feedback;
 import com.example.studymate.data.model.request.FeedbackRequest;
-import com.example.studymate.data.repository.FeedbackRepository; // ⭐️ Dùng Repo mới
+import com.example.studymate.data.repository.FeedbackRepository;
 import java.util.List;
 
 public class FeedbackViewModel extends ViewModel {
@@ -16,12 +16,10 @@ public class FeedbackViewModel extends ViewModel {
         this.feedbackRepository = new FeedbackRepository();
     }
 
-    // Fragment sẽ gọi hàm này
     public void loadFeedbackThread(int classId, @Nullable Long studentId) {
         feedbackRepository.getFeedbackThread(classId, studentId);
     }
 
-    // Getters để Fragment quan sát
     public LiveData<List<Feedback>> getFeedbackThread() {
         return feedbackRepository.getFeedbackThread();
     }

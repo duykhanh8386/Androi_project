@@ -32,8 +32,6 @@ public class NotificationCreateFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // 1. Lấy classId (từ Bước 6)
         if (getArguments() != null) {
             classId = getArguments().getInt("classId");
         } else {
@@ -54,7 +52,6 @@ public class NotificationCreateFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
 
-        // Ánh xạ View
         edtTitle = view.findViewById(R.id.edtTitle);
         edtContent = view.findViewById(R.id.edtContent);
         btnSend = view.findViewById(R.id.btnSend);
@@ -75,27 +72,21 @@ public class NotificationCreateFragment extends Fragment {
                 return;
             }
 
-            // Gọi ViewModel
             viewModel.performCreateNotification(classId, title, content);
         });
     }
 
     private void setupObservers() {
-        // Quan sát trạng thái "Đang gửi..."
         viewModel.getIsCreating().observe(getViewLifecycleOwner(), isCreating -> {
             progressBar.setVisibility(isCreating ? View.VISIBLE : View.GONE);
             scrollViewContent.setAlpha(isCreating ? 0.3f : 1.0f);
             btnSend.setEnabled(!isCreating);
         });
 
-        // Quan sát "Gửi thành công"
         viewModel.getCreateSuccessEvent().observe(getViewLifecycleOwner(), createdNotification -> {
             Toast.makeText(getContext(), "Gửi thông báo thành công!", Toast.LENGTH_SHORT).show();
-            // Tự động quay lại màn hình Danh sách
             NavHostFragment.findNavController(this).popBackStack();
         });
-
-        // Quan sát "Gửi thất bại"
         viewModel.getCreateErrorEvent().observe(getViewLifecycleOwner(), error -> {
             Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         });

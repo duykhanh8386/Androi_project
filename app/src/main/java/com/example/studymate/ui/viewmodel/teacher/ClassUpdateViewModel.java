@@ -13,12 +13,10 @@ public class ClassUpdateViewModel extends ViewModel {
         this.repository = new TeacherRepository();
     }
 
-    // Fragment sẽ gọi hàm này
     public void performUpdateClass(int classId, String className, String classTime) {
         repository.updateClass(classId, className, classTime);
     }
 
-    // Getters để Fragment quan sát
     public LiveData<StudyClass> getUpdateSuccess() {
         return repository.getUpdateClassSuccessEvent();
     }

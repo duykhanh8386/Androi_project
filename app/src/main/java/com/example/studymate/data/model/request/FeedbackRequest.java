@@ -10,11 +10,9 @@ public class FeedbackRequest {
     @SerializedName("feedbackContent")
     private String feedbackContent;
 
-    // ⭐️ BƯỚC 1: THÊM TRƯỜNG NÀY VÀO
     @SerializedName("receiverId")
     private Long receiverId; // (ID của người nhận tin nhắn)
 
-    // ⭐️ BƯỚC 2: CẬP NHẬT CONSTRUCTOR
     public FeedbackRequest(int classId, String feedbackContent, Long receiverId) {
         this.classId = classId;
         this.feedbackContent = feedbackContent;
@@ -39,7 +37,6 @@ public class FeedbackRequest {
         this.feedbackContent = feedbackContent;
     }
 
-    // ⭐️ BƯỚC 3: THÊM GETTER/SETTER MỚI
     public Long getReceiverId() {
         return receiverId;
     }

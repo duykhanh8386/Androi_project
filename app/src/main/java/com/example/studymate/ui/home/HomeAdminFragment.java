@@ -1,7 +1,5 @@
 package com.example.studymate.ui.home;
 
-
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,18 +18,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
-
 import com.example.studymate.R;
 import com.example.studymate.data.repository.AuthRepository;
 import com.example.studymate.ui.viewmodel.HomeAdminViewModel;
-import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
-
 
 public class HomeAdminFragment extends Fragment {
 
     private HomeAdminViewModel viewModel;
-
-
 
     @Nullable
     @Override
@@ -70,17 +62,14 @@ public class HomeAdminFragment extends Fragment {
                 .setTitle(R.string.logout)
                 .setMessage(R.string.logout_confirm)
                 .setPositiveButton(R.string.ok, (d, w) -> {
-                    authRepository.logout(); // xoá token, gọi API...
-
+                    authRepository.logout();
                     Toast.makeText(getContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();
-
                     NavHostFragment.findNavController(HomeAdminFragment.this)
                             .navigate(R.id.action_homeAdminFragment_to_loginFragment);
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -92,7 +81,6 @@ public class HomeAdminFragment extends Fragment {
                 .navigate(R.id.action_admin_to_accounts));
         }
 
-        // Quan sát sự kiện Đăng xuất
         viewModel.getLogoutSuccessEvent().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isSuccess) {
@@ -104,8 +92,4 @@ public class HomeAdminFragment extends Fragment {
             }
         });
     }
-
-
-
-
 }

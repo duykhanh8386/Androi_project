@@ -9,37 +9,27 @@ import com.example.studymate.data.repository.ClassRepository;
 
 import java.util.List;
 
-
 public class HomeTeacherViewModel extends ViewModel {
-
-
     private AuthRepository authRepository;
     private LiveData<Boolean> logoutSuccessEvent;
 
-    // ⭐️ THAY ĐỔI TẠI ĐÂY
     private ClassRepository classRepository;
     private LiveData<List<StudyClass>> classListLiveData;
     private LiveData<Boolean> isLoading;
 
     public HomeTeacherViewModel() {
-        // Khởi tạo Auth Repo
         this.authRepository = new AuthRepository();
         this.logoutSuccessEvent = authRepository.getLogoutSuccessEvent();
 
-        // ⭐️ Khởi tạo Class Repo
         this.classRepository = new ClassRepository();
-        // ⭐️ Lấy LiveData từ Class Repo
         this.classListLiveData = classRepository.getTeacherClassListLiveData();
         this.isLoading = classRepository.getIsTeacherClassListLoading();
 
     }
-
-    // ⭐️ THÊM: Hàm để Fragment gọi
     public void fetchTeacherClasses() {
         classRepository.fetchTeacherClasses();
     }
 
-    // Getter để Fragment có thể "quan sát"
     public LiveData<List<StudyClass>> getClassList() {
         return classListLiveData;
     }

@@ -39,7 +39,6 @@ public class ClassCreateFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(ClassCreateViewModel.class);
 
-        // Ánh xạ View
         edtClassName = view.findViewById(R.id.edtClassName);
         edtClassTime = view.findViewById(R.id.edtClassTime);
         btnCreate = view.findViewById(R.id.btnCreate);
@@ -64,13 +63,11 @@ public class ClassCreateFragment extends Fragment {
                 return;
             }
 
-            // Gọi ViewModel
             viewModel.performCreateClass(className, classTime);
         });
     }
 
     private void setupObservers() {
-        // Quan sát trạng thái "Đang tạo..."
         viewModel.getIsCreating().observe(getViewLifecycleOwner(), isCreating -> {
             if (isCreating) {
                 progressBar.setVisibility(View.VISIBLE);
@@ -83,14 +80,11 @@ public class ClassCreateFragment extends Fragment {
             }
         });
 
-        // Quan sát "Tạo thành công"
         viewModel.getCreateSuccess().observe(getViewLifecycleOwner(), createdClass -> {
             Toast.makeText(getContext(), "Tạo lớp '" + createdClass.getClassName() + "' thành công!", Toast.LENGTH_SHORT).show();
-            // Tự động quay lại màn hình Home
             NavHostFragment.findNavController(this).popBackStack();
         });
 
-        // Quan sát "Tạo thất bại"
         viewModel.getCreateError().observe(getViewLifecycleOwner(), error -> {
             Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         });

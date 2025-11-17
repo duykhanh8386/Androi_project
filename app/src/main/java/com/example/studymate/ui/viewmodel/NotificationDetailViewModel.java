@@ -13,12 +13,10 @@ public class NotificationDetailViewModel extends ViewModel {
         this.repository = new NotificationRepository();
     }
 
-    // Fragment sẽ gọi hàm này
     public void loadNotificationDetail(int notificationId) {
         repository.fetchNotificationDetail(notificationId);
     }
 
-    // Getters để Fragment quan sát
     public LiveData<Notification> getNotificationDetail() {
         return repository.getNotificationDetail();
     }

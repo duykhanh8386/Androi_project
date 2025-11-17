@@ -22,7 +22,6 @@ public class ClassListAdapter extends ListAdapter<StudyClass, ClassListAdapter.C
         this.sessionManager = sessionManager;
     }
 
-    // Định nghĩa cách RecyclerView so sánh các item (tối ưu hiệu suất)
     private static final DiffUtil.ItemCallback<StudyClass> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<StudyClass>() {
                 @Override
@@ -40,7 +39,6 @@ public class ClassListAdapter extends ListAdapter<StudyClass, ClassListAdapter.C
     @NonNull
     @Override
     public ClassViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // "Thổi phồng" layout item_class_card.xml
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_class_card, parent, false);
         return new ClassViewHolder(view);
@@ -52,7 +50,6 @@ public class ClassListAdapter extends ListAdapter<StudyClass, ClassListAdapter.C
         holder.bind(currentClass);
     }
 
-    // Lớp "ViewHolder" giữ tham chiếu đến các View trong item_class_card.xml
     class ClassViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvClassName;
         private final TextView tvClassTime;
@@ -71,12 +68,9 @@ public class ClassListAdapter extends ListAdapter<StudyClass, ClassListAdapter.C
                         StudyClass clickedClass = getItem(position);
                         int classId = clickedClass.getClassId();
 
-                        // 1. Tạo một Bundle để chứa classId
                         Bundle bundle = new Bundle();
-                        bundle.putInt("classId", classId); // "classId" phải khớp với tên 'argument' trong nav_graph
+                        bundle.putInt("classId", classId);
 
-                        // 2. Tìm NavController và điều hướng
-                        // Dùng action ID chúng ta đã tạo ở Bước 1
                         if(sessionManager.getUserRole().equals("ROLE_TEACHER")) {
                             Navigation.findNavController(itemView)
                                     .navigate(R.id.action_teacher_home_to_classDetail, bundle);
@@ -89,10 +83,9 @@ public class ClassListAdapter extends ListAdapter<StudyClass, ClassListAdapter.C
             });
         }
 
-        // Gán dữ liệu từ StudyClass vào các TextView
         public void bind(StudyClass studyClass) {
             tvClassName.setText(studyClass.getClassName());
-            tvClassTime.setText(studyClass.getClassTime()); // Giả sử classTime chứa tên GV
+            tvClassTime.setText(studyClass.getClassTime());
         }
     }
 }

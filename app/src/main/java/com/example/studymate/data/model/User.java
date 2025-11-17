@@ -1,4 +1,4 @@
-package com.example.studymate.data.model; // Hoặc package model của bạn
+package com.example.studymate.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -14,8 +14,6 @@ public class User {
     @SerializedName("username")
     private String username;
 
-    // Password thường không được trả về trong API response,
-    // nhưng nếu có thì đây là cách ánh xạ:
     @SerializedName("password")
     private String password;
 
@@ -25,18 +23,17 @@ public class User {
     @SerializedName("roleName")
     private String roleName;
 
-    // Constructor rỗng (bắt buộc cho Gson)
     public User() {
     }
 
-    @SerializedName("email") // Giả sử API/mock data có trường này
+    @SerializedName("email")
     private String email;
 
     public User(int userId, String fullName, String username, String email, String roleName) {
         this.userId = userId;
         this.fullName = fullName;
         this.username = username;
-        this.email = email; // Thêm vào
+        this.email = email;
         this.roleName = roleName;
     }
 

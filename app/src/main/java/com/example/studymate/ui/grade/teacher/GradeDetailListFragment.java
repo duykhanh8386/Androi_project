@@ -1,6 +1,5 @@
 package com.example.studymate.ui.grade.teacher;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +30,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GradeDetailListFragment extends Fragment implements GradeDetailAdapter.OnGradeClickListener {
 
-    // (Dùng chung Key với GradeEntryFragment)
     public static final String KEY_REFRESH_GRADES = "refresh_grades_key";
 
     private RecyclerView rvGradeDetailList;
@@ -52,15 +49,12 @@ public class GradeDetailListFragment extends Fragment implements GradeDetailAdap
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // 1. Lấy dữ liệu (arguments) từ Bước 3 (nav_graph)
         if (getArguments() != null) {
             classId = getArguments().getInt("classId");
             studentId = getArguments().getLong("studentId");
             studentName = getArguments().getString("studentName");
             String gradesJson = getArguments().getString("gradesJson");
 
-            // 2. Chuyển JSON (String) ngược lại thành List<Grade>
             Type listType = new TypeToken<ArrayList<Grade>>(){}.getType();
             gradeList = new Gson().fromJson(gradesJson, listType);
         }
@@ -77,9 +71,8 @@ public class GradeDetailListFragment extends Fragment implements GradeDetailAdap
         super.onViewCreated(view, savedInstanceState);
 
         navController = NavHostFragment.findNavController(this);
-        viewModel = new ViewModelProvider(this).get(GradeEditViewModel.class); // (Dùng chung)
+        viewModel = new ViewModelProvider(this).get(GradeEditViewModel.class);
 
-        // Ánh xạ View
         rvGradeDetailList = view.findViewById(R.id.rvGradeDetailList);
         progressBar = view.findViewById(R.id.progressBar);
         TextView tvStudentNameTitle = view.findViewById(R.id.tvStudentNameTitle);
@@ -87,23 +80,20 @@ public class GradeDetailListFragment extends Fragment implements GradeDetailAdap
 
         tvStudentNameTitle.setText(studentName);
 
-        // 3. Setup Adapter
         adapter = new GradeDetailAdapter();
         adapter.setOnGradeClickListener(this);
         rvGradeDetailList.setLayoutManager(new LinearLayoutManager(getContext()));
         rvGradeDetailList.setAdapter(adapter);
-        adapter.submitList(gradeList); // (Hiển thị danh sách đã nhận)
+        adapter.submitList(gradeList);
 
-        // 4. Click nút "+" (Thêm mới)
         fabAddGrade.setOnClickListener(v -> {
-            navigateToAddOrEdit(false, null); // (Chế độ "Thêm")
+            navigateToAddOrEdit(false, null);
         });
 
         setupObservers();
         listenForRefreshSignal();
     }
 
-    // (Hàm này lắng nghe tín hiệu từ Dialog)
     private void listenForRefreshSignal() {
         SavedStateHandle savedStateHandle = navController.getCurrentBackStackEntry()
                 .getSavedStateHandle();
@@ -112,16 +102,10 @@ public class GradeDetailListFragment extends Fragment implements GradeDetailAdap
                     @Override
                     public void onChanged(Boolean shouldRefresh) {
                         if (shouldRefresh) {
-                            // ⭐️ BÁO CHO MÀN HÌNH TRƯỚC (GradeEntryFragment) ⭐️
                             navController.getPreviousBackStackEntry()
                                     .getSavedStateHandle()
                                     .set(GradeEntryFragment.KEY_REFRESH_GRADES, true);
-
-                            // (Tự Pop, vì đã hết điểm)
-                            // Hoặc (Tải lại danh sách điểm của học sinh này - cần API)
                             Toast.makeText(getContext(), "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
-
-                            // (Tạm thời, chúng ta PopBack)
                             navController.popBackStack();
                         }
                     }
@@ -129,7 +113,6 @@ public class GradeDetailListFragment extends Fragment implements GradeDetailAdap
     }
 
     private void setupObservers() {
-        // (Quan sát 2 sự kiện Sửa/Xóa)
         Observer<Boolean> loadingObserver = isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             rvGradeDetailList.setAlpha(isLoading ? 0.3f : 1.0f);
@@ -138,35 +121,30 @@ public class GradeDetailListFragment extends Fragment implements GradeDetailAdap
         viewModel.getIsUpdating().observe(getViewLifecycleOwner(), loadingObserver);
         viewModel.getIsDeleting().observe(getViewLifecycleOwner(), loadingObserver);
 
-        // (Quan sát sự kiện Xóa thành công)
         viewModel.getDeleteSuccess().observe(getViewLifecycleOwner(), response -> {
             Toast.makeText(getContext(), response.getMessage(), Toast.LENGTH_SHORT).show();
-            // Báo cho màn hình A (GradeEntry) biết để tải lại
             navController.getPreviousBackStackEntry()
                     .getSavedStateHandle()
                     .set(GradeEntryFragment.KEY_REFRESH_GRADES, true);
-            navController.popBackStack(); // Quay lại
+            navController.popBackStack();
         });
 
         viewModel.getDeleteError().observe(getViewLifecycleOwner(), error -> {
             Toast.makeText(getContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
         });
 
-        // (Quan sát Sửa thành công - Giống hệt Add)
         viewModel.getUpdateSuccess().observe(getViewLifecycleOwner(), updatedGrade -> {
             Toast.makeText(getContext(), "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
             navController.getPreviousBackStackEntry()
                     .getSavedStateHandle()
                     .set(GradeEntryFragment.KEY_REFRESH_GRADES, true);
-            navController.popBackStack(); // Quay lại
+            navController.popBackStack();
         });
     }
 
-    // --- Xử lý click từ Adapter ---
-
     @Override
     public void onEditClick(Grade grade) {
-        navigateToAddOrEdit(true, grade); // (Chế độ "Sửa")
+        navigateToAddOrEdit(true, grade);
     }
 
     @Override
@@ -181,7 +159,6 @@ public class GradeDetailListFragment extends Fragment implements GradeDetailAdap
                 .show();
     }
 
-    // --- Điều hướng (Helper) ---
     private void navigateToAddOrEdit(boolean isEditMode, @Nullable Grade grade) {
         Bundle bundle = new Bundle();
         bundle.putInt("classId", classId);
@@ -190,7 +167,6 @@ public class GradeDetailListFragment extends Fragment implements GradeDetailAdap
         bundle.putBoolean("isEditMode", isEditMode);
 
         if (isEditMode && grade != null) {
-            // Gửi dữ liệu cũ sang (cho chế độ Sửa)
             bundle.putInt("gradeId", grade.getGradeId());
             bundle.putString("currentType", grade.getGradeType());
             bundle.putFloat("currentScore", Float.parseFloat(String.valueOf(grade.getScore())));

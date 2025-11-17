@@ -2,7 +2,6 @@ package com.example.studymate.ui.viewmodel.student;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
-import com.example.studymate.data.repository.ClassRepository;
 import com.example.studymate.data.repository.StudentRepository;
 
 public class JoinClassViewModel extends ViewModel {
@@ -17,7 +16,6 @@ public class JoinClassViewModel extends ViewModel {
         studentRepository.joinClass(classCode);
     }
 
-    // Getters để Fragment quan sát
     public LiveData<String> getJoinSuccessEvent() {
         return studentRepository.getJoinClassSuccess();
     }
