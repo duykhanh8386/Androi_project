@@ -18,7 +18,6 @@ import java.util.List;
 
 public class GradeEntryAdapter extends ListAdapter<StudentResponse, GradeEntryAdapter.GradeViewHolder> {
 
-    // 1. Interface để xử lý click
     public interface OnItemClickListener {
         void onItemClick(StudentResponse student);
     }
@@ -27,7 +26,6 @@ public class GradeEntryAdapter extends ListAdapter<StudentResponse, GradeEntryAd
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.clickListener = listener;
     }
-    // -------------------
 
     public GradeEntryAdapter() {
         super(DIFF_CALLBACK);
@@ -61,7 +59,6 @@ public class GradeEntryAdapter extends ListAdapter<StudentResponse, GradeEntryAd
         holder.bind(currentUser);
     }
 
-    // --- ViewHolder ---
     class GradeViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvStudentName, tvStudentID;
         private final TextView tvStudentScoreTX, tvStudentScoreGK, tvStudentScoreCK;
@@ -74,7 +71,6 @@ public class GradeEntryAdapter extends ListAdapter<StudentResponse, GradeEntryAd
             tvStudentScoreGK = itemView.findViewById(R.id.tvStudentScoreGK);
             tvStudentScoreCK = itemView.findViewById(R.id.tvStudentScoreCK);
 
-            // 2. Xử lý click trên toàn bộ item
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (clickListener != null && position != RecyclerView.NO_POSITION) {
@@ -83,7 +79,6 @@ public class GradeEntryAdapter extends ListAdapter<StudentResponse, GradeEntryAd
             });
         }
 
-        // 3. Hàm Bind (Tái sử dụng logic từ StudentManageAdapter)
         public void bind(StudentResponse studentResponse) {
             tvStudentName.setText(studentResponse.getUser().getFullName());
             tvStudentID.setText(studentResponse.getUser().getUserName());
@@ -106,7 +101,6 @@ public class GradeEntryAdapter extends ListAdapter<StudentResponse, GradeEntryAd
                 }
             }
 
-            // Cập nhật UI
             tvStudentScoreTX.setText(scoreTX.isEmpty() ? "-" : scoreTX.trim());
             tvStudentScoreGK.setText(scoreGK.isEmpty() ? "-" : scoreGK.trim());
             tvStudentScoreCK.setText(scoreCK.isEmpty() ? "-" : scoreCK.trim());

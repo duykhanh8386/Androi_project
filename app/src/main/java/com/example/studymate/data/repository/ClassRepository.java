@@ -1,8 +1,5 @@
 package com.example.studymate.data.repository;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -13,7 +10,6 @@ import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,7 +19,6 @@ import retrofit2.Response;
 public class ClassRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = false; // ⭐️ Vẫn dùng Mock
 
     // LiveData cho danh sách lớp của học sinh
     private MutableLiveData<List<StudyClass>> studentClassListLiveData = new MutableLiveData<>();
@@ -54,58 +49,35 @@ public class ClassRepository {
         this.apiService = RetrofitClient.getApiService();
     }
 
-    // ViewModel sẽ gọi hàm này
     public void fetchStudentClasses() {
-        isStudentClassListLoading.postValue(true); // Báo là đang tải
-
-        if (IS_MOCK_MODE) {
-            runMockLogic();
-        } else {
-            runRealApiLogic();
-        }
+        isStudentClassListLoading.postValue(true);
+        runRealApiLogic();
     }
 
     public void fetchTeacherClasses() {
-        isTeacherClassListLoading.postValue(true); // Báo là đang tải
-
-        if (IS_MOCK_MODE) {
-            runMockLogicForClassListTeacher();
-        } else {
-            runRealApiLogicForClassListTeacher();
-        }
+        isTeacherClassListLoading.postValue(true);
+        runRealApiLogicForClassListTeacher();
     }
 
     public void fetchClassDetails(int classId) {
         isDetailLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForDetail(classId);
-        } else {
-            runRealApiLogicForDetail(classId);
-        }
+        runRealApiLogicForDetail(classId);
     }
 
     public void leaveClass(int classId) {
         isLeaveLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForLeaveClass(classId);
-        } else {
-            runRealApiLogicForLeaveClass(classId);
-        }
+        runRealApiLogicForLeaveClass(classId);
     }
     public void deleteClass(int classId) {
         isDeletingClass.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForDeleteClass(classId);
-        } else {
-            runRealApiLogicForDeleteClass(classId);
-        }
+        runRealApiLogicForDeleteClass(classId);
     }
 
     private void runRealApiLogicForClassListTeacher() {
         apiService.getTeacherClasses().enqueue(new Callback<List<StudyClass>>() {
             @Override
             public void onResponse(Call<List<StudyClass>> call, Response<List<StudyClass>> response) {
-                isTeacherClassListLoading.postValue(false); // Tải xong
+                isTeacherClassListLoading.postValue(false);
                 if (response.isSuccessful()) {
                     teacherClassListLiveData.postValue(response.body());
                 } else {
@@ -115,35 +87,17 @@ public class ClassRepository {
 
             @Override
             public void onFailure(Call<List<StudyClass>> call, Throwable t) {
-                isTeacherClassListLoading.postValue(false); // Tải xong
+                isTeacherClassListLoading.postValue(false);
                 teacherClassListError.postValue("Lỗi mạng: " + t.getMessage());
             }
         });
     }
 
-    private void runMockLogicForClassListTeacher() {
-        // Giả lập độ trễ 1.5 giây
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            ArrayList<StudyClass> mockList = new ArrayList<>();
-            mockList.add(new StudyClass(1, "Toán 10A1", "GV: Nguyễn Văn A"));
-            mockList.add(new StudyClass(2, "Lý 11B2", "GV: Trần Thị B"));
-            mockList.add(new StudyClass(3, "Hóa 12C3", "GV: Lê Văn C"));
-            mockList.add(new StudyClass(4, "Sinh 10A4", "GV: Phạm Thị D"));
-            mockList.add(new StudyClass(5, "Anh 11E5", "GV: Bùi Văn E"));
-
-            isTeacherClassListLoading.postValue(false); // Tải xong
-            teacherClassListLiveData.postValue(mockList); // Gửi dữ liệu
-        }, 1500); // Trì hoãn 1.5 giây
-    }
-
-
-
-    // Logic gọi API thật
     private void runRealApiLogic() {
         apiService.getStudentClasses().enqueue(new Callback<List<StudyClass>>() {
             @Override
             public void onResponse(Call<List<StudyClass>> call, Response<List<StudyClass>> response) {
-                isStudentClassListLoading.postValue(false); // Tải xong
+                isStudentClassListLoading.postValue(false);
                 if (response.isSuccessful()) {
                     studentClassListLiveData.postValue(response.body());
                 } else {
@@ -153,26 +107,10 @@ public class ClassRepository {
 
             @Override
             public void onFailure(Call<List<StudyClass>> call, Throwable t) {
-                isStudentClassListLoading.postValue(false); // Tải xong
+                isStudentClassListLoading.postValue(false);
                 studentClassListError.postValue("Lỗi mạng: " + t.getMessage());
             }
         });
-    }
-
-    // Logic dữ liệu mẫu (đã chuyển từ ViewModel cũ sang đây)
-    private void runMockLogic() {
-        // Giả lập độ trễ 1.5 giây
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            ArrayList<StudyClass> mockList = new ArrayList<>();
-            mockList.add(new StudyClass(1, "Toán 10A1", "GV: Nguyễn Văn A"));
-            mockList.add(new StudyClass(2, "Lý 11B2", "GV: Trần Thị B"));
-            mockList.add(new StudyClass(3, "Hóa 12C3", "GV: Lê Văn C"));
-            mockList.add(new StudyClass(4, "Sinh 10A4", "GV: Phạm Thị D"));
-            mockList.add(new StudyClass(5, "Anh 11E5", "GV: Bùi Văn E"));
-
-            isStudentClassListLoading.postValue(false); // Tải xong
-            studentClassListLiveData.postValue(mockList); // Gửi dữ liệu
-        }, 1500); // Trì hoãn 1.5 giây
     }
 
     private void runRealApiLogicForDetail(int classId) {
@@ -194,28 +132,6 @@ public class ClassRepository {
         });
     }
 
-    private void runMockLogicForDetail(int classId) {
-        // Giả lập độ trễ 1 giây
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // Giả lập tìm thấy lớp học dựa trên ID
-            ClassDetailResponse mockClass = new ClassDetailResponse(3, "Lớp 10A1", "L10A1",
-                    "Thứ 2 - 7h30", 3L,"Teacher User", 35);
-            isDetailLoading.postValue(false);
-            classDetailLiveData.postValue(mockClass);
-        }, 1000);
-    }
-
-    // ⭐️ THÊM HÀM MỚI: (Mock logic)
-    private void runMockLogicForLeaveClass(int classId) {
-        // Giả lập độ trễ 1 giây
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            isLeaveLoading.postValue(false);
-            // Trả về thông báo thành công (theo Use Case 2.4.13)
-            leaveSuccessEvent.postValue("Rời lớp thành công!");
-        }, 1000);
-    }
-
-    // ⭐️ THÊM HÀM MỚI: (Real API logic)
     private void runRealApiLogicForLeaveClass(int classId) {
         apiService.leaveClass(classId).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -240,17 +156,6 @@ public class ClassRepository {
         });
     }
 
-    // ⭐️ THÊM HÀM MỚI: (Mock logic)
-    private void runMockLogicForDeleteClass(int classId) {
-        // Giả lập độ trễ 1 giây
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            isDeletingClass.postValue(false);
-            // Trả về thông báo thành công (theo Use Case 2.3.4)
-            deleteSuccessEvent.postValue("Xóa lớp thành công!");
-        }, 1000);
-    }
-
-    // ⭐️ THÊM HÀM MỚI: (Real API logic)
     private void runRealApiLogicForDeleteClass(int classId) {
         apiService.deleteClass(classId).enqueue(new Callback<MessageResponse>() {
             @Override

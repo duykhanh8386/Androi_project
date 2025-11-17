@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.Feedback;
-// (Không cần SessionManager ở đây, nên truyền ID vào)
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,27 +18,22 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-/**
- * Đây là Adapter cho Màn hình B (FeedbackThreadFragment)
- * Nó hiển thị các tin nhắn Gửi/Nhận (dùng item_feedback_sent/received.xml)
- */
 public class FeedbackThreadAdapter extends ListAdapter<Feedback, FeedbackThreadAdapter.BaseViewHolder> {
 
-    private final Long currentUserId; // ⭐️ 1. Nhận ID qua constructor
+    private final Long currentUserId;
 
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
 
     public FeedbackThreadAdapter(Long currentUserId) {
         super(DIFF_CALLBACK);
-        this.currentUserId = currentUserId; // ⭐️ 2. Lưu ID
+        this.currentUserId = currentUserId;
     }
 
     // ⭐️ 3. Xác định layout nào sẽ dùng (gửi hay nhận)
     @Override
     public int getItemViewType(int position) {
         Feedback feedback = getItem(position);
-        // (So sánh an toàn, phòng trường hợp ID là null)
         if (feedback.getSenderId() != null && feedback.getSenderId().equals(currentUserId)) {
             return VIEW_TYPE_SENT;
         } else {
@@ -68,34 +62,26 @@ public class FeedbackThreadAdapter extends ListAdapter<Feedback, FeedbackThreadA
         holder.bind(current);
     }
 
-    // --- (Các lớp ViewHolder) ---
-
     abstract class BaseViewHolder extends RecyclerView.ViewHolder {
         public BaseViewHolder(@NonNull View itemView) {
             super(itemView);
         }
         abstract void bind(Feedback feedback);
 
-        // ⭐️ 4. Thêm hàm Helper để định dạng ngày (vì createdAt là String)
         String formatTimestamp(String timestamp) {
             if (timestamp == null || timestamp.isEmpty()) return "vừa xong";
             try {
-                // (Định dạng đầu vào khớp với "2025-11-12T22:02:44.90208")
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-                inputFormat.setTimeZone(TimeZone.getTimeZone("UTC")); // (Giả sử là UTC)
-
-                // (Định dạng đầu ra mong muốn)
+                inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
                 SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm dd/MM", Locale.getDefault());
-
                 Date date = inputFormat.parse(timestamp);
                 return outputFormat.format(date);
             } catch (ParseException e) {
-                return timestamp; // (Nếu lỗi, trả về chuỗi gốc)
+                return timestamp;
             }
         }
     }
 
-    // (ViewHolder Gửi)
     class SentViewHolder extends BaseViewHolder {
         private final TextView tvSenderInfo;
         private final TextView tvFeedbackContent;
@@ -107,13 +93,11 @@ public class FeedbackThreadAdapter extends ListAdapter<Feedback, FeedbackThreadA
         }
 
         void bind(Feedback feedback) {
-            // ⭐️ 5. Sửa lại: Dùng tên thật và format ngày
             tvSenderInfo.setText("Bạn (" + formatTimestamp(feedback.getCreatedAt()) + ")");
             tvFeedbackContent.setText(feedback.getFeedbackContent());
         }
     }
 
-    // (ViewHolder Nhận)
     class ReceivedViewHolder extends BaseViewHolder {
         private final TextView tvSenderInfo;
         private final TextView tvFeedbackContent;
@@ -125,14 +109,12 @@ public class FeedbackThreadAdapter extends ListAdapter<Feedback, FeedbackThreadA
         }
 
         void bind(Feedback feedback) {
-            // ⭐️ 6. Sửa lại: Dùng tên thật (getSenderName) và format ngày
             String senderName = (feedback.getSenderName() != null) ? feedback.getSenderName() : "Giáo viên";
             tvSenderInfo.setText(senderName + " (" + formatTimestamp(feedback.getCreatedAt()) + ")");
             tvFeedbackContent.setText(feedback.getFeedbackContent());
         }
     }
 
-    // --- (DiffUtil - Đã đúng) ---
     private static final DiffUtil.ItemCallback<Feedback> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<Feedback>() {
                 @Override

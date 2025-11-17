@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.studymate.data.model.Grade;
 import com.example.studymate.data.model.StudentClass;
 import com.example.studymate.data.model.StudyClass;
-import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.GradeRequest;
 import com.example.studymate.data.model.request.UpdateClassRequest;
 import com.example.studymate.data.model.response.MessageResponse;
@@ -24,7 +23,6 @@ import retrofit2.Response;
 public class TeacherRepository {
 
     private ApiService apiService;
-    private final boolean IS_MOCK_MODE = false;
 
     // LiveData cho danh sách chờ
     private MutableLiveData<List<StudentClass>> pendingListLiveData = new MutableLiveData<>();
@@ -80,20 +78,12 @@ public class TeacherRepository {
     // --- Lấy danh sách chờ ---
     public void fetchPendingList(int classId) {
         isLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForList(classId);
-        } else {
-            runRealApiLogicForList(classId);
-        }
+        runRealApiLogicForList(classId);
     }
 
     private void runMockLogicForList(int classId) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             ArrayList<StudentClass> mockList = new ArrayList<>();
-            // (Mock User: id, fullName, email, role)
-            // (Quan trọng: ID ở đây là *studentClassId* (ID bảng trung gian), không phải UserID)
-//            mockList.add(new User(1, "Học Sinh Chờ 1", "wait1@test.com", "STUDENT"));
-//            mockList.add(new User(2, "Học Sinh Chờ 2", "wait2@test.com", "STUDENT"));
             isLoading.postValue(false);
             pendingListLiveData.postValue(mockList);
         }, 1000);
@@ -120,62 +110,46 @@ public class TeacherRepository {
 
     // --- Xử lý Phê duyệt/Từ chối đơn le ---
 
-    // (Helper chung)
     private void processApproval(int studentClassId, String status) {
         isApprovalLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        apiService.approveOrRejectStudent(studentClassId, status).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 isApprovalLoading.postValue(false);
-                approvalSuccessEvent.postValue(status + " thành công!");
-            }, 500);
-        } else {
-            apiService.approveOrRejectStudent(studentClassId, status).enqueue(new Callback<MessageResponse>() {
-                @Override
-                public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                    isApprovalLoading.postValue(false);
-                    if (response.isSuccessful() && response.body() != null) {
-                        approvalSuccessEvent.postValue("Phê duyệt thành công");
-                    } else {
-                        approvalErrorEvent.postValue("Lỗi: " + response.code());
-                    }
+                if (response.isSuccessful() && response.body() != null) {
+                    approvalSuccessEvent.postValue("Phê duyệt thành công");
+                } else {
+                    approvalErrorEvent.postValue("Lỗi: " + response.code());
                 }
-                @Override
-                public void onFailure(Call<MessageResponse> call, Throwable t) {
-                    isApprovalLoading.postValue(false);
-                    approvalErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
-                }
-            });
-        }
+            }
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                isApprovalLoading.postValue(false);
+                approvalErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
     }
 
     private void processApproval(int studentId, int classId , String status) {
         isApprovalLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        apiService.kickStudent(classId, studentId, status).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 isApprovalLoading.postValue(false);
-                approvalSuccessEvent.postValue(status + " thành công!");
-            }, 500);
-        } else {
-            apiService.kickStudent(classId, studentId, status).enqueue(new Callback<MessageResponse>() {
-                @Override
-                public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                    isApprovalLoading.postValue(false);
-                    if (response.isSuccessful() && response.body() != null) {
-                        approvalSuccessEvent.postValue(response.body().getMessage());
-                    } else {
-                        approvalErrorEvent.postValue("Lỗi: " + response.code());
-                    }
+                if (response.isSuccessful() && response.body() != null) {
+                    approvalSuccessEvent.postValue(response.body().getMessage());
+                } else {
+                    approvalErrorEvent.postValue("Lỗi: " + response.code());
                 }
-                @Override
-                public void onFailure(Call<MessageResponse> call, Throwable t) {
-                    isApprovalLoading.postValue(false);
-                    approvalErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
-                }
-            });
-        }
+            }
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                isApprovalLoading.postValue(false);
+                approvalErrorEvent.postValue("Lỗi mạng: " + t.getMessage());
+            }
+        });
     }
 
-    // (Hàm public)
     public void approveStudent(int studentClassId) {
         processApproval(studentClassId, "APPROVED");
     }
@@ -188,44 +162,17 @@ public class TeacherRepository {
         processApproval(studentId, classId, "REJECTED");
     }
 
-    // (Phê duyệt/Từ chối - HÀNG LOẠT)
     public void approveAllPending(int classId) {
         isBulkLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForApproveAll(classId);
-        } else {
-            // ⭐️ SỬA LẠI:
-            runRealApiLogicForUpdateAll(classId, "APPROVED");
-        }
+        runRealApiLogicForUpdateAll(classId, "APPROVED");
     }
 
     public void rejectAllPending(int classId) {
         isBulkLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForRejectAll(classId);
-        } else {
-            // ⭐️ SỬA LẠI:
-            runRealApiLogicForUpdateAll(classId, "REJECTED");
-        }
+        runRealApiLogicForUpdateAll(classId, "REJECTED");
     }
 
-    // ⭐️ THÊM MỚI: Logic Mock (Hàng loạt)
-    private void runMockLogicForApproveAll(int classId) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            isBulkLoading.postValue(false);
-            bulkSuccessEvent.postValue("Đã phê duyệt tất cả!");
-        }, 1500);
-    }
-    private void runMockLogicForRejectAll(int classId) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            isBulkLoading.postValue(false);
-            bulkSuccessEvent.postValue("Đã từ chối tất cả!");
-        }, 1500);
-    }
-
-    // ⭐️ THÊM MỚI: Logic API (Hàng loạt)
     private void runRealApiLogicForUpdateAll(int classId, String status) {
-        // Gọi hàm mới trong ApiService
         apiService.updateAllPendingStatus(classId, status).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
@@ -245,23 +192,9 @@ public class TeacherRepository {
         });
     }
 
-    // ⭐️ THÊM HÀM MỚI: Tạo lớp
     public void createClass(String className, String classTime) {
         isCreatingClass.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForCreateClass(className, classTime);
-        } else {
-            runRealApiLogicForCreateClass(className, classTime);
-        }
-    }
-
-    private void runMockLogicForCreateClass(String className, String classTime) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // Giả lập tạo thành công
-            StudyClass newClass = new StudyClass(99, className, classTime);
-            isCreatingClass.postValue(false);
-            createClassSuccessEvent.postValue(newClass);
-        }, 1500); // Trì hoãn 1.5 giây
+        runRealApiLogicForCreateClass(className, classTime);
     }
 
     private void runRealApiLogicForCreateClass(String className, String classTime) {
@@ -286,20 +219,7 @@ public class TeacherRepository {
 
     public void updateClass(int classId, String className, String classTime) {
         isUpdatingClass.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForUpdateClass(classId, className, classTime);
-        } else {
-            runRealApiLogicForUpdateClass(classId, className, classTime);
-        }
-    }
-
-    private void runMockLogicForUpdateClass(int classId, String className, String classTime) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // Giả lập cập nhật thành công
-            StudyClass updatedClass = new StudyClass(classId, className, classTime);
-            isUpdatingClass.postValue(false);
-            updateClassSuccessEvent.postValue(updatedClass);
-        }, 1500); // Trì hoãn 1.5 giây
+        runRealApiLogicForUpdateClass(classId, className, classTime);
     }
 
     private void runRealApiLogicForUpdateClass(int classId, String className, String classTime) {
@@ -324,33 +244,10 @@ public class TeacherRepository {
 
     public void fetchStudentList(int classId) {
         isStudentListLoading.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForStudentList(classId);
-        } else {
-            runRealApiLogicForStudentList(classId);
-        }
-    }
-
-    private void runMockLogicForStudentList(int classId) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            ArrayList<StudentResponse> mockList = new ArrayList<>();
-
-            // Tạo 2 học sinh mẫu (với điểm)
-            User userA = new User(201, "Nguyễn Văn An", "20201111", "nva@test.com", "ROLE_STUDENT");
-            List<Grade> gradesA = List.of(new Grade(1, "TX", 9.0), new Grade(2, "GK", 8.5), new Grade(3, "CK", 8.8));
-            mockList.add(new StudentResponse(userA, gradesA));
-
-            User userB = new User(202, "20202222", "Trần Thị Bình", "ttb@test.com", "ROLE_STUDENT");
-            List<Grade> gradesB = List.of(new Grade(4, "TX", 7.0));
-            mockList.add(new StudentResponse(userB, gradesB));
-
-            isStudentListLoading.postValue(false);
-            studentListLiveData.postValue(mockList);
-        }, 1000);
+        runRealApiLogicForStudentList(classId);
     }
 
     private void runRealApiLogicForStudentList(int classId) {
-        // (Chúng ta gọi hàm getStudentsInClass mà StudentRepository cũng dùng)
         apiService.getStudentsInClass(classId).enqueue(new Callback<List<StudentResponse>>() {
             @Override
             public void onResponse(Call<List<StudentResponse>> call, Response<List<StudentResponse>> response) {
@@ -369,25 +266,10 @@ public class TeacherRepository {
         });
     }
 
-    // ⭐️ THÊM HÀM MỚI: Thêm điểm
     public void addGrade(Long studentId, Integer classId, String gradeType, Double score) {
         isAddingGrade.postValue(true);
         GradeRequest request = new GradeRequest(studentId, classId, gradeType, score);
-
-        if (IS_MOCK_MODE) {
-            runMockLogicForAddGrade(request);
-        } else {
-            runRealApiLogicForAddGrade(request);
-        }
-    }
-
-    private void runMockLogicForAddGrade(GradeRequest request) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // Giả lập tạo thành công
-            Grade newGrade = new Grade(99, request.getGradeType(), request.getScore());
-            isAddingGrade.postValue(false);
-            addGradeSuccessEvent.postValue(newGrade);
-        }, 1000); // Trì hoãn 1 giây
+        runRealApiLogicForAddGrade(request);
     }
 
     private void runRealApiLogicForAddGrade(GradeRequest request) {
@@ -412,20 +294,7 @@ public class TeacherRepository {
     public void updateGrade(int gradeId, Long studentId, Integer classId, String gradeType, Double score) {
         isUpdatingGrade.postValue(true);
         GradeRequest request = new GradeRequest(studentId, classId, gradeType, score);
-
-        if (IS_MOCK_MODE) {
-            runMockLogicForUpdateGrade(gradeId, request);
-        } else {
-            runRealApiLogicForUpdateGrade(gradeId, request);
-        }
-    }
-
-    private void runMockLogicForUpdateGrade(int gradeId, GradeRequest request) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            Grade updatedGrade = new Grade(gradeId, request.getGradeType(), request.getScore());
-            isUpdatingGrade.postValue(false);
-            updateGradeSuccessEvent.postValue(updatedGrade);
-        }, 1000);
+        runRealApiLogicForUpdateGrade(gradeId, request);
     }
 
     private void runRealApiLogicForUpdateGrade(int gradeId, GradeRequest request) {
@@ -449,18 +318,7 @@ public class TeacherRepository {
 
     public void deleteGrade(int gradeId) {
         isDeletingGrade.postValue(true);
-        if (IS_MOCK_MODE) {
-            runMockLogicForDeleteGrade(gradeId);
-        } else {
-            runRealApiLogicForDeleteGrade(gradeId);
-        }
-    }
-
-    private void runMockLogicForDeleteGrade(int gradeId) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            isDeletingGrade.postValue(false);
-            deleteGradeSuccessEvent.postValue(new MessageResponse("Xóa thành công (mock)"));
-        }, 1000);
+        runRealApiLogicForDeleteGrade(gradeId);
     }
 
     private void runRealApiLogicForDeleteGrade(int gradeId) {

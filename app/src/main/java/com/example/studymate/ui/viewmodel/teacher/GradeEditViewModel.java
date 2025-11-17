@@ -3,7 +3,7 @@ package com.example.studymate.ui.viewmodel.teacher;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.studymate.data.model.Grade;
-import com.example.studymate.data.model.response.MessageResponse; // ⭐️ THÊM
+import com.example.studymate.data.model.response.MessageResponse;
 import com.example.studymate.data.repository.TeacherRepository;
 
 public class GradeEditViewModel extends ViewModel {
@@ -14,7 +14,6 @@ public class GradeEditViewModel extends ViewModel {
         this.repository = new TeacherRepository();
     }
 
-    // --- 1. LOGIC THÊM ĐIỂM (ĐÃ CÓ) ---
     public void performAddGrade(Long studentId, Integer classId, String gradeType, Double score) {
         repository.addGrade(studentId, classId, gradeType, score);
     }
@@ -28,7 +27,6 @@ public class GradeEditViewModel extends ViewModel {
         return repository.getAddGradeErrorEvent();
     }
 
-    // ⭐️ 2. THÊM LOGIC SỬA ĐIỂM (MỚI) ⭐️
     public void performUpdateGrade(int gradeId, Long studentId, Integer classId, String gradeType, Double score) {
         repository.updateGrade(gradeId, studentId, classId, gradeType, score);
     }
@@ -42,7 +40,6 @@ public class GradeEditViewModel extends ViewModel {
         return repository.getUpdateGradeErrorEvent();
     }
 
-    // ⭐️ 3. THÊM LOGIC XÓA ĐIỂM (MỚI) ⭐️
     public void performDeleteGrade(int gradeId) {
         repository.deleteGrade(gradeId);
     }

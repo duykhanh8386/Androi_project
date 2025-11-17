@@ -13,7 +13,6 @@ import com.example.studymate.data.model.request.CreateUserRequest;
 import com.example.studymate.data.model.request.FeedbackRequest;
 import com.example.studymate.data.model.request.JoinClassRequest;
 import com.example.studymate.data.model.request.LoginRequest;
-import com.example.studymate.data.model.request.UpdateStatusRequest;
 import com.example.studymate.data.model.response.ClassDetailResponse;
 import com.example.studymate.data.model.response.LoginResponse;
 import com.example.studymate.data.model.response.MessageResponse;
@@ -25,7 +24,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -122,8 +120,6 @@ public interface ApiService {
     Call<MessageResponse> leaveClass(@Path("id") int classId);
 
     // ===== FEEDBACK ======
-    @GET("api/student/feedback/{id}/conversations")
-    Call<List<Feedback>> getFeedbackThread(@Path("id") int classId);
 
     @POST("api/user/feedback/send")
     Call<Feedback> sendFeedback(@Body FeedbackRequest feedbackRequest);
@@ -131,10 +127,6 @@ public interface ApiService {
     @GET("api/user/classes/{id}/feedback")
     Call<List<Feedback>> getFeedbackThread(
             @Path("id") int classId,
-
-            // Thêm Query Param này.
-            // (Khi Student gọi, studentId = null)
-            // (Khi Teacher gọi, studentId = ID của học sinh)
             @Query("studentId") Long studentId
     );
 
@@ -142,8 +134,6 @@ public interface ApiService {
     @POST("api/admin/users")
     Call<User> createUser(@Body CreateUserRequest body);
 
-    // Tìm kiếm user theo keyword (tìm trong fullName, username, email)
-    // keyword sẽ tìm trong TẤT CẢ các trường: fullName, username, email
     @GET("api/admin/users")
     Call<List<User>> searchUsers(
             @Query("keyword") String keyword,

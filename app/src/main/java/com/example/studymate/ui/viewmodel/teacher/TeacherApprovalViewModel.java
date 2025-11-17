@@ -15,7 +15,6 @@ public class TeacherApprovalViewModel extends ViewModel {
         this.repository = new TeacherRepository();
     }
 
-    // --- (Lấy danh sách) ---
     public void loadPendingList(int classId) {
         repository.fetchPendingList(classId);
     }
@@ -26,7 +25,6 @@ public class TeacherApprovalViewModel extends ViewModel {
         return repository.getIsLoading();
     }
 
-    // --- (Xử lý 1 item) ---
     public void approveStudent(int studentClassId) {
         repository.approveStudent(studentClassId);
     }
@@ -58,5 +56,4 @@ public class TeacherApprovalViewModel extends ViewModel {
     public LiveData<String> getBulkErrorEvent() {
         return repository.getBulkErrorEvent();
     }
-    // TODO: Thêm logic cho Approve All / Reject All
 }

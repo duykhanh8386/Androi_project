@@ -11,16 +11,13 @@ public class FeedbackListViewModel extends ViewModel {
     private FeedbackRepository repository;
 
     public FeedbackListViewModel() {
-        // (Khởi tạo Repository)
         this.repository = new FeedbackRepository();
     }
 
-    // Fragment sẽ gọi hàm này
     public void loadFeedbackList(int classId) {
         repository.fetchTeacherFeedbackList(classId);
     }
 
-    // Getters để Fragment quan sát
     public LiveData<List<Feedback>> getFeedbackList() {
         return repository.getFeedbackList();
     }

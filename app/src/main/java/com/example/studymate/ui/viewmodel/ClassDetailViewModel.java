@@ -2,7 +2,6 @@ package com.example.studymate.ui.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
-import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.response.ClassDetailResponse;
 import com.example.studymate.data.repository.ClassRepository;
 
@@ -10,12 +9,10 @@ public class ClassDetailViewModel extends ViewModel {
 
     private ClassRepository classRepository;
 
-    // LiveData "CHI TIÊT LỚP HỌC"
     private LiveData<ClassDetailResponse> classDetail;
     private LiveData<Boolean> isLoading;
     private LiveData<String> error;
 
-    // LiveData "RỜI LỚP"
     private LiveData<Boolean> isLeaveLoading;
     private LiveData<String> leaveSuccess;
     private LiveData<String> leaveError;
@@ -40,12 +37,10 @@ public class ClassDetailViewModel extends ViewModel {
         deleteError = classRepository.getDeleteErrorEvent();
     }
 
-    // Hàm này được Fragment gọi
     public void loadClassDetails(int classId) {
         classRepository.fetchClassDetails(classId);
     }
 
-    // Getters để Fragment quan sát
     public LiveData<ClassDetailResponse> getClassDetail() {
         return classDetail;
     }

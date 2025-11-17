@@ -15,14 +15,10 @@ public class SessionManager {
     private SharedPreferences prefs;
 
     public SessionManager() {
-        // Lấy Context an toàn từ MyApplication
         Context context = MyApplication.getAppContext();
         prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    /**
-     * Lưu token khi đăng nhập thành công
-     */
     public void saveAuthToken(String token) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(KEY_AUTH_TOKEN, token);
@@ -41,9 +37,6 @@ public class SessionManager {
         editor.apply();
     }
 
-    /**
-     * Lấy token để Interceptor sử dụng
-     */
     public String getAuthToken() {
         return prefs.getString(KEY_AUTH_TOKEN, null);
     }
@@ -55,9 +48,7 @@ public class SessionManager {
     public Long getUserId() {
         return prefs.getLong(USER_ID, -1);
     }
-    /**
-     * Xóa token khi đăng xuất
-     */
+
     public void clearUserData() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove(KEY_AUTH_TOKEN);

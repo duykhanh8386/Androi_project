@@ -16,7 +16,6 @@ import com.example.studymate.data.model.Grade;
 
 public class GradeDetailAdapter extends ListAdapter<Grade, GradeDetailAdapter.GradeDetailViewHolder> {
 
-    // 1. Interfaces để xử lý 2 nút click
     public interface OnGradeClickListener {
         void onEditClick(Grade grade);
         void onDeleteClick(Grade grade);
@@ -26,7 +25,6 @@ public class GradeDetailAdapter extends ListAdapter<Grade, GradeDetailAdapter.Gr
     public void setOnGradeClickListener(OnGradeClickListener listener) {
         this.clickListener = listener;
     }
-    // -------------------
 
     public GradeDetailAdapter() {
         super(DIFF_CALLBACK);
@@ -59,7 +57,6 @@ public class GradeDetailAdapter extends ListAdapter<Grade, GradeDetailAdapter.Gr
         holder.bind(getItem(position));
     }
 
-    // --- ViewHolder ---
     class GradeDetailViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvGradeType, tvGradeScore;
         private final ImageButton btnEditGrade, btnDeleteGrade;
@@ -71,7 +68,6 @@ public class GradeDetailAdapter extends ListAdapter<Grade, GradeDetailAdapter.Gr
             btnEditGrade = itemView.findViewById(R.id.btnEditGrade);
             btnDeleteGrade = itemView.findViewById(R.id.btnDeleteGrade);
 
-            // 2. Xử lý click
             btnEditGrade.setOnClickListener(v -> {
                 int pos = getAdapterPosition();
                 if (clickListener != null && pos != RecyclerView.NO_POSITION) {

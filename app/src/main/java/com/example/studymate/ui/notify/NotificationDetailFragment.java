@@ -12,12 +12,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
-import com.example.studymate.data.model.Notification;
 import com.example.studymate.ui.viewmodel.NotificationDetailViewModel;
 
 public class NotificationDetailFragment extends Fragment {
@@ -32,8 +30,6 @@ public class NotificationDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // LẤY ID THÔNG BÁO (từ Bước 2 và 7)
         if (getArguments() != null) {
             notificationId = getArguments().getInt("notificationId");
         } else {
@@ -52,33 +48,24 @@ public class NotificationDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Ánh xạ View
         txtTitle = view.findViewById(R.id.txtTitle);
         txtTime = view.findViewById(R.id.txtTime);
         txtContent = view.findViewById(R.id.txtContent);
         progressBar = view.findViewById(R.id.progressBar);
         scrollContent = view.findViewById(R.id.scrollContent);
-
-        // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(NotificationDetailViewModel.class);
-
-        // Quan sát
         setupObservers();
-
-        // Tải dữ liệu
         if (notificationId > 0) {
             viewModel.loadNotificationDetail(notificationId);
         }
     }
 
     private void setupObservers() {
-        // Quan sát Loading
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             scrollContent.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         });
 
-        // Quan sát Dữ liệu
         viewModel.getNotificationDetail().observe(getViewLifecycleOwner(), notification -> {
             if (notification != null) {
                 txtTitle.setText(notification.getNotificationTitle());

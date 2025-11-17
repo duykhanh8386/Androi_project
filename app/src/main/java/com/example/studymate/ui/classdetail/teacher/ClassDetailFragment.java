@@ -26,11 +26,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.studymate.R;
-import com.example.studymate.data.model.StudyClass;
 import com.example.studymate.data.model.response.ClassDetailResponse;
-import com.example.studymate.ui.home.HomeStudentFragment;
 import com.example.studymate.ui.viewmodel.ClassDetailViewModel;
-import com.example.studymate.ui.viewmodel.HomeStudentViewModel;
 import com.example.studymate.ui.viewmodel.HomeTeacherViewModel;
 
 public class ClassDetailFragment extends Fragment {
@@ -57,11 +54,9 @@ public class ClassDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        // Nhận classId từ Bundle (được gửi từ Adapter)
         if (getArguments() != null) {
             classId = getArguments().getInt("classId");
         } else {
-            // Xử lý lỗi nếu không nhận được ID
             Toast.makeText(getContext(), "Lỗi: Không tìm thấy ID lớp học", Toast.LENGTH_SHORT).show();
         }
     }
@@ -75,7 +70,6 @@ public class ClassDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Ánh xạ View
         tvClassNameDetail = view.findViewById(R.id.tvClassNameDetail);
         tvTeacherNameDetail = view.findViewById(R.id.tvTeacherNameDetail);
         tvClassId = view.findViewById(R.id.tvClassId);
@@ -93,29 +87,21 @@ public class ClassDetailFragment extends Fragment {
 
         bottomButtons = view.findViewById(R.id.bottomButtons);
 
-        // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(ClassDetailViewModel.class);
         homeTeacherViewModel = new ViewModelProvider(this).get(HomeTeacherViewModel.class);
         navController = NavHostFragment.findNavController(this);
 
-        // Thiết lập observers
         setupObservers();
-
-        // Thêm hàm setup Click Listeners
         setupClickListeners();
-
         listenForUpdateSignal();
 
-        // Tải dữ liệu lần đầu
-        if (currentClassDetails == null) { // Chỉ tải nếu chưa có dữ liệu
+        if (currentClassDetails == null) {
             viewModel.loadClassDetails(classId);
         }
     }
 
     private void listenForUpdateSignal() {
-        // Lấy NavController (bạn đã có)
         NavController navController = NavHostFragment.findNavController(this);
-
         SavedStateHandle savedStateHandle = navController.getCurrentBackStackEntry()
                 .getSavedStateHandle();
 
@@ -125,8 +111,6 @@ public class ClassDetailFragment extends Fragment {
                     public void onChanged(Boolean shouldRefresh) {
                         if (shouldRefresh != null && shouldRefresh) {
                             viewModel.loadClassDetails(classId);
-
-                            // Xóa tín hiệu đi (rất quan trọng)
                             savedStateHandle.remove(KEY_REFRESH_DETAILS);
                         }
                     }
@@ -134,7 +118,6 @@ public class ClassDetailFragment extends Fragment {
     }
 
     private void setupObservers() {
-        // Quan sát trạng thái loading
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isLoading) {
@@ -142,7 +125,6 @@ public class ClassDetailFragment extends Fragment {
                 scrollContent.setVisibility(isLoading ? View.GONE : View.VISIBLE);
                 bottomButtons.setVisibility(isLoading ? View.GONE : View.VISIBLE);
 
-                // ⭐️ Ẩn/hiện các nút dưới cùng (LinearLayout chứa btnGoBack)
                 View bottomButtons = getView().findViewById(R.id.bottomButtons);
                 if (bottomButtons != null) {
                     bottomButtons.setVisibility(isLoading ? View.GONE : View.VISIBLE);
@@ -150,12 +132,10 @@ public class ClassDetailFragment extends Fragment {
             }
         });
 
-        // Quan sát dữ liệu chi tiết
         viewModel.getClassDetail().observe(getViewLifecycleOwner(), new Observer<ClassDetailResponse>() {
             @Override
             public void onChanged(ClassDetailResponse studyClass) {
                 if (studyClass != null) {
-
                     currentClassDetails = studyClass;
 
                     tvClassNameDetail.setText(studyClass.getClassName());
@@ -166,29 +146,24 @@ public class ClassDetailFragment extends Fragment {
                 }
             }
         });
-        // (Quan sát lỗi tải chi tiết)
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + error, Toast.LENGTH_LONG).show();
             }
         });
 
-        // ⭐️ THÊM MỚI: Quan sát sự kiện XÓA LỚP
         viewModel.getIsDeleting().observe(getViewLifecycleOwner(), isDeleting -> {
-            // Vô hiệu hóa các nút khi đang xử lý
             btnDeleteClass.setEnabled(!isDeleting);
             btnUpdateClass.setEnabled(!isDeleting);
             if (isDeleting) {
                 btnDeleteClass.setText("Đang xóa...");
             } else {
-                btnDeleteClass.setText(R.string.btn_class_delete); // Reset text
+                btnDeleteClass.setText(R.string.btn_class_delete);
             }
         });
 
         viewModel.getDeleteSuccess().observe(getViewLifecycleOwner(), successMessage -> {
             Toast.makeText(getContext(), successMessage, Toast.LENGTH_LONG).show();
-            // Xóa thành công, quay về màn hình Home
-            // (Pop cho đến Home, KHÔNG bao gồm Home)
             navController.popBackStack(R.id.homeTeacherFragment, false);
         });
 
@@ -196,7 +171,6 @@ public class ClassDetailFragment extends Fragment {
             Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
         });
 
-        // Quan sát sự kiện Đăng xuất
         homeTeacherViewModel.getLogoutSuccessEvent().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isSuccess) {
@@ -210,8 +184,6 @@ public class ClassDetailFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-
-        // Nút "Cập nhật lớp"
         btnUpdateClass.setOnClickListener(v -> {
             if (currentClassDetails != null) {
                 navigateToUpdateFragment();
@@ -220,41 +192,31 @@ public class ClassDetailFragment extends Fragment {
             }
         });
 
-        // Nút "Xóa lớp"
         btnDeleteClass.setOnClickListener(v -> {
-            // Hiển thị hộp thoại xác nhận
             showDeleteClassDialog();
         });
 
-        // Nút Xem Học sinh
         btnStudents.setOnClickListener(v -> {
-            // (Dùng ID action từ nav_graph của bạn)
             Bundle bundle = new Bundle();
             bundle.putInt("classId", classId);
-
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_detail_to_studentManage, bundle);
         });
 
-        // Nút Xem Thông báo
         btnNotify.setOnClickListener(v -> {
-            // (Dùng ID action từ nav_graph của bạn)
             Bundle bundle = new Bundle();
             bundle.putInt("classId", classId);
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_detail_to_notifications, bundle);
         });
 
-        // Nút Hỏi đáp (Feedback)
         btnFeedback.setOnClickListener(v -> {
-            // (Dùng ID action từ nav_graph của bạn)
             Bundle bundle = new Bundle();
             bundle.putInt("classId", classId);
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_detail_to_feedback, bundle);
         });
 
-        // Nút Xem Điểm
         btnScore.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putInt("classId", classId);
@@ -263,44 +225,35 @@ public class ClassDetailFragment extends Fragment {
         });
 
         btnAccept.setOnClickListener(v -> {
-            // 1. Tạo Bundle
             Bundle bundle = new Bundle();
             bundle.putInt("classId", classId);
-
-            // 2. Điều hướng (dùng ID action từ nav_graph)
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_detail_to_approvalList, bundle);
         });
 
     }
 
-    // ⭐️ THÊM HÀM MỚI: (Để điều hướng)
     private void navigateToUpdateFragment() {
-        // 1. Tạo Bundle để gửi dữ liệu qua
         Bundle bundle = new Bundle();
         bundle.putInt("classId", classId);
         bundle.putString("currentName", currentClassDetails.getClassName());
         bundle.putString("currentTime", currentClassDetails.getClassTime());
 
-        // 2. Gọi action (từ nav_graph)
         NavHostFragment.findNavController(this)
                 .navigate(R.id.action_teacherClassDetailFragment_to_classUpdateFragment, bundle);
     }
 
-    // (Hiển thị Dialog xác nhận Xóa)
     private void showDeleteClassDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Xác nhận xóa lớp")
                 .setMessage("Bạn có chắc muốn xóa lớp học này không? Hành động này không thể hoàn tác.")
                 .setPositiveButton("Xóa", (dialog, which) -> {
-                    // Người dùng bấm "Xóa" -> Gọi ViewModel
                     viewModel.performDeleteClass(classId);
                 })
-                .setNegativeButton("Hủy", null) // Bấm "Hủy" -> không làm gì
+                .setNegativeButton("Hủy", null)
                 .show();
     }
 
-    // (onCreateOptionsMenu, onOptionsItemSelected, showLogoutDialog không đổi)
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();

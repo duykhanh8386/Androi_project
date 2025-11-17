@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.request.CreateUserRequest;
-import com.example.studymate.data.model.request.UpdateStatusRequest;
 import com.example.studymate.data.network.ApiService;
 import com.example.studymate.data.network.RetrofitClient;
 

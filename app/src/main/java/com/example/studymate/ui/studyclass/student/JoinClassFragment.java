@@ -39,41 +39,33 @@ public class JoinClassFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(JoinClassViewModel.class);
 
-        // Ánh xạ View
         edtClassCode = view.findViewById(R.id.edtClassCode);
         btnSubmitJoin = view.findViewById(R.id.btnSubmitJoin);
         progressBar = view.findViewById(R.id.progressBar);
         scrollViewContent = view.findViewById(R.id.scrollViewContent);
 
-        // Xử lý Click
         btnSubmitJoin.setOnClickListener(v -> {
             String code = edtClassCode.getText().toString().trim();
             if (code.isEmpty()) {
                 Toast.makeText(getContext(), "Vui lòng nhập mã lớp", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // Gọi ViewModel
             viewModel.performJoinClass(code);
         });
 
-        // Quan sát LiveData
         setupObservers();
     }
 
     private void setupObservers() {
-        // Quan sát Loading
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             showLoading(isLoading);
         });
 
-        // Quan sát Thành công
         viewModel.getJoinSuccessEvent().observe(getViewLifecycleOwner(), message -> {
             Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-            // Đóng Fragment này và quay lại Home
             NavHostFragment.findNavController(this).popBackStack();
         });
 
-        // Quan sát Lỗi
         viewModel.getJoinErrorEvent().observe(getViewLifecycleOwner(), error -> {
             Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         });

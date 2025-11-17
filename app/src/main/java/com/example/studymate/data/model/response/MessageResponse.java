@@ -11,7 +11,6 @@ public class MessageResponse {
         return message;
     }
 
-    // Constructor cho mock data
     public MessageResponse(String message) {
         this.message = message;
     }

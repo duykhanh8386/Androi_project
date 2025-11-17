@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studymate.R;
 import com.example.studymate.data.model.Grade;
-import com.example.studymate.data.model.User;
 import com.example.studymate.data.model.response.StudentResponse;
 
 import java.util.List;
@@ -55,8 +54,6 @@ public class StudentListAdapter extends ListAdapter<StudentResponse, StudentList
         private final TextView tvStudentScoreTX;
         private final TextView tvStudentScoreGK;
         private final TextView tvStudentScoreCK;
-
-
 
         public StudentViewHolder(@NonNull View itemView) {
             super(itemView);
